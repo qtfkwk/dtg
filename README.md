@@ -18,8 +18,11 @@ Item              | Description               | Default
 `TIMESTAMP`       | Timestamp `SECONDS[.NS]`  | *now*
 
 [^1]: Implies `-f '%a %d %b %Y %H:%M:%S %Z'`
+
 [^2]: https://docs.rs/chrono/latest/chrono/format/strftime#specifiers
+
 [^3]: See note 1
+
 [^4]: Similar to `%s.%f%n%Y-%m-%dT%H:%M:%SZ%n%a %d %b %Y %H:%M:%S %Z`
       except the last line is repeated for the given timezone and the
       top three lines are in UTC
