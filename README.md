@@ -7,7 +7,7 @@ Date/time CLI utility
 ```text
 dtg [-V|--version] [-h|--help] \
     [-z TZ] [-f FORMAT] \
-    [-r] [-a] \
+    [-l] [-a] \
     [TIMESTAMP]
 ```
 
@@ -50,7 +50,7 @@ $ dtg -l
 Thu 26 Nov 2020 22:21:16 EST
 ```
 
-Get current date/time in explicit / other timezone and default format:
+Get current date/time in explicit timezone and default format:
 
 ```text
 $ dtg -z MST
@@ -60,6 +60,27 @@ Thu 26 Nov 2020 20:21:16 MST
 ```text
 $ dtg -z America/Los_Angeles
 Thu 26 Nov 2020 19:21:16 PST
+```
+
+Get current date/time in UTC and specific format:
+
+```text
+$ dtg -f %A
+Friday
+```
+
+Get current date/time in local timezone and specific format:
+
+```text
+$ dtg -l -f %A
+Thursday
+```
+
+Get current date/time in explicit timezone and specific format:
+
+```text
+$ dtg -z MST -f %A
+Thursday
 ```
 
 Get current date/time in custom format (see note 3 above):
@@ -72,7 +93,7 @@ Fri 27 Nov 2020 03:21:16 UTC
 Thu 26 Nov 2020 22:21:16 EST
 ```
 
-Get current date/time in explicit / other timezone and custom format (see note 3 above):
+Get current date/time in explicit timezone and custom format (see note 3 above):
 
 ```text
 $ dtg -a -z MST
@@ -96,7 +117,7 @@ $ dtg -l 1606447276.941324100
 Thu 26 Nov 2020 22:21:16 EST
 ```
 
-Get a specific date/time in explicit / other timezone and default format:
+Get a specific date/time in explicit timezone and default format:
 
 ```text
 $ dtg -z MST 1606447276.941324100
@@ -106,6 +127,27 @@ Thu 26 Nov 2020 20:21:16 MST
 ```text
 $ dtg -z America/Los_Angeles 1606447276.941324100
 Thu 26 Nov 2020 19:21:16 PST
+```
+
+Get specific date/time in UTC and specific format:
+
+```text
+$ dtg -f %A 1606447276.941324100
+Friday
+```
+
+Get specific date/time in local timezone and specific format:
+
+```text
+$ dtg -l -f %A 1606447276.941324100
+Thursday
+```
+
+Get specific date/time in explicit timezone and specific format:
+
+```text
+$ dtg -z MST -f %A 1606447276.941324100
+Thursday
 ```
 
 Get a specific date/time in custom format (see note 3 above):
@@ -118,7 +160,7 @@ Fri 27 Nov 2020 03:21:16 UTC
 Thu 26 Nov 2020 22:21:16 EST
 ```
 
-Get a specific date/time in explicit / other timezone and custom format (see note 3 above):
+Get a specific date/time in explicit timezone and custom format (see note 3 above):
 
 ```text
 $ dtg -a -z MST 1606447276.941324100
@@ -135,4 +177,5 @@ Thu 26 Nov 2020 20:21:16 MST
     * General improvements to readme and code
     * Replaced `-u` with `-l` and ability to get local timezone via the
       [iana-time-zone crate](https://crates.io/crates/iana-time-zone)
+* 2.0.1: Improve readme (add `-f` examples...); `s/-r/-l/` in usage
 

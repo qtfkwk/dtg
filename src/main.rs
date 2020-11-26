@@ -59,7 +59,7 @@ dtg v{}
 ```text
 dtg [-V|--version] [-h|--help] \\
     [-z TZ] [-f FORMAT] \\
-    [-r] [-a] \\
+    [-l] [-a] \\
     [TIMESTAMP]
 ```
 
