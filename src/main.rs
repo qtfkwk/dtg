@@ -5,86 +5,111 @@ Date/time CLI utility
 use chrono::{TimeZone, Utc};
 use chrono_tz::Tz;
 
+fn error(code: i32, msg: &str) {
+    eprintln!("ERROR: {}!", msg);
+    std::process::exit(code);
+}
+
+fn done(msg: &str) {
+    println!("{}", msg);
+    std::process::exit(0);
+}
+
+/**
+Process timezone name
+*/
+fn tz(name: &str) -> Tz {
+    if name == "local" {
+        if let Ok(local) = iana_time_zone::get_timezone() {
+            return tz(&local);
+        } else {
+            error(5, "Couldn't get local timezone");
+        }
+    }
+    if let Ok(z) = name.parse() {
+        return z;
+    } else {
+        error(3, &format!("Invalid time zone: `{}`", name));
+    }
+    Tz::UTC
+}
+
 /**
 Main
 */
 fn main() {
-    fn error(code: i32, msg: &str) {
-        eprintln!("ERROR: {}!", msg);
-        std::process::exit(code);
-    }
-    fn done(msg: &str) {
-        println!("{}", msg);
-        std::process::exit(0);
-    }
-    let mut opt_f = false;
-    let mut fmt = String::from("%a %d %b %Y %H:%M:%S %Z");
-    let mut use_fmt = false;
     let mut opt_z = false;
-    let mut zone = Tz::UTC;
+    let mut opt_f = false;
     let mut opt_a = false;
+    let mut use_fmt = false;
+    let mut fmt = String::from("%a %d %b %Y %H:%M:%S %Z");
+    let mut zone = Tz::UTC;
     let mut args = vec![];
     for arg in std::env::args().skip(1) {
         let a = arg.as_str();
         if ["-V", "--version"].contains(&a) {
-            println!("dtg v{}", env!("CARGO_PKG_VERSION"));
-            std::process::exit(0);
+            done(&format!("dtg v{}", env!("CARGO_PKG_VERSION")));
         } else if ["-h", "--help"].contains(&a) {
-            println!(
+            done(&format!(
                 "\
 dtg v{}
 
 {}
 
+```text
+dtg [-V|--version] [-h|--help] \\
+    [-z TZ] [-f FORMAT] \\
+    [-r] [-a] \\
+    [TIMESTAMP]
 ```
-dtg [-V|--version] [-h|--help] [-z TZ] [-f FORMAT] [TIMESTAMP]
-```
 
-Item              | Description               | Default
-------------------|---------------------------|--------------------------
-`-V`, `--version` | Print banner with version |
-`-h`, `--help`    | Print usage               |
-`-z TZ`           | Timezone[^1]              | `UTC`
-`-f FORMAT`       | Strftime format[^2]       | `%Y-%m-%dT%H:%M:%SZ`[^3]
-`-a`              | Use custom format[^4]     |
-`TIMESTAMP`       | Timestamp `SECONDS[.NS]`  | *now*
+Item              | Description             | Default
+------------------|-------------------------|---------------------
+`-V`, `--version` | Print version           |
+`-h`, `--help`    | Print usage             |
+`-z TZ`           | Timezone (1)            | `UTC`
+`-l`              | `-z local`              |
+`-f FORMAT`       | Format (2)              | `%Y-%m-%dT%H:%M:%SZ`
+`-a`              | Custom format (3)       |
+`TIMESTAMP`       | `SECONDS[.NS]`          | *Now*
 
-[^1]: Implies `-f '%a %d %b %Y %H:%M:%S %Z'`
-[^2]: https://docs.rs/chrono/latest/chrono/format/strftime#specifiers
-[^3]: See note 1
-[^4]: Similar to `%s.%f%n%Y-%m-%dT%H:%M:%SZ%n%a %d %b %Y %H:%M:%S %Z`
-      except the last line is repeated for the given timezone and the
-      top three lines are in UTC
+1. Implies `-f '%a %d %b %Y %H:%M:%S %Z'`
+2. Format fields are roughly equivalent to strftime but with some
+   enhancements; for details, see:
+   https://docs.rs/chrono/latest/chrono/format/strftime#specifiers
+3. Equivalent to the following; implies `-l`, override via `-z TZ`
 
+    ```text
+    dtg -f '%s.%f'
+    dtg -f '%Y-%m-%dT%H:%M:%SZ'
+    dtg -f '%a %d %b %Y %H:%M:%S %Z'
+    dig -f '%a %d %b %Y %H:%M:%S %Z' -z TZ
+    ```
 \
                 ",
                 env!("CARGO_PKG_VERSION"),
                 env!("CARGO_PKG_HOMEPAGE"),
-            );
-            std::process::exit(0);
+            ));
         } else if ["-f", "--format"].contains(&a) {
             opt_f = true;
         } else if opt_f {
             opt_f = false;
-            fmt = arg;
             use_fmt = true;
+            fmt = arg;
         } else if ["-z", "--zone"].contains(&a) {
             opt_z = true;
         } else if opt_z {
-            if let Ok(z) = arg.parse() {
-                zone = z;
-            } else {
-                error(3, &format!("Invalid time zone: `{}`", arg));
-            }
             opt_z = false;
+            zone = tz(&arg);
             use_fmt = true;
-        } else if arg == "-u" {
-            zone = Tz::UTC;
+        } else if arg == "-l" {
+            zone = tz("local");
             use_fmt = true;
         } else if arg == "-a" {
             opt_a = true;
-            fmt = String::from("%a %d %b %Y %H:%M:%S %Z");
-            use_fmt = true;
+            if zone == Tz::UTC {
+                zone = tz("local");
+            }
         } else if arg.starts_with('-') {
             error(1, &format!("Invalid option: `{}`", arg));
         } else {
@@ -126,7 +151,11 @@ Item              | Description               | Default
         match dt {
             Some(d) => {
                 if opt_a {
-                    println!("{}", d.format("%s.%f%n%Y-%m-%dT%H:%M:%SZ%n%a %d %b %Y %H:%M:%S %Z"));
+                    done(&format!(
+                        "{}\n{}",
+                        d.format("%s.%f%n%Y-%m-%dT%H:%M:%SZ%n%a %d %b %Y %H:%M:%S %Z"),
+                        d.with_timezone(&zone).format("%a %d %b %Y %H:%M:%S %Z"),
+                    ));
                 }
                 let d = d.with_timezone(&zone);
                 done(&if use_fmt {

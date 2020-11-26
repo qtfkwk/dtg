@@ -97,26 +97,35 @@ dtg v{}
 
 {}
 
+```text
+dtg [-V|--version] [-h|--help] \\
+    [-z TZ] [-f FORMAT] \\
+    [-r] [-a] \\
+    [TIMESTAMP]
 ```
-dtg [-V|--version] [-h|--help] [-z TZ] [-f FORMAT] [TIMESTAMP]
-```
 
-Item              | Description               | Default
-------------------|---------------------------|--------------------------
-`-V`, `--version` | Print banner with version |
-`-h`, `--help`    | Print usage               |
-`-z TZ`           | Timezone[^1]              | `UTC`
-`-f FORMAT`       | Strftime format[^2]       | `%Y-%m-%dT%H:%M:%SZ`[^3]
-`-a`              | Use custom format[^4]     |
-`TIMESTAMP`       | Timestamp `SECONDS[.NS]`  | *now*
+Item              | Description             | Default
+------------------|-------------------------|---------------------
+`-V`, `--version` | Print version           |
+`-h`, `--help`    | Print usage             |
+`-z TZ`           | Timezone (1)            | `UTC`
+`-l`              | `-z local`              |
+`-f FORMAT`       | Format (2)              | `%Y-%m-%dT%H:%M:%SZ`
+`-a`              | Custom format (3)       |
+`TIMESTAMP`       | `SECONDS[.NS]`          | *Now*
 
-[^1]: Implies `-f '%a %d %b %Y %H:%M:%S %Z'`
-[^2]: https://docs.rs/chrono/latest/chrono/format/strftime#specifiers
-[^3]: See note 1
-[^4]: Similar to `%s.%f%n%Y-%m-%dT%H:%M:%SZ%n%a %d %b %Y %H:%M:%S %Z`
-      except the last line is repeated for the given timezone and the
-      top three lines are in UTC
+1. Implies `-f '%a %d %b %Y %H:%M:%S %Z'`
+2. Format fields are roughly equivalent to strftime but with some
+   enhancements; for details, see:
+   https://docs.rs/chrono/latest/chrono/format/strftime#specifiers
+3. Equivalent to the following; implies `-l`, override via `-z TZ`
 
+    ```text
+    dtg -f '%s.%f'
+    dtg -f '%Y-%m-%dT%H:%M:%SZ'
+    dtg -f '%a %d %b %Y %H:%M:%S %Z'
+    dig -f '%a %d %b %Y %H:%M:%S %Z' -z TZ
+    ```
 \
             ",
                 env!("CARGO_PKG_VERSION"),
@@ -138,11 +147,6 @@ fn epoch_subsecond() {
         &["-f", "%Y-%m-%dT%H:%M:%S.%fZ", &nanoseconds()],
         &RFC3339.replace('Z', &format!(".{}Z", NANOSECONDS)),
     );
-}
-
-#[test]
-fn utc() {
-    pass("dtg", &["-u", &nanoseconds()], UTC);
 }
 
 #[test]
@@ -168,16 +172,7 @@ fn format_custom_day_of_week() {
 }
 
 #[test]
-fn custom_format_1() {
-    pass(
-        "dtg",
-        &["-a", &nanoseconds()],
-        &format!("{}.{}\n{}\n{}\n{}", SECONDS, NANOSECONDS, RFC3339, UTC, UTC),
-    );
-}
-
-#[test]
-fn custom_format_2() {
+fn custom_format() {
     pass(
         "dtg",
         &["-a", "-z", "EST", &nanoseconds()],
