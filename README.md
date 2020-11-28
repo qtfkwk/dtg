@@ -178,4 +178,6 @@ Thu 26 Nov 2020 20:21:16 MST
     * Replaced `-u` with `-l` and ability to get local timezone via the
       [iana-time-zone crate](https://crates.io/crates/iana-time-zone)
 * 2.0.1: Improve readme (add `-f` examples...); `s/-r/-l/` in usage
+* 2.1.0: Enable bundling options (`-a -z TZ`: `-az TZ`, `-a -l`: `-al`, `-l -a`: `-la`,
+  `-l -f FORMAT`: `-lf FORMAT`)
 

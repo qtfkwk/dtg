@@ -173,11 +173,11 @@ fn format_custom_day_of_week() {
 
 #[test]
 fn custom_format() {
-    pass(
-        "dtg",
-        &["-a", "-z", "EST", &nanoseconds()],
-        &format!("{}.{}\n{}\n{}\n{}", SECONDS, NANOSECONDS, RFC3339, UTC, EST),
-    );
+    let want = format!("{}.{}\n{}\n{}\n{}", SECONDS, NANOSECONDS, RFC3339, UTC, EST);
+    let ns = nanoseconds();
+    pass("dtg", &["-a", "-z", "EST", &ns], &want);
+    pass("dtg", &["-z", "EST", "-a", &ns], &want);
+    pass("dtg", &["-az", "EST", &ns], &want);
 }
 
 // ## Errors

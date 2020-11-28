@@ -105,8 +105,22 @@ Item              | Description             | Default
         } else if arg == "-l" {
             zone = tz("local");
             use_fmt = true;
+        } else if arg == "-lf" {
+            opt_f = true;
+            zone = tz("local");
+            use_fmt = true;
+        } else if ["-al", "-la"].contains(&a) {
+            opt_a = true;
+            zone = tz("local");
+            use_fmt = true;
         } else if arg == "-a" {
             opt_a = true;
+            if zone == Tz::UTC {
+                zone = tz("local");
+            }
+        } else if arg == "-az" {
+            opt_a = true;
+            opt_z = true;
             if zone == Tz::UTC {
                 zone = tz("local");
             }
