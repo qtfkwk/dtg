@@ -14,6 +14,7 @@ const RFC3339: &str = "2020-11-25T14:32:37Z";
 const UTC: &str = "Wed 25 Nov 2020 14:32:37 UTC";
 const EST: &str = "Wed 25 Nov 2020 09:32:37 EST";
 const DOW: &str = "Wednesday";
+const X: &str = "7E4AOEWb";
 
 // # Helper functions
 
@@ -100,7 +101,7 @@ dtg v{}
 ```text
 dtg [-V|--version] [-h|--help] \\
     [-z TZ] [-f FORMAT] \\
-    [-l] [-a] \\
+    [-l] [-a] [-x] \\
     [TIMESTAMP]
 ```
 
@@ -112,6 +113,7 @@ Item              | Description             | Default
 `-l`              | `-z local`              |
 `-f FORMAT`       | Format (2)              | `%Y-%m-%dT%H:%M:%SZ`
 `-a`              | Custom format (3)       |
+`-x`              | Custom format           |
 `TIMESTAMP`       | `SECONDS[.NS]`          | *Now*
 
 1. Implies `-f '%a %d %b %Y %H:%M:%S %Z'`
@@ -178,6 +180,12 @@ fn custom_format() {
     pass("dtg", &["-a", "-z", "EST", &ns], &want);
     pass("dtg", &["-z", "EST", "-a", &ns], &want);
     pass("dtg", &["-az", "EST", &ns], &want);
+}
+
+#[test]
+fn x() {
+    let ns = nanoseconds();
+    pass("dtg", &["-x", &ns], X);
 }
 
 // ## Errors

@@ -7,7 +7,7 @@ Date/time CLI utility
 ```text
 dtg [-V|--version] [-h|--help] \
     [-z TZ] [-f FORMAT] \
-    [-l] [-a] \
+    [-l] [-a] [-x] \
     [TIMESTAMP]
 ```
 
@@ -19,6 +19,7 @@ Item              | Description             | Default
 `-l`              | `-z local`              |
 `-f FORMAT`       | Format (2)              | `%Y-%m-%dT%H:%M:%SZ`
 `-a`              | Custom format (3)       |
+`-x`              | Custom format           |
 `TIMESTAMP`       | `SECONDS[.NS]`          | *Now*
 
 1. Implies `-f '%a %d %b %Y %H:%M:%S %Z'`
@@ -103,6 +104,13 @@ Fri 27 Nov 2020 03:21:16 UTC
 Thu 26 Nov 2020 20:21:16 MST
 ```
 
+Get current date/time in custom format:
+
+```text
+$ dtg -x
+7E4AQ3LG
+```
+
 Get a specific date / time in UTC and RFC 3339 format:
 
 ```text
@@ -170,6 +178,13 @@ Fri 27 Nov 2020 03:21:16 UTC
 Thu 26 Nov 2020 20:21:16 MST
 ```
 
+Get a specific date/time in custom format:
+
+```text
+$ dtg -x 1606447276.941324100
+7E4AQ3LG
+```
+
 # Changelog
 
 * 1.0.2: Initial public release
@@ -180,4 +195,5 @@ Thu 26 Nov 2020 20:21:16 MST
 * 2.0.1: Improve readme (add `-f` examples...); `s/-r/-l/` in usage
 * 2.1.0: Enable bundling options (`-a -z TZ`: `-az TZ`, `-a -l`: `-al`, `-l -a`: `-la`,
   `-l -f FORMAT`: `-lf FORMAT`)
+* 2.2.0: Add `-x` option
 

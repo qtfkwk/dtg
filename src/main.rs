@@ -2,6 +2,8 @@
 Date/time CLI utility
 */
 
+use std::collections::HashMap;
+
 use chrono::{TimeZone, Utc};
 use chrono_tz::Tz;
 
@@ -44,6 +46,7 @@ fn main() {
     let mut use_fmt = false;
     let mut fmt = String::from("%a %d %b %Y %H:%M:%S %Z");
     let mut zone = Tz::UTC;
+    let mut opt_x = false;
     let mut args = vec![];
     for arg in std::env::args().skip(1) {
         let a = arg.as_str();
@@ -59,7 +62,7 @@ dtg v{}
 ```text
 dtg [-V|--version] [-h|--help] \\
     [-z TZ] [-f FORMAT] \\
-    [-l] [-a] \\
+    [-l] [-a] [-x] \\
     [TIMESTAMP]
 ```
 
@@ -71,6 +74,7 @@ Item              | Description             | Default
 `-l`              | `-z local`              |
 `-f FORMAT`       | Format (2)              | `%Y-%m-%dT%H:%M:%SZ`
 `-a`              | Custom format (3)       |
+`-x`              | Custom format           |
 `TIMESTAMP`       | `SECONDS[.NS]`          | *Now*
 
 1. Implies `-f '%a %d %b %Y %H:%M:%S %Z'`
@@ -124,6 +128,8 @@ Item              | Description             | Default
             if zone == Tz::UTC {
                 zone = tz("local");
             }
+        } else if arg == "-x" {
+            opt_x = true;
         } else if arg.starts_with('-') {
             error(1, &format!("Invalid option: `{}`", arg));
         } else {
@@ -170,6 +176,34 @@ Item              | Description             | Default
                         d.format("%s.%f%n%Y-%m-%dT%H:%M:%SZ%n%a %d %b %Y %H:%M:%S %Z"),
                         d.with_timezone(&zone).format("%a %d %b %Y %H:%M:%S %Z"),
                     ));
+                }
+                if opt_x {
+                    let c: HashMap<u8, char> = [
+                        (0, '0'), (10, 'A'), (20, 'K'), (30, 'U'), (40, 'e'), (50, 'o'),
+                        (1, '1'), (11, 'B'), (21, 'L'), (31, 'V'), (41, 'f'), (51, 'p'),
+                        (2, '2'), (12, 'C'), (22, 'M'), (32, 'W'), (42, 'g'), (52, 'q'),
+                        (3, '3'), (13, 'D'), (23, 'N'), (33, 'X'), (43, 'h'), (53, 'r'),
+                        (4, '4'), (14, 'E'), (24, 'O'), (34, 'Y'), (44, 'i'), (54, 's'),
+                        (5, '5'), (15, 'F'), (25, 'P'), (35, 'Z'), (45, 'j'), (55, 't'),
+                        (6, '6'), (16, 'G'), (26, 'Q'), (36, 'a'), (46, 'k'), (56, 'u'),
+                        (7, '7'), (17, 'H'), (27, 'R'), (37, 'b'), (47, 'l'), (57, 'v'),
+                        (8, '8'), (18, 'I'), (28, 'S'), (38, 'c'), (48, 'm'), (58, 'w'),
+                        (9, '9'), (19, 'J'), (29, 'T'), (39, 'd'), (49, 'n'), (59, 'x'),
+                    ].iter().cloned().collect();
+                    let year = d.format("%Y").to_string().parse::<u32>().unwrap();
+                    let mut mon = d.format("%m").to_string().parse::<u8>().unwrap();
+                    let mut day = d.format("%d").to_string().parse::<u8>().unwrap();
+                    let h = d.format("%H").to_string().parse::<u8>().unwrap();
+                    let m = d.format("%M").to_string().parse::<u8>().unwrap();
+                    let s = d.format("%S").to_string().parse::<u8>().unwrap();
+                    mon -= 1;
+                    day -= 1;
+                    let mon = c.get(&mon).unwrap();
+                    let day = c.get(&day).unwrap();
+                    let h = c.get(&h).unwrap();
+                    let m = c.get(&m).unwrap();
+                    let s = c.get(&s).unwrap();
+                    done(&format!("{:03X}{}{}{}{}{}", year, mon, day, h, m, s));
                 }
                 let d = d.with_timezone(&zone);
                 done(&if use_fmt {
