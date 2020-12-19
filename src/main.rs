@@ -190,7 +190,7 @@ Item              | Description             | Default
                         (8, '8'), (18, 'I'), (28, 'S'), (38, 'c'), (48, 'm'), (58, 'w'),
                         (9, '9'), (19, 'J'), (29, 'T'), (39, 'd'), (49, 'n'), (59, 'x'),
                     ].iter().cloned().collect();
-                    let year = d.format("%Y").to_string().parse::<u32>().unwrap();
+                    let mut year = d.format("%Y").to_string().parse::<u32>().unwrap();
                     let mut mon = d.format("%m").to_string().parse::<u8>().unwrap();
                     let mut day = d.format("%d").to_string().parse::<u8>().unwrap();
                     let h = d.format("%H").to_string().parse::<u8>().unwrap();
@@ -203,7 +203,20 @@ Item              | Description             | Default
                     let h = c.get(&h).unwrap();
                     let m = c.get(&m).unwrap();
                     let s = c.get(&s).unwrap();
-                    done(&format!("{:03X}{}{}{}{}{}", year, mon, day, h, m, s));
+                    let mut y: Vec<u8> = vec![];
+                    if year == 0 {
+                        y.push(0);
+                    }
+                    while year > 0 {
+                        y.push((year % 60) as u8);
+                        year /= 60;
+                    }
+                    let year = y
+                        .iter()
+                        .rev()
+                        .map(|x| c.get(x).unwrap())
+                        .collect::<String>();
+                    done(&format!("{}{}{}{}{}{}", year, mon, day, h, m, s));
                 }
                 let d = d.with_timezone(&zone);
                 done(&if use_fmt {

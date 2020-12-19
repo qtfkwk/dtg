@@ -14,7 +14,7 @@ const RFC3339: &str = "2020-11-25T14:32:37Z";
 const UTC: &str = "Wed 25 Nov 2020 14:32:37 UTC";
 const EST: &str = "Wed 25 Nov 2020 09:32:37 EST";
 const DOW: &str = "Wednesday";
-const X: &str = "7E4AOEWb";
+const X: &str = "XeAOEWb";
 
 // # Helper functions
 

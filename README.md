@@ -108,7 +108,7 @@ Get current date/time in custom format:
 
 ```text
 $ dtg -x
-7E4AQ3LG
+XeAQ3LG
 ```
 
 Get a specific date / time in UTC and RFC 3339 format:
@@ -182,7 +182,7 @@ Get a specific date/time in custom format:
 
 ```text
 $ dtg -x 1606447276.941324100
-7E4AQ3LG
+XeAQ3LG
 ```
 
 # Changelog
@@ -196,4 +196,5 @@ $ dtg -x 1606447276.941324100
 * 2.1.0: Enable bundling options (`-a -z TZ`: `-az TZ`, `-a -l`: `-al`, `-l -a`: `-la`,
   `-l -f FORMAT`: `-lf FORMAT`)
 * 2.2.0: Add `-x` option
+* 2.2.1: Fix `-x` option year from hex to base 60
 
