@@ -105,16 +105,16 @@ dtg [-V|--version] [-h|--help] \\
     [TIMESTAMP]
 ```
 
-Item              | Description             | Default
-------------------|-------------------------|---------------------
-`-V`, `--version` | Print version           |
-`-h`, `--help`    | Print usage             |
-`-z TZ`           | Timezone (1)            | `UTC`
-`-l`              | `-z local`              |
-`-f FORMAT`       | Format (2)              | `%Y-%m-%dT%H:%M:%SZ`
-`-a`              | Custom format (3)       |
-`-x`              | Custom format           |
-`TIMESTAMP`       | `SECONDS[.NS]`          | *Now*
+Item              | Description       | Default
+------------------|-------------------|---------------------
+`-V`, `--version` | Print version     |
+`-h`, `--help`    | Print usage       |
+`-z TZ`           | Timezone (1)      | `UTC`
+`-l`              | `-z local`        |
+`-f FORMAT`       | Format (2)        | `%Y-%m-%dT%H:%M:%SZ`
+`-a`              | Custom format (3) |
+`-x`              | Custom format (4) |
+`TIMESTAMP`       | `SECONDS[.NS]`    | *Now*
 
 1. Implies `-f '%a %d %b %Y %H:%M:%S %Z'`
 2. Format fields are roughly equivalent to strftime but with some
@@ -128,6 +128,10 @@ Item              | Description             | Default
     dtg -f '%a %d %b %Y %H:%M:%S %Z'
     dig -f '%a %d %b %Y %H:%M:%S %Z' -z TZ
     ```
+
+4. Compact format using base 60 (0-9, A-Z, a-x) for 2 character
+   full year and 1 character each for month, day, hour, minute,
+   and second.
 \
             ",
                 env!("CARGO_PKG_VERSION"),
@@ -174,7 +178,7 @@ fn format_custom_day_of_week() {
 }
 
 #[test]
-fn custom_format() {
+fn format_a() {
     let want = format!("{}.{}\n{}\n{}\n{}", SECONDS, NANOSECONDS, RFC3339, UTC, EST);
     let ns = nanoseconds();
     pass("dtg", &["-a", "-z", "EST", &ns], &want);
@@ -183,9 +187,33 @@ fn custom_format() {
 }
 
 #[test]
-fn x() {
+fn format_x() {
     let ns = nanoseconds();
     pass("dtg", &["-x", &ns], X);
+}
+
+#[test]
+fn format_ax() {
+    let want = format!("{}.{}\n{}\n{}\n{}\n{}", SECONDS, NANOSECONDS, RFC3339, UTC, EST, X);
+    let ns = nanoseconds();
+    pass("dtg", &["-a", "-x", "-z", "EST", &ns], &want);
+    pass("dtg", &["-a", "-z", "EST", "-x", &ns], &want);
+    pass("dtg", &["-z", "EST", "-a", "-x", &ns], &want);
+    pass("dtg", &["-ax", "-z", "EST", &ns], &want);
+    pass("dtg", &["-z", "EST", "-ax", &ns], &want);
+    pass("dtg", &["-axz", "EST", &ns], &want);
+}
+
+#[test]
+fn format_xz() {
+    let want = format!("{}\n{}.{}\n{}\n{}\n{}", X, SECONDS, NANOSECONDS, RFC3339, UTC, EST);
+    let ns = nanoseconds();
+    pass("dtg", &["-x", "-a", "-z", "EST", &ns], &want);
+    pass("dtg", &["-x", "-z", "EST", "-a", &ns], &want);
+    pass("dtg", &["-z", "EST", "-x", "-a", &ns], &want);
+    pass("dtg", &["-xa", "-z", "EST", &ns], &want);
+    pass("dtg", &["-z", "EST", "-xa", &ns], &want);
+    pass("dtg", &["-xaz", "EST", &ns], &want);
 }
 
 // ## Errors

@@ -11,16 +11,16 @@ dtg [-V|--version] [-h|--help] \
     [TIMESTAMP]
 ```
 
-Item              | Description             | Default
-------------------|-------------------------|---------------------
-`-V`, `--version` | Print version           |
-`-h`, `--help`    | Print usage             |
-`-z TZ`           | Timezone (1)            | `UTC`
-`-l`              | `-z local`              |
-`-f FORMAT`       | Format (2)              | `%Y-%m-%dT%H:%M:%SZ`
-`-a`              | Custom format (3)       |
-`-x`              | Custom format           |
-`TIMESTAMP`       | `SECONDS[.NS]`          | *Now*
+Item              | Description       | Default
+------------------|-------------------|---------------------
+`-V`, `--version` | Print version     |
+`-h`, `--help`    | Print usage       |
+`-z TZ`           | Timezone (1)      | `UTC`
+`-l`              | `-z local`        |
+`-f FORMAT`       | Format (2)        | `%Y-%m-%dT%H:%M:%SZ`
+`-a`              | Custom format (3) |
+`-x`              | Custom format (4) |
+`TIMESTAMP`       | `SECONDS[.NS]`    | *Now*
 
 1. Implies `-f '%a %d %b %Y %H:%M:%S %Z'`
 2. Format fields are roughly equivalent to strftime but with some
@@ -34,6 +34,10 @@ Item              | Description             | Default
     dtg -f '%a %d %b %Y %H:%M:%S %Z'
     dig -f '%a %d %b %Y %H:%M:%S %Z' -z TZ
     ```
+
+4. Compact format using base 60 (0-9, A-Z, a-x) for 2 character
+   full year and 1 character each for month, day, hour, minute,
+   and second.
 
 # Examples
 
@@ -104,7 +108,7 @@ Fri 27 Nov 2020 03:21:16 UTC
 Thu 26 Nov 2020 20:21:16 MST
 ```
 
-Get current date/time in custom format:
+Get current date/time in custom format (see note 4 above):
 
 ```text
 $ dtg -x
@@ -168,7 +172,8 @@ Fri 27 Nov 2020 03:21:16 UTC
 Thu 26 Nov 2020 22:21:16 EST
 ```
 
-Get a specific date/time in explicit timezone and custom format (see note 3 above):
+Get a specific date/time in explicit timezone and custom format (see note 3
+above):
 
 ```text
 $ dtg -a -z MST 1606447276.941324100
@@ -178,7 +183,7 @@ Fri 27 Nov 2020 03:21:16 UTC
 Thu 26 Nov 2020 20:21:16 MST
 ```
 
-Get a specific date/time in custom format:
+Get a specific date/time in custom format (see note 4 above):
 
 ```text
 $ dtg -x 1606447276.941324100
@@ -197,4 +202,5 @@ XeAQ3LG
   `-l -f FORMAT`: `-lf FORMAT`)
 * 2.2.0: Add `-x` option
 * 2.2.1: Fix `-x` option year from hex to base 60
+* 2.2.2: Update doc; allow `-ax`, `-axz`, `-xa`, `-xaz`
 
