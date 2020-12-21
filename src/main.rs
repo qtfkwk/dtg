@@ -50,6 +50,7 @@ Main
 fn main() {
     let mut opt_f = false;
     let mut opt_z = false;
+    let mut opt_big_x = false;
     let mut use_fmt = false;
     let mut zone = Tz::UTC;
     let mut args = vec![];
@@ -82,6 +83,7 @@ Item              | Description       | Default
 `-f FORMAT`       | Format (2)        | `%Y-%m-%dT%H:%M:%SZ`
 `-a`              | Custom format (3) |
 `-x`              | Custom format (4) |
+`-X`              | Custom format (5) |
 `TIMESTAMP`       | `SECONDS[.NS]`    | *Now*
 
 1. Implies `-f '%a %d %b %Y %H:%M:%S %Z'`
@@ -100,6 +102,8 @@ Item              | Description       | Default
 4. Compact format using base 60 (0-9, A-Z, a-x) for 2 character
    full year and 1 character each for month, day, hour, minute,
    and second.
+
+5. Interpret `TIMESTAMP` as custom format (4).
 \
                 ",
                 env!("CARGO_PKG_VERSION"),
@@ -154,6 +158,8 @@ Item              | Description       | Default
             cmds.push(Cmd::A);
         } else if arg == "-x" {
             cmds.push(Cmd::X);
+        } else if arg == "-X" {
+            opt_big_x = true;
         } else if arg == "-xaz" {
             opt_z = true;
             if zone == Tz::UTC {
@@ -170,7 +176,11 @@ Item              | Description       | Default
         } else if arg.starts_with('-') {
             error(1, &format!("Invalid option: `{}`", arg));
         } else {
-            args.push(arg);
+            args.push(if opt_big_x {
+                reverse_x(&arg)
+            } else {
+                arg
+            });
         }
     }
     if opt_z {
@@ -298,4 +308,27 @@ where
         .map(|x| c.get(x).unwrap())
         .collect::<String>();
     format!("{}{}{}{}{}{}", year, mon, day, h, m, s)
+}
+
+fn reverse_x(arg: &str) -> String {
+    let c: HashMap<char, u8> = [
+        ('0', 0), ('A', 10), ('K', 20), ('U', 30), ('e', 40), ('o', 50),
+        ('1', 1), ('B', 11), ('L', 21), ('V', 31), ('f', 41), ('p', 51),
+        ('2', 2), ('C', 12), ('M', 22), ('W', 32), ('g', 42), ('q', 52),
+        ('3', 3), ('D', 13), ('N', 23), ('X', 33), ('h', 43), ('r', 53),
+        ('4', 4), ('E', 14), ('O', 24), ('Y', 34), ('i', 44), ('s', 54),
+        ('5', 5), ('F', 15), ('P', 25), ('Z', 35), ('j', 45), ('t', 55),
+        ('6', 6), ('G', 16), ('Q', 26), ('a', 36), ('k', 46), ('u', 56),
+        ('7', 7), ('H', 17), ('R', 27), ('b', 37), ('l', 47), ('v', 57),
+        ('8', 8), ('I', 18), ('S', 28), ('c', 38), ('m', 48), ('w', 58),
+        ('9', 9), ('J', 19), ('T', 29), ('d', 39), ('n', 49), ('x', 59),
+    ].iter().cloned().collect();
+    let mut v: Vec<u32> = arg.chars().rev().take(5).map(|x| *c.get(&x).unwrap() as u32).collect();
+    v[3] += 1;
+    v[4] += 1;
+    let mut y = 0;
+    for (e, x) in arg.chars().rev().skip(5).enumerate() {
+        y += (*c.get(&x).unwrap() as i32) * 60_i32.pow(e as u32);
+    }
+    format!("{}", Utc.ymd(y, v[4], v[3]).and_hms(v[2], v[1], v[0]).timestamp())
 }

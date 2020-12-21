@@ -8,7 +8,7 @@ Date/time CLI utility
 dtg [-V|--version] [-h|--help] \
     [-z TZ] [-f FORMAT] \
     [-l] [-a] [-x] \
-    [TIMESTAMP]
+    [-X] [TIMESTAMP]
 ```
 
 Item              | Description       | Default
@@ -20,6 +20,7 @@ Item              | Description       | Default
 `-f FORMAT`       | Format (2)        | `%Y-%m-%dT%H:%M:%SZ`
 `-a`              | Custom format (3) |
 `-x`              | Custom format (4) |
+`-X`              | Custom format (5) |
 `TIMESTAMP`       | `SECONDS[.NS]`    | *Now*
 
 1. Implies `-f '%a %d %b %Y %H:%M:%S %Z'`
@@ -38,6 +39,8 @@ Item              | Description       | Default
 4. Compact format using base 60 (0-9, A-Z, a-x) for 2 character
    full year and 1 character each for month, day, hour, minute,
    and second.
+
+5. Interpret `TIMESTAMP` as custom format (4).
 
 # Examples
 
@@ -190,6 +193,34 @@ $ dtg -x 1606447276.941324100
 XeAQ3LG
 ```
 
+Get a specific date / time from custom format in UTC and RFC 3339 format:
+
+```text
+$ dtg -X XeAQ3LG
+2020-11-27T03:21:16Z
+```
+
+Get a specific date / time from custom format in UTC and specific format:
+
+```text
+$ dtg -f '%a %d %b %Y %H:%M:%S %Z' -X XeAQ3LG
+Fri 27 Nov 2020 03:21:16 UTC
+```
+
+Get a specific date / time from custom format in explicit timezone and specific format:
+
+```text
+$ dtg -l -f '%a %d %b %Y %H:%M:%S %Z' -X XeAQ3LG
+Thu 26 Nov 2020 22:21:16 EST
+```
+
+Get a specific date / time from custom format in explicit timezone and specific format:
+
+```text
+$ dtg -z MST -f '%a %d %b %Y %H:%M:%S %Z' -X XeAQ3LG
+Thu 26 Nov 2020 20:21:16 MST
+```
+
 # Changelog
 
 * 1.0.2: Initial public release
@@ -204,4 +235,5 @@ XeAQ3LG
 * 2.2.1: Fix `-x` option year from hex to base 60
 * 2.2.2: Update doc; allow `-ax`, `-axz`, `-xa`, `-xaz`
 * 2.2.3: Enable multiple `-f` options
+* 2.2.4: Add `-X` option
 

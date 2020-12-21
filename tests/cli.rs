@@ -115,6 +115,7 @@ Item              | Description       | Default
 `-f FORMAT`       | Format (2)        | `%Y-%m-%dT%H:%M:%SZ`
 `-a`              | Custom format (3) |
 `-x`              | Custom format (4) |
+`-X`              | Custom format (5) |
 `TIMESTAMP`       | `SECONDS[.NS]`    | *Now*
 
 1. Implies `-f '%a %d %b %Y %H:%M:%S %Z'`
@@ -133,6 +134,8 @@ Item              | Description       | Default
 4. Compact format using base 60 (0-9, A-Z, a-x) for 2 character
    full year and 1 character each for month, day, hour, minute,
    and second.
+
+5. Interpret `TIMESTAMP` as custom format (4).
 \
             ",
                 env!("CARGO_PKG_VERSION"),
@@ -191,11 +194,22 @@ fn format_a() {
 fn format_x() {
     let ns = nanoseconds();
     pass("dtg", &["-x", &ns], X);
+    pass("dtg", &["-X", X], RFC3339);
+    pass("dtg", &["-X", "-f", "%s", X], SECONDS);
+    pass("dtg", &["-X", "-f", "%a %d %b %Y %H:%M:%S %Z", X], UTC);
+    pass(
+        "dtg",
+        &["-X", "-f", "%a %d %b %Y %H:%M:%S %Z", "-z", "EST", X],
+        EST,
+    );
 }
 
 #[test]
 fn format_ax() {
-    let want = format!("{}.{}\n{}\n{}\n{}\n{}", SECONDS, NANOSECONDS, RFC3339, UTC, EST, X);
+    let want = format!(
+        "{}.{}\n{}\n{}\n{}\n{}",
+        SECONDS, NANOSECONDS, RFC3339, UTC, EST, X
+    );
     let ns = nanoseconds();
     pass("dtg", &["-a", "-x", "-z", "EST", &ns], &want);
     pass("dtg", &["-a", "-z", "EST", "-x", &ns], &want);
@@ -207,7 +221,10 @@ fn format_ax() {
 
 #[test]
 fn format_xz() {
-    let want = format!("{}\n{}.{}\n{}\n{}\n{}", X, SECONDS, NANOSECONDS, RFC3339, UTC, EST);
+    let want = format!(
+        "{}\n{}.{}\n{}\n{}\n{}",
+        X, SECONDS, NANOSECONDS, RFC3339, UTC, EST
+    );
     let ns = nanoseconds();
     pass("dtg", &["-x", "-a", "-z", "EST", &ns], &want);
     pass("dtg", &["-x", "-z", "EST", "-a", &ns], &want);
