@@ -203,4 +203,5 @@ XeAQ3LG
 * 2.2.0: Add `-x` option
 * 2.2.1: Fix `-x` option year from hex to base 60
 * 2.2.2: Update doc; allow `-ax`, `-axz`, `-xa`, `-xaz`
+* 2.2.3: Enable multiple `-f` options
 

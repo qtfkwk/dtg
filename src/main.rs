@@ -38,9 +38,10 @@ fn tz(name: &str) -> Tz {
 Format command
 */
 enum Cmd {
+    Default,
+    Custom(String),
     A,
     X,
-    Other,
 }
 
 /**
@@ -50,7 +51,6 @@ fn main() {
     let mut opt_f = false;
     let mut opt_z = false;
     let mut use_fmt = false;
-    let mut fmt = String::from("%a %d %b %Y %H:%M:%S %Z");
     let mut zone = Tz::UTC;
     let mut args = vec![];
     let mut cmds = vec![];
@@ -111,7 +111,7 @@ Item              | Description       | Default
         } else if opt_f {
             opt_f = false;
             use_fmt = true;
-            fmt = arg;
+            cmds.push(Cmd::Custom(arg.to_string()));
         } else if ["-z", "--zone"].contains(&a) {
             opt_z = true;
         } else if opt_z {
@@ -124,7 +124,6 @@ Item              | Description       | Default
         } else if arg == "-lf" {
             opt_f = true;
             zone = tz("local");
-            use_fmt = true;
         } else if ["-al", "-la"].contains(&a) {
             zone = tz("local");
             use_fmt = true;
@@ -184,7 +183,7 @@ Item              | Description       | Default
         args.push(String::from(""));
     }
     if cmds.is_empty() {
-        cmds.push(Cmd::Other);
+        cmds.push(Cmd::Default);
     }
     for arg in args.iter() {
         let mut dt = None;
@@ -212,18 +211,24 @@ Item              | Description       | Default
         match dt {
             Some(d) => {
                 for cmd in cmds.iter() {
-                    match cmd {
-                        Cmd::A => println!("{}", format_a(&d, &zone)),
-                        Cmd::X => println!("{}", format_x(&d)),
-                        Cmd::Other => {
-                            let d = d.with_timezone(&zone);
-                            if use_fmt {
-                                println!("{}", d.format(&fmt));
-                            } else {
-                                println!("{}", d.format("%Y-%m-%dT%H:%M:%SZ"));
-                            }
-                        }
-                    }
+                    println!("{}", match cmd {
+                        Cmd::Default => d
+                            .with_timezone(&zone)
+                            .format(
+                                if use_fmt {
+                                    "%a %d %b %Y %H:%M:%S %Z"
+                                } else {
+                                    "%Y-%m-%dT%H:%M:%SZ"
+                                }
+                            )
+                            .to_string(),
+                        Cmd::Custom(f) => d
+                            .with_timezone(&zone)
+                            .format(&f)
+                            .to_string(),
+                        Cmd::A => format_a(&d, &zone),
+                        Cmd::X => format_x(&d),
+                    });
                 }
             }
             None => {

@@ -13,6 +13,7 @@ const NANOSECONDS: &str = "191168200";
 const RFC3339: &str = "2020-11-25T14:32:37Z";
 const UTC: &str = "Wed 25 Nov 2020 14:32:37 UTC";
 const EST: &str = "Wed 25 Nov 2020 09:32:37 EST";
+const MONTH: &str = "November";
 const DOW: &str = "Wednesday";
 const X: &str = "XeAOEWb";
 
@@ -214,6 +215,15 @@ fn format_xz() {
     pass("dtg", &["-xa", "-z", "EST", &ns], &want);
     pass("dtg", &["-z", "EST", "-xa", &ns], &want);
     pass("dtg", &["-xaz", "EST", &ns], &want);
+}
+
+#[test]
+fn mulitple_f_options() {
+    let want = format!("{}\n{}", MONTH, DOW);
+    let ns = nanoseconds();
+    pass("dtg", &["-f", "%B", "-f", "%A", "-z", "EST", &ns], &want);
+    pass("dtg", &["-f", "%B", "-z", "EST", "-f", "%A", &ns], &want);
+    pass("dtg", &["-z", "EST", "-f", "%B", "-f", "%A", &ns], &want);
 }
 
 // ## Errors
