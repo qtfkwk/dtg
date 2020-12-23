@@ -5,21 +5,21 @@ Date/time CLI utility
 # Usage
 
 ```text
-dtg 3.1.0
+dtg 3.2.0
 Date/time CLI utility; https://github.com/qtfkwk/dtg
 
 USAGE:
     dtg [FLAGS] [OPTIONS] [--] [ARG]...
 
 FLAGS:
-    -a               "a" format
-    -X               Give timestamp argument(s) in "x" format
+    -a               "a" format (1)
+    -X               Give timestamp argument(s) in "x" format (2)
     -h, --help       Prints help information
     -Z               Search/list timezones
     -l               Local timezone
         --readme     Print the readme
     -V, --version    Prints version information
-    -x               "x" format
+    -x               "x" format (2)
 
 OPTIONS:
     -f <formats>...        Format(s) [-z/-l: "%a %d %b %Y %H:%M:%S %Z",
@@ -27,8 +27,34 @@ OPTIONS:
     -z <zone>              Timezone [default: UTC]
 
 ARGS:
-    <ARG>...    Argument [-X: timestamp in "x" format, -Z: timezone search
-                term, timestamp in "%s.%f" format, default: now]
+    <ARG>...    Argument [-X: timestamp in "x" format (2), -Z: timezone
+                search term, timestamp in "%s.%f" format, default: now]
+
+NOTES:
+    1. "a" format:
+
+       %s.%f
+       %Y-%m-%dT%H:%M:%SZ
+       %a %d %b %Y %H:%M:%S %Z
+       %a %d %b %Y %H:%M:%S %Z # -l implied or use -z <zone>
+
+    2. "x" format (base 60):
+
+       0* 0 1 2 3 4 5 6 7 8 9
+       1* A B C D E F G H I J
+       2* K L M N O P Q R S T
+       3* U V W X Y Z a b c d
+       4* e f g h i j k l m n
+       5* o p q r s t u v w x
+
+       Field  | Values           | Result
+       -------|------------------|----------
+       Year   | 2020 => 33*60+40 | Xe
+       Month  | Jan-Dec => 0-11  | 0-B
+       Day    | 0-27/28/29/30    | 0-R/S/T/U
+       Hour   | 0-23             | 0-N
+       Minute | 0-59             | 0-x
+       Second | 0-59             | 0-x
 ```
 
 # Examples
@@ -837,4 +863,5 @@ America/Winnipeg
 * 2.2.4: Add `-X` option
 * 3.0.0: Rewrite with structopt; add `-Z`
 * 3.1.0: Add `--readme`
+* 3.2.0: Improve doc
 

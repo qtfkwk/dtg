@@ -56,15 +56,15 @@ struct Opt {
     #[structopt(short)]
     formats: Vec<String>,
 
-    /// "a" format
+    /// "a" format (1)
     #[structopt(short)]
     a_format: bool,
 
-    /// "x" format
+    /// "x" format (2)
     #[structopt(short)]
     x_format: bool,
 
-    /// Give timestamp argument(s) in "x" format
+    /// Give timestamp argument(s) in "x" format (2)
     #[structopt(short="X")]
     from_x: bool,
 
@@ -80,7 +80,7 @@ struct Opt {
     #[structopt(short="Z")]
     list_zones: bool,
 
-    /// Argument [-X: timestamp in "x" format, -Z: timezone search term,
+    /// Argument [-X: timestamp in "x" format (2), -Z: timezone search term,
     /// timestamp in "%s.%f" format, default: now]
     #[structopt(name="ARG")]
     args: Vec<String>,
@@ -90,9 +90,38 @@ struct Opt {
 Main
 */
 fn main() {
-    let app = Opt::clap().set_term_width(80);
+    let app = Opt::clap().set_term_width(80)
+        .after_help(
+            "\
+NOTES:
+    1. \"a\" format:
+
+       %s.%f
+       %Y-%m-%dT%H:%M:%SZ
+       %a %d %b %Y %H:%M:%S %Z
+       %a %d %b %Y %H:%M:%S %Z # -l implied or use -z <zone>
+
+    2. \"x\" format (base 60):
+
+       0* 0 1 2 3 4 5 6 7 8 9
+       1* A B C D E F G H I J
+       2* K L M N O P Q R S T
+       3* U V W X Y Z a b c d
+       4* e f g h i j k l m n
+       5* o p q r s t u v w x
+
+       Field  | Values           | Result
+       -------|------------------|----------
+       Year   | 2020 => 33*60+40 | Xe
+       Month  | Jan-Dec => 0-11  | 0-B
+       Day    | 0-27/28/29/30    | 0-R/S/T/U
+       Hour   | 0-23             | 0-N
+       Minute | 0-59             | 0-x
+       Second | 0-59             | 0-x
+\
+            ",
+        );
     let opt = Opt::from_clap(&app.get_matches());
-    //println!("opt = {:?}", opt);
 
     if opt.readme {
         let readme = include_str!("../README.md");
