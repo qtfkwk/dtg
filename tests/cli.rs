@@ -83,65 +83,7 @@ fn nanoseconds() -> String {
 #[test]
 fn version() {
     for i in ["-V", "--version"].iter() {
-        pass("dtg", &[i], &format!("dtg v{}", env!("CARGO_PKG_VERSION")));
-    }
-}
-
-#[test]
-fn help() {
-    for i in ["-h", "--help"].iter() {
-        pass(
-            "dtg",
-            &[i],
-            &format!(
-                "\
-dtg v{}
-
-{}
-
-```text
-dtg [-V|--version] [-h|--help] \\
-    [-z TZ] [-f FORMAT] \\
-    [-l] [-a] [-x] \\
-    [TIMESTAMP]
-```
-
-Item              | Description       | Default
-------------------|-------------------|---------------------
-`-V`, `--version` | Print version     |
-`-h`, `--help`    | Print usage       |
-`-z TZ`           | Timezone (1)      | `UTC`
-`-l`              | `-z local`        |
-`-f FORMAT`       | Format (2)        | `%Y-%m-%dT%H:%M:%SZ`
-`-a`              | Custom format (3) |
-`-x`              | Custom format (4) |
-`-X`              | Custom format (5) |
-`TIMESTAMP`       | `SECONDS[.NS]`    | *Now*
-
-1. Implies `-f '%a %d %b %Y %H:%M:%S %Z'`
-2. Format fields are roughly equivalent to strftime but with some
-   enhancements; for details, see:
-   https://docs.rs/chrono/latest/chrono/format/strftime#specifiers
-3. Equivalent to the following; implies `-l`, override via `-z TZ`
-
-    ```text
-    dtg -f '%s.%f'
-    dtg -f '%Y-%m-%dT%H:%M:%SZ'
-    dtg -f '%a %d %b %Y %H:%M:%S %Z'
-    dig -f '%a %d %b %Y %H:%M:%S %Z' -z TZ
-    ```
-
-4. Compact format using base 60 (0-9, A-Z, a-x) for 2 character
-   full year and 1 character each for month, day, hour, minute,
-   and second.
-
-5. Interpret `TIMESTAMP` as custom format (4).
-\
-            ",
-                env!("CARGO_PKG_VERSION"),
-                env!("CARGO_PKG_HOMEPAGE"),
-            ),
-        );
+        pass("dtg", &[i], &format!("dtg {}", env!("CARGO_PKG_VERSION")));
     }
 }
 
@@ -154,31 +96,25 @@ fn epoch_seconds() {
 fn epoch_subsecond() {
     pass(
         "dtg",
-        &["-f", "%Y-%m-%dT%H:%M:%S.%fZ", &nanoseconds()],
+        &["-f", "%Y-%m-%dT%H:%M:%S.%fZ", "--", &nanoseconds()],
         &RFC3339.replace('Z', &format!(".{}Z", NANOSECONDS)),
     );
 }
 
 #[test]
 fn zone_utc() {
-    for i in ["-z", "--zone"].iter() {
-        pass("dtg", &[i, "UTC", &nanoseconds()], UTC);
-    }
+    pass("dtg", &["-z", "UTC", &nanoseconds()], UTC);
 }
 
 #[test]
 fn zone_est() {
-    for i in ["-z", "--zone"].iter() {
-        pass("dtg", &[i, "EST", &nanoseconds()], EST);
-    }
+    pass("dtg", &["-z", "EST", &nanoseconds()], EST);
 }
 
 #[test]
 fn format_custom_day_of_week() {
     let ns = nanoseconds();
-    for i in ["-f", "--format"].iter() {
-        pass("dtg", &[i, "%A", &ns], DOW);
-    }
+    pass("dtg", &["-f", "%A", "--", &ns], DOW);
 }
 
 #[test]
@@ -195,8 +131,8 @@ fn format_x() {
     let ns = nanoseconds();
     pass("dtg", &["-x", &ns], X);
     pass("dtg", &["-X", X], RFC3339);
-    pass("dtg", &["-X", "-f", "%s", X], SECONDS);
-    pass("dtg", &["-X", "-f", "%a %d %b %Y %H:%M:%S %Z", X], UTC);
+    pass("dtg", &["-X", "-f", "%s", "--", X], SECONDS);
+    pass("dtg", &["-X", "-f", "%a %d %b %Y %H:%M:%S %Z", "--", X], UTC);
     pass(
         "dtg",
         &["-X", "-f", "%a %d %b %Y %H:%M:%S %Z", "-z", "EST", X],
@@ -220,34 +156,36 @@ fn format_ax() {
 }
 
 #[test]
-fn format_xz() {
-    let want = format!(
-        "{}\n{}.{}\n{}\n{}\n{}",
-        X, SECONDS, NANOSECONDS, RFC3339, UTC, EST
-    );
-    let ns = nanoseconds();
-    pass("dtg", &["-x", "-a", "-z", "EST", &ns], &want);
-    pass("dtg", &["-x", "-z", "EST", "-a", &ns], &want);
-    pass("dtg", &["-z", "EST", "-x", "-a", &ns], &want);
-    pass("dtg", &["-xa", "-z", "EST", &ns], &want);
-    pass("dtg", &["-z", "EST", "-xa", &ns], &want);
-    pass("dtg", &["-xaz", "EST", &ns], &want);
-}
-
-#[test]
 fn mulitple_f_options() {
     let want = format!("{}\n{}", MONTH, DOW);
     let ns = nanoseconds();
     pass("dtg", &["-f", "%B", "-f", "%A", "-z", "EST", &ns], &want);
-    pass("dtg", &["-f", "%B", "-z", "EST", "-f", "%A", &ns], &want);
-    pass("dtg", &["-z", "EST", "-f", "%B", "-f", "%A", &ns], &want);
+    pass("dtg", &["-f", "%B", "-z", "EST", "-f", "%A", "--", &ns], &want);
+    pass("dtg", &["-z", "EST", "-f", "%B", "-f", "%A", "--", &ns], &want);
+}
+
+#[test]
+fn timezone_list() {
+    cmd("dtg")
+        .args(&["-Z"])
+        .assert()
+        .success();
+}
+
+#[test]
+fn timezone_search() {
+    pass(
+        "dtg",
+        &["-Z", "new_"],
+        "America/New_York\nAmerica/North_Dakota/New_Salem",
+    );
 }
 
 // ## Errors
 
 #[test]
-fn invalid_option() {
-    fail("dtg", &["-q"], 1, "Invalid option: `-q`");
+fn timezone_search_found_zero() {
+    fail("dtg", &["-Z", "blah"], 1, "Zero timezones found matching `blah`");
 }
 
 #[test]
@@ -256,16 +194,6 @@ fn invalid_argument() {
 }
 
 #[test]
-fn invalid_time_zone_1() {
-    fail("dtg", &["-z"], 3, "Invalid time zone: ``");
-}
-
-#[test]
-fn invalid_time_zone_2() {
+fn invalid_time_zone() {
     fail("dtg", &["-z", "Z"], 3, "Invalid time zone: `Z`");
-}
-
-#[test]
-fn invalid_format() {
-    fail("dtg", &["-f"], 4, "Invalid format: ``");
 }

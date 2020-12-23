@@ -5,7 +5,8 @@ Date/time CLI utility
 use std::collections::HashMap;
 
 use chrono::{DateTime, TimeZone, Utc};
-use chrono_tz::Tz;
+use chrono_tz::{TZ_VARIANTS, Tz};
+use structopt::StructOpt;
 
 /**
 Print message to stderr and exit with code
@@ -38,166 +39,120 @@ fn tz(name: &str) -> Tz {
 Format command
 */
 enum Cmd {
-    Default,
     Custom(String),
     A,
     X,
+}
+
+/// Date/time CLI utility; https://github.com/qtfkwk/dtg
+#[derive(StructOpt, Debug)]
+#[structopt()]
+struct Opt {
+    /// Format(s) [-z/-l: "%a %d %b %Y %H:%M:%S %Z", "%Y-%m-%dT%H:%M:%SZ"]
+    #[structopt(short)]
+    formats: Vec<String>,
+
+    /// "a" format
+    #[structopt(short)]
+    a_format: bool,
+
+    /// "x" format
+    #[structopt(short)]
+    x_format: bool,
+
+    /// Give timestamp argument(s) in "x" format
+    #[structopt(short="X")]
+    from_x: bool,
+
+    /// Timezone [default: UTC]
+    #[structopt(short)]
+    zone: Option<String>,
+
+    /// Local timezone
+    #[structopt(short)]
+    local_zone: bool,
+
+    /// Search/list timezones
+    #[structopt(short="Z")]
+    list_zones: bool,
+
+    /// Argument [-X: timestamp in "x" format, -Z: timezone search term,
+    /// timestamp in "%s.%f" format, default: now]
+    #[structopt(name="ARG")]
+    args: Vec<String>,
 }
 
 /**
 Main
 */
 fn main() {
-    let mut opt_f = false;
-    let mut opt_z = false;
-    let mut opt_big_x = false;
-    let mut use_fmt = false;
-    let mut zone = Tz::UTC;
-    let mut args = vec![];
-    let mut cmds = vec![];
-    for arg in std::env::args().skip(1) {
-        let a = arg.as_str();
-        if ["-V", "--version"].contains(&a) {
-            println!("dtg v{}", env!("CARGO_PKG_VERSION"));
-            std::process::exit(0);
-        } else if ["-h", "--help"].contains(&a) {
-            println!(
-                "\
-dtg v{}
+    let app = Opt::clap().set_term_width(80);
+    let opt = Opt::from_clap(&app.get_matches());
+    //println!("opt = {:?}", opt);
 
-{}
-
-```text
-dtg [-V|--version] [-h|--help] \\
-    [-z TZ] [-f FORMAT] \\
-    [-l] [-a] [-x] \\
-    [TIMESTAMP]
-```
-
-Item              | Description       | Default
-------------------|-------------------|---------------------
-`-V`, `--version` | Print version     |
-`-h`, `--help`    | Print usage       |
-`-z TZ`           | Timezone (1)      | `UTC`
-`-l`              | `-z local`        |
-`-f FORMAT`       | Format (2)        | `%Y-%m-%dT%H:%M:%SZ`
-`-a`              | Custom format (3) |
-`-x`              | Custom format (4) |
-`-X`              | Custom format (5) |
-`TIMESTAMP`       | `SECONDS[.NS]`    | *Now*
-
-1. Implies `-f '%a %d %b %Y %H:%M:%S %Z'`
-2. Format fields are roughly equivalent to strftime but with some
-   enhancements; for details, see:
-   https://docs.rs/chrono/latest/chrono/format/strftime#specifiers
-3. Equivalent to the following; implies `-l`, override via `-z TZ`
-
-    ```text
-    dtg -f '%s.%f'
-    dtg -f '%Y-%m-%dT%H:%M:%SZ'
-    dtg -f '%a %d %b %Y %H:%M:%S %Z'
-    dig -f '%a %d %b %Y %H:%M:%S %Z' -z TZ
-    ```
-
-4. Compact format using base 60 (0-9, A-Z, a-x) for 2 character
-   full year and 1 character each for month, day, hour, minute,
-   and second.
-
-5. Interpret `TIMESTAMP` as custom format (4).
-\
-                ",
-                env!("CARGO_PKG_VERSION"),
-                env!("CARGO_PKG_HOMEPAGE"),
-            );
-            std::process::exit(0);
-        } else if ["-f", "--format"].contains(&a) {
-            opt_f = true;
-        } else if opt_f {
-            opt_f = false;
-            use_fmt = true;
-            cmds.push(Cmd::Custom(arg.to_string()));
-        } else if ["-z", "--zone"].contains(&a) {
-            opt_z = true;
-        } else if opt_z {
-            opt_z = false;
-            zone = tz(&arg);
-            use_fmt = true;
-        } else if arg == "-l" {
-            zone = tz("local");
-            use_fmt = true;
-        } else if arg == "-lf" {
-            opt_f = true;
-            zone = tz("local");
-        } else if ["-al", "-la"].contains(&a) {
-            zone = tz("local");
-            use_fmt = true;
-            cmds.push(Cmd::A);
-        } else if arg == "-a" {
-            if zone == Tz::UTC {
-                zone = tz("local");
+    if opt.list_zones {
+        let mut found = 0;
+        if opt.args.is_empty() {
+            for zone in TZ_VARIANTS.iter() {
+                println!("{}", zone);
+                found += 1;
             }
-            cmds.push(Cmd::A);
-        } else if arg == "-ax" {
-            if zone == Tz::UTC {
-                zone = tz("local");
-            }
-            cmds.push(Cmd::A);
-            cmds.push(Cmd::X);
-        } else if arg == "-axz" {
-            opt_z = true;
-            if zone == Tz::UTC {
-                zone = tz("local");
-            }
-            cmds.push(Cmd::A);
-            cmds.push(Cmd::X);
-        } else if arg == "-az" {
-            opt_z = true;
-            if zone == Tz::UTC {
-                zone = tz("local");
-            }
-            cmds.push(Cmd::A);
-        } else if arg == "-x" {
-            cmds.push(Cmd::X);
-        } else if arg == "-X" {
-            opt_big_x = true;
-        } else if arg == "-xaz" {
-            opt_z = true;
-            if zone == Tz::UTC {
-                zone = tz("local");
-            }
-            cmds.push(Cmd::X);
-            cmds.push(Cmd::A);
-        } else if arg == "-xa" {
-            if zone == Tz::UTC {
-                zone = tz("local");
-            }
-            cmds.push(Cmd::X);
-            cmds.push(Cmd::A);
-        } else if arg.starts_with('-') {
-            error(1, &format!("Invalid option: `{}`", arg));
         } else {
-            args.push(if opt_big_x {
-                reverse_x(&arg)
-            } else {
-                arg
-            });
+            let search = &opt.args[0];
+            let search_lc = search.to_lowercase();
+            for zone in TZ_VARIANTS.iter() {
+                let name = zone.to_string().to_lowercase();
+                if name.contains(&search_lc) {
+                    println!("{}", zone);
+                    found += 1;
+                }
+            }
+            if found == 0 {
+                error(1, &format!("Zero timezones found matching `{}`", search));
+            }
         }
+        return;
     }
-    if opt_z {
-        error(3, "Invalid time zone: ``");
+
+    let mut cmds = vec![];
+    for i in opt.formats.iter() {
+        cmds.push(Cmd::Custom(i.to_string()));
     }
-    if opt_f {
-        error(4, "Invalid format: ``");
+    if opt.a_format {
+        cmds.push(Cmd::A);
     }
-    if args.len() == 0 {
-        args.push(String::from(""));
+    if opt.x_format {
+        cmds.push(Cmd::X);
     }
     if cmds.is_empty() {
-        cmds.push(Cmd::Default);
+        if opt.local_zone || opt.zone != None {
+            cmds.push(Cmd::Custom(String::from("%a %d %b %Y %H:%M:%S %Z")));
+        } else {
+            cmds.push(Cmd::Custom(String::from("%Y-%m-%dT%H:%M:%SZ")));
+        }
+    }
+    let zone = if opt.local_zone {
+        tz("local")
+    } else {
+        match opt.zone {
+            Some(s) => tz(&s),
+            None => tz("UTC"),
+        }
+    };
+    let mut args = vec![];
+    for timestamp in opt.args.iter() {
+        args.push(if opt.from_x {
+            from_format_x(timestamp)
+        } else {
+            timestamp.to_string()
+        });
+    }
+    if args.len() == 0 {
+        args.push(String::from("now"));
     }
     for arg in args.iter() {
         let mut dt = None;
-        if arg == "" {
+        if ["now", ""].contains(&arg.as_str()) {
             dt = Some(Utc::now());
         } else {
             let s = arg.split('.').collect::<Vec<&str>>();
@@ -222,16 +177,6 @@ Item              | Description       | Default
             Some(d) => {
                 for cmd in cmds.iter() {
                     println!("{}", match cmd {
-                        Cmd::Default => d
-                            .with_timezone(&zone)
-                            .format(
-                                if use_fmt {
-                                    "%a %d %b %Y %H:%M:%S %Z"
-                                } else {
-                                    "%Y-%m-%dT%H:%M:%SZ"
-                                }
-                            )
-                            .to_string(),
                         Cmd::Custom(f) => d
                             .with_timezone(&zone)
                             .format(&f)
@@ -249,7 +194,7 @@ Item              | Description       | Default
 }
 
 /**
-Custom format `-a`
+Format "a"
 */
 fn format_a<T: TimeZone>(d: &DateTime<T>, tz: &Tz) -> String
 where
@@ -263,7 +208,7 @@ where
 }
 
 /**
-Custom format `-x`
+Format "x"
 */
 fn format_x<T: TimeZone>(d: &DateTime<T>) -> String
 where
@@ -310,7 +255,10 @@ where
     format!("{}{}{}{}{}{}", year, mon, day, h, m, s)
 }
 
-fn reverse_x(arg: &str) -> String {
+/**
+Convert from format "x" to "%s"
+*/
+fn from_format_x(arg: &str) -> String {
     let c: HashMap<char, u8> = [
         ('0', 0), ('A', 10), ('K', 20), ('U', 30), ('e', 40), ('o', 50),
         ('1', 1), ('B', 11), ('L', 21), ('V', 31), ('f', 41), ('p', 51),
@@ -323,7 +271,8 @@ fn reverse_x(arg: &str) -> String {
         ('8', 8), ('I', 18), ('S', 28), ('c', 38), ('m', 48), ('w', 58),
         ('9', 9), ('J', 19), ('T', 29), ('d', 39), ('n', 49), ('x', 59),
     ].iter().cloned().collect();
-    let mut v: Vec<u32> = arg.chars().rev().take(5).map(|x| *c.get(&x).unwrap() as u32).collect();
+    let mut v: Vec<u32> = arg.chars().rev().take(5)
+        .map(|x| *c.get(&x).unwrap() as u32).collect();
     v[3] += 1;
     v[4] += 1;
     let mut y = 0;
