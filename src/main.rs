@@ -48,6 +48,10 @@ enum Cmd {
 #[derive(StructOpt, Debug)]
 #[structopt()]
 struct Opt {
+    /// Print the readme
+    #[structopt(long)]
+    readme: bool,
+
     /// Format(s) [-z/-l: "%a %d %b %Y %H:%M:%S %Z", "%Y-%m-%dT%H:%M:%SZ"]
     #[structopt(short)]
     formats: Vec<String>,
@@ -89,6 +93,12 @@ fn main() {
     let app = Opt::clap().set_term_width(80);
     let opt = Opt::from_clap(&app.get_matches());
     //println!("opt = {:?}", opt);
+
+    if opt.readme {
+        let readme = include_str!("../README.md");
+        print!("{}", readme);
+        return;
+    }
 
     if opt.list_zones {
         let mut found = 0;

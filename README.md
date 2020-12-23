@@ -5,7 +5,7 @@ Date/time CLI utility
 # Usage
 
 ```text
-dtg 3.0.0
+dtg 3.1.0
 Date/time CLI utility; https://github.com/qtfkwk/dtg
 
 USAGE:
@@ -17,6 +17,7 @@ FLAGS:
     -h, --help       Prints help information
     -Z               Search/list timezones
     -l               Local timezone
+        --readme     Print the readme
     -V, --version    Prints version information
     -x               "x" format
 
@@ -835,4 +836,5 @@ America/Winnipeg
 * 2.2.3: Enable multiple `-f` options
 * 2.2.4: Add `-X` option
 * 3.0.0: Rewrite with structopt; add `-Z`
+* 3.1.0: Add `--readme`
 
