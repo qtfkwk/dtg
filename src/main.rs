@@ -170,12 +170,12 @@ NOTES:
             cmds.push(Cmd::Custom(String::from("%Y-%m-%dT%H:%M:%SZ")));
         }
     }
-    let zone = if opt.local_zone {
-        tz("local")
-    } else {
-        match opt.zone {
-            Some(s) => tz(&s),
-            None => tz("UTC"),
+    let zone = match opt.zone {
+        Some(s) => tz(&s),
+        None => if opt.local_zone || opt.a_format {
+            tz("local")
+        } else {
+            tz("UTC")
         }
     };
     let mut args = vec![];

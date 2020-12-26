@@ -864,4 +864,5 @@ America/Winnipeg
 * 3.0.0: Rewrite with structopt; add `-Z`
 * 3.1.0: Add `--readme`
 * 3.2.0: Improve doc
+* 3.2.1: Fix `-a` option
 
