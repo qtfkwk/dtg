@@ -1,6 +1,6 @@
 [package]
 name = "dtg"
-version = "3.2.2"
+version = "3.3.0"
 authors = ["qtfkwk <qtfkwk@gmail.com>"]
 edition = "2018"
 homepage = "https://github.com/qtfkwk/dtg"
@@ -12,8 +12,8 @@ license = "MIT"
 [dependencies]
 chrono = "0.4.19"
 chrono-tz = "0.5.3"
-iana-time-zone = "0.1.2"
+iana-time-zone = "0.1.9"
 structopt = "0.3.21"
 
 [dev-dependencies]
-assert_cmd = "1.0.2"
+assert_cmd = "1.0.3"

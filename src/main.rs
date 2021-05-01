@@ -96,19 +96,23 @@ fn main() {
 NOTES:
     1. \"a\" format:
 
+       ```
        %s.%f
        %Y-%m-%dT%H:%M:%SZ
        %a %d %b %Y %H:%M:%S %Z
        %a %d %b %Y %H:%M:%S %Z # -l implied or use -z <zone>
+       ```
 
-    2. \"x\" format (base 60):
+    2. \"x\" format (novel UTC / base 60 encoding):
 
+       ```
        0* 0 1 2 3 4 5 6 7 8 9
        1* A B C D E F G H I J
        2* K L M N O P Q R S T
        3* U V W X Y Z a b c d
        4* e f g h i j k l m n
        5* o p q r s t u v w x
+       ```
 
        Field  | Values           | Result
        -------|------------------|----------
