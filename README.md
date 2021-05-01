@@ -5,7 +5,7 @@ Date/time CLI utility
 # Usage
 
 ~~~text
-dtg 3.3.0
+dtg 3.3.1
 Date/time CLI utility; https://github.com/qtfkwk/dtg
 
 USAGE:
@@ -877,29 +877,22 @@ Spec. | Example       | Description
 `%Y`  | `2001`        | The full proleptic Gregorian year, zero-padded to 4 digits.
 `%C`  | `20`          | The proleptic Gregorian year divided by 100, zero-padded to 2 digits.
 `%y`  | `01`          | The proleptic Gregorian year modulo 100, zero-padded to 2 digits.
-      |               |
 `%m`  | `07`          | Month number (01--12), zero-padded to 2 digits.
 `%b`  | `Jul`         | Abbreviated month name. Always 3 letters.
 `%B`  | `July`        | Full month name. Also accepts corresponding abbreviation in parsing.
 `%h`  | `Jul`         | Same as `%b`.
-      |               |
 `%d`  | `08`          | Day number (01--31), zero-padded to 2 digits.
 `%e`  | ` 8`          | Same as `%d` but space-padded. Same as `%_d`.
-      |               |
 `%a`  | `Sun`         | Abbreviated weekday name. Always 3 letters.
 `%A`  | `Sunday`      | Full weekday name. Also accepts corresponding abbreviation in parsing.
 `%w`  | `0`           | Sunday = 0, Monday = 1, ..., Saturday = 6.
 `%u`  | `7`           | Monday = 1, Tuesday = 2, ..., Sunday = 7. (ISO 8601)
-      |               |
 `%U`  | `28`          | Week number starting with Sunday (00--53), zero-padded to 2 digits.
 `%W`  | `27`          | Same as `%U`, but week 1 starts with the first Monday in that year instead.
-      |               |
 `%G`  | `2001`        | Same as `%Y` but uses the year number in ISO 8601 week date.
 `%g`  | `01`          | Same as `%y` but uses the year number in ISO 8601 week date.
 `%V`  | `27`          | Same as `%U` but uses the week number in ISO 8601 week date (01--53).
-      |               |
 `%j`  | `189`         | Day of the year (001--366), zero-padded to 3 digits.
-      |               |
 `%D`  | `07/08/01`    | Month-day-year format. Same as `%m/%d/%y`.
 `%x`  | `07/08/01`    | Locale's date representation (e.g., 12/31/99).
 `%F`  | `2001-07-08`  | Year-month-day format (ISO 8601). Same as `%Y-%m-%d`.
@@ -913,10 +906,8 @@ Spec.  | Example       | Description
 `%k`   | ` 0`          | Same as `%H` but space-padded. Same as `%_H`.
 `%I`   | `12`          | Hour number in 12-hour clocks (01--12), zero-padded to 2 digits.
 `%l`   | `12`          | Same as `%I` but space-padded. Same as `%_I`.
-       |               |
 `%P`   | `am`          | `am` or `pm` in 12-hour clocks.
 `%p`   | `AM`          | `AM` or `PM` in 12-hour clocks.
-       |               |
 `%M`   | `34`          | Minute number (00--59), zero-padded to 2 digits.
 `%S`   | `60`          | Second number (00--60), zero-padded to 2 digits.
 `%f`   | `026490000`   | The fractional seconds (in nanoseconds) since last whole second.
@@ -927,7 +918,6 @@ Spec.  | Example       | Description
 `%3f`  | `026`         | Similar to `%.3f` but without the leading dot.
 `%6f`  | `026490`      | Similar to `%.6f` but without the leading dot.
 `%9f`  | `026490000`   | Similar to `%.9f` but without the leading dot.
-       |               |
 `%R`   | `00:34`       | Hour-minute format. Same as `%H:%M`.
 `%T`   | `00:34:60`    | Hour-minute-second format. Same as `%H:%M:%S`.
 `%X`   | `00:34:60`    | Locale's time representation (e.g., 23:13:48).
@@ -979,4 +969,5 @@ Spec. | Description
 * 3.2.1: Fix `-a` option (yanked)
 * 3.2.2: Fix readme
 * 3.3.0: Improve doc; upgrade dependencies
+* 3.3.1: Fix tables in readme
 
