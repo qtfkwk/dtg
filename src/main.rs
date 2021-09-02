@@ -202,10 +202,16 @@ NOTES:
             let n = s.len();
             if n == 1 {
                 if let Ok(seconds) = s[0].parse::<i64>() {
+                    if seconds > 8210298412799 {
+                        error(4, &format!("Overflow: `{}`", arg));
+                    }
                     dt = Some(Utc.timestamp(seconds, 0));
                 }
             } else if n == 2 {
                 if let Ok(seconds) = s[0].parse::<i64>() {
+                    if seconds > 8210298412799 {
+                        error(4, &format!("Overflow: `{}`", arg));
+                    }
                     let mut ss = s[1].to_string();
                     while ss.len() < 9 {
                         ss.push_str("0");
@@ -321,6 +327,9 @@ fn from_format_x(arg: &str) -> String {
     let mut y = 0;
     for (e, x) in arg.chars().rev().skip(5).enumerate() {
         y += (*c.get(&x).unwrap() as i32) * 60_i32.pow(e as u32);
+    }
+    if y > 262143 {
+        error(4, &format!("Overflow: `{}`", arg));
     }
     format!("{}", Utc.ymd(y, v[4], v[3]).and_hms(v[2], v[1], v[0]).timestamp())
 }

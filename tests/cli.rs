@@ -16,6 +16,11 @@ const EST: &str = "Wed 25 Nov 2020 09:32:37 EST";
 const MONTH: &str = "November";
 const DOW: &str = "Wednesday";
 const X: &str = "XeAOEWb";
+const MAX: &str = "+262143-12-31T23:59:59Z";
+const MAX_SECONDS: &str = "8210298412799";
+const MAX_X: &str = "1Cn3BUNxx";
+const OVERFLOW_SECONDS: &str = "8210298412800";
+const OVERFLOW_X: &str = "1Cn400000";
 
 // # Helper functions
 
@@ -181,6 +186,16 @@ fn timezone_search() {
     );
 }
 
+#[test]
+fn max_seconds() {
+    pass("dtg", &[MAX_SECONDS], MAX);
+}
+
+#[test]
+fn max_x() {
+    pass("dtg", &["-X", MAX_X], MAX);
+}
+
 // ## Errors
 
 #[test]
@@ -196,4 +211,14 @@ fn invalid_argument() {
 #[test]
 fn invalid_time_zone() {
     fail("dtg", &["-z", "Z"], 3, "Invalid time zone: `Z`");
+}
+
+#[test]
+fn overflow_seconds() {
+    fail("dtg", &[OVERFLOW_SECONDS], 4, &format!("Overflow: `{}`", OVERFLOW_SECONDS));
+}
+
+#[test]
+fn overflow_x() {
+    fail("dtg", &["-X", OVERFLOW_X], 4, &format!("Overflow: `{}`", OVERFLOW_X));
 }

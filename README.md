@@ -5,7 +5,7 @@ Date/time CLI utility
 # Usage
 
 ~~~text
-dtg 3.3.1
+dtg 3.4.0
 Date/time CLI utility; https://github.com/qtfkwk/dtg
 
 USAGE:
@@ -864,6 +864,36 @@ America/Whitehorse
 America/Winnipeg
 ```
 
+Maximums/overflows:
+
+```text
+$ dtg -a -x 8210298412799
+8210298412799.000000000
++262143-12-31T23:59:59Z
+Tue 31 Dec +262143 23:59:59 UTC
+Tue 31 Dec +262143 18:59:59 EST
+1Cn3BUNxx
+```
+
+```text
+$ dtg -a -x -X 1Cn3BUNxx
+8210298412799.000000000
++262143-12-31T23:59:59Z
+Tue 31 Dec +262143 23:59:59 UTC
+Tue 31 Dec +262143 18:59:59 EST
+1Cn3BUNxx
+```
+
+```text
+$ dtg -a -x 8210298412800
+ERROR: Overflow: `8210298412800`!
+```
+
+```text
+$ dtg -a -x -X 1Cn400000
+ERROR: Overflow: `1Cn400000`!
+```
+
 # Formats
 
 The following information originates from the
@@ -970,4 +1000,5 @@ Spec. | Description
 * 3.2.2: Fix readme
 * 3.3.0: Improve doc; upgrade dependencies
 * 3.3.1: Fix tables in readme
+* 3.4.0: Catch overflows; upgrade dependencies
 

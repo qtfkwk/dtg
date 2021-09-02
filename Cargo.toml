@@ -1,6 +1,6 @@
 [package]
 name = "dtg"
-version = "3.3.1"
+version = "3.4.0"
 authors = ["qtfkwk <qtfkwk@gmail.com>"]
 edition = "2018"
 homepage = "https://github.com/qtfkwk/dtg"
@@ -16,4 +16,4 @@ iana-time-zone = "0.1.9"
 structopt = "0.3.21"
 
 [dev-dependencies]
-assert_cmd = "1.0.3"
+assert_cmd = "2.0.0"
