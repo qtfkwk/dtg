@@ -84,6 +84,14 @@ struct Opt {
     #[structopt(short)]
     separator: Option<String>,
 
+    /// Run every N seconds
+    #[structopt(short, value_name = "N")]
+    interval: Option<f32>,
+
+    /// Clear and run every N seconds
+    #[structopt(short, value_name = "N")]
+    clear: Option<f32>,
+
     /// Argument [-X: timestamp in "x" format (2), -Z: timezone search term,
     /// timestamp in "%s.%f" format, default: now]
     #[structopt(name = "ARG")]
@@ -163,6 +171,19 @@ NOTES:
         return;
     }
 
+    let clear = opt.clear.is_some();
+    if opt.interval.is_some() && clear {
+        error(6, "Options `-i` and `-I` are mutually exclusive");
+        return;
+    }
+    let interval = match opt.interval {
+        Some(f) => Some(std::time::Duration::from_secs_f32(f)),
+        None => match opt.clear {
+            Some(f) => Some(std::time::Duration::from_secs_f32(f)),
+            None => None,
+        }
+    };
+
     let separator = match opt.separator {
         Some(s) => match s.as_str() {
             "\\n" => String::from("\n"),
@@ -215,6 +236,25 @@ NOTES:
     if args.len() == 0 {
         args.push(String::from("now"));
     }
+    if interval.is_some() {
+        let duration = interval.unwrap();
+        loop {
+            if clear {
+                clearscreen::clear().unwrap();
+            }
+            core(&args, &cmds, &zones, &separator);
+            std::thread::sleep(duration);
+        }
+    } else {
+        core(&args, &cmds, &zones, &separator);
+    }
+}
+
+
+/**
+Core
+*/
+fn core(args: &[String], cmds: &[Cmd], zones: &[Tz], separator: &str) {
     for arg in args.iter() {
         let mut dt = None;
         if ["now", ""].contains(&arg.as_str()) {
@@ -259,7 +299,7 @@ NOTES:
                         ));
                     }
                 }
-                println!("{}", r.join(&separator));
+                println!("{}", r.join(separator));
             }
             None => {
                 error(2, &format!("Invalid argument: `{}`", arg));

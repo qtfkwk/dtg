@@ -6,7 +6,7 @@ Date/time CLI utility
 
 ~~~text
 $ dtg -h
-dtg 3.6.0
+dtg 3.7.0
 Date/time CLI utility; https://github.com/qtfkwk/dtg
 
 USAGE:
@@ -23,8 +23,10 @@ FLAGS:
     -x               "x" format (2)
 
 OPTIONS:
+    -c <N>                 Clear and run every N seconds
     -f <formats>...        Format(s) [-z/-l: "%a %d %b %Y %H:%M:%S %Z",
                            "%Y-%m-%dT%H:%M:%SZ"]
+    -i <N>                 Run every N seconds
     -s <separator>         Separator [default: "\n"]
     -z <zone>              Timezone(s) [default: UTC] (3)
 
@@ -979,6 +981,18 @@ $ dtg -z PST8PDT,MST7MDT,CST6CDT,EST5EDT,UTC -f '[%Z %H:%M:%S]' -s ' '
 [PST 19:21:16] [MST 20:21:16] [CST 21:21:16] [EST 22:21:16] [UTC 03:21:16]
 ```
 
+Run every second; use `-c 1` instead of `-i 1` to clear the screen between each run:
+
+```text
+$ dtg -z PST8PDT,MST7MDT,CST6CDT,EST5EDT,UTC -f '[%Z %H:%M:%S]' -s ' ' -i 1
+[PST 19:21:16] [MST 20:21:16] [CST 21:21:16] [EST 22:21:16] [UTC 03:21:16]
+[PST 19:21:17] [MST 20:21:17] [CST 21:21:17] [EST 22:21:17] [UTC 03:21:17]
+[PST 19:21:18] [MST 20:21:18] [CST 21:21:18] [EST 22:21:18] [UTC 03:21:18]
+[PST 19:21:19] [MST 20:21:19] [CST 21:21:19] [EST 22:21:19] [UTC 03:21:19]
+[PST 19:21:20] [MST 20:21:20] [CST 21:21:20] [EST 22:21:20] [UTC 03:21:20]
+...
+```
+
 # Formats
 
 The following information originates from the
@@ -1088,4 +1102,5 @@ Spec. | Description
 * 3.4.0: Catch overflows; upgrade dependencies
 * 3.5.0: Multiple timezones; cargo fmt; upgrade dependencies
 * 3.6.0: Separator `-s` option
+* 3.7.0: Interval `-i`, `-c` options
 
