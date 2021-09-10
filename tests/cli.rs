@@ -13,6 +13,9 @@ const NANOSECONDS: &str = "191168200";
 const RFC3339: &str = "2020-11-25T14:32:37Z";
 const UTC: &str = "Wed 25 Nov 2020 14:32:37 UTC";
 const EST: &str = "Wed 25 Nov 2020 09:32:37 EST";
+const CST: &str = "Wed 25 Nov 2020 08:32:37 CST";
+const MST: &str = "Wed 25 Nov 2020 07:32:37 MST";
+const PST: &str = "Wed 25 Nov 2020 06:32:37 PST";
 const MONTH: &str = "November";
 const DOW: &str = "Wednesday";
 const X: &str = "XeAOEWb";
@@ -113,7 +116,31 @@ fn zone_utc() {
 
 #[test]
 fn zone_est() {
-    pass("dtg", &["-z", "EST", &nanoseconds()], EST);
+    pass("dtg", &["-z", "EST5EDT", &nanoseconds()], EST);
+}
+
+#[test]
+fn zone_cst() {
+    pass("dtg", &["-z", "CST6CDT", &nanoseconds()], CST);
+}
+
+#[test]
+fn zone_mst() {
+    pass("dtg", &["-z", "MST7MDT", &nanoseconds()], MST);
+}
+
+#[test]
+fn zone_pst() {
+    pass("dtg", &["-z", "PST8PDT", &nanoseconds()], PST);
+}
+
+#[test]
+fn zone_multi() {
+    pass(
+        "dtg",
+        &["-z", "UTC,EST5EDT,CST6CDT,MST7MDT,PST8PDT", &nanoseconds()],
+        &[UTC, EST, CST, MST, PST].join("\n"),
+    );
 }
 
 #[test]
@@ -137,7 +164,11 @@ fn format_x() {
     pass("dtg", &["-x", &ns], X);
     pass("dtg", &["-X", X], RFC3339);
     pass("dtg", &["-X", "-f", "%s", "--", X], SECONDS);
-    pass("dtg", &["-X", "-f", "%a %d %b %Y %H:%M:%S %Z", "--", X], UTC);
+    pass(
+        "dtg",
+        &["-X", "-f", "%a %d %b %Y %H:%M:%S %Z", "--", X],
+        UTC,
+    );
     pass(
         "dtg",
         &["-X", "-f", "%a %d %b %Y %H:%M:%S %Z", "-z", "EST", X],
@@ -165,16 +196,21 @@ fn mulitple_f_options() {
     let want = format!("{}\n{}", MONTH, DOW);
     let ns = nanoseconds();
     pass("dtg", &["-f", "%B", "-f", "%A", "-z", "EST", &ns], &want);
-    pass("dtg", &["-f", "%B", "-z", "EST", "-f", "%A", "--", &ns], &want);
-    pass("dtg", &["-z", "EST", "-f", "%B", "-f", "%A", "--", &ns], &want);
+    pass(
+        "dtg",
+        &["-f", "%B", "-z", "EST", "-f", "%A", "--", &ns],
+        &want,
+    );
+    pass(
+        "dtg",
+        &["-z", "EST", "-f", "%B", "-f", "%A", "--", &ns],
+        &want,
+    );
 }
 
 #[test]
 fn timezone_list() {
-    cmd("dtg")
-        .args(&["-Z"])
-        .assert()
-        .success();
+    cmd("dtg").args(&["-Z"]).assert().success();
 }
 
 #[test]
@@ -200,7 +236,12 @@ fn max_x() {
 
 #[test]
 fn timezone_search_found_zero() {
-    fail("dtg", &["-Z", "blah"], 1, "Zero timezones found matching `blah`");
+    fail(
+        "dtg",
+        &["-Z", "blah"],
+        1,
+        "Zero timezones found matching `blah`",
+    );
 }
 
 #[test]
@@ -215,10 +256,20 @@ fn invalid_time_zone() {
 
 #[test]
 fn overflow_seconds() {
-    fail("dtg", &[OVERFLOW_SECONDS], 4, &format!("Overflow: `{}`", OVERFLOW_SECONDS));
+    fail(
+        "dtg",
+        &[OVERFLOW_SECONDS],
+        4,
+        &format!("Overflow: `{}`", OVERFLOW_SECONDS),
+    );
 }
 
 #[test]
 fn overflow_x() {
-    fail("dtg", &["-X", OVERFLOW_X], 4, &format!("Overflow: `{}`", OVERFLOW_X));
+    fail(
+        "dtg",
+        &["-X", OVERFLOW_X],
+        4,
+        &format!("Overflow: `{}`", OVERFLOW_X),
+    );
 }

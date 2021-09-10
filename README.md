@@ -5,7 +5,8 @@ Date/time CLI utility
 # Usage
 
 ~~~text
-dtg 3.4.0
+$ dtg -h
+dtg 3.5.0
 Date/time CLI utility; https://github.com/qtfkwk/dtg
 
 USAGE:
@@ -24,7 +25,7 @@ FLAGS:
 OPTIONS:
     -f <formats>...        Format(s) [-z/-l: "%a %d %b %Y %H:%M:%S %Z",
                            "%Y-%m-%dT%H:%M:%SZ"]
-    -z <zone>              Timezone [default: UTC]
+    -z <zone>              Timezone(s) [default: UTC] (3)
 
 ARGS:
     <ARG>...    Argument [-X: timestamp in "x" format (2), -Z: timezone
@@ -59,6 +60,9 @@ NOTES:
        Hour   | 0-23             | 0-N
        Minute | 0-59             | 0-x
        Second | 0-59             | 0-x
+
+    3. Prints the timestamp in each format with one or more timezones using a
+       comma-separated string (`-z UTC,EST`).
 ~~~
 
 # Examples
@@ -894,6 +898,79 @@ $ dtg -a -x -X 1Cn400000
 ERROR: Overflow: `1Cn400000`!
 ```
 
+Multiple timezones:
+
+```text
+$ dtg -z UTC,EST5EDT,CST6CDT,MST7MDT,PST8PDT -f '%Z%n%H:%M:%S%n' -f '%Z%n%Y-%m-%d%n'
+UTC
+03:21:16
+
+EST
+22:21:16
+
+CST
+21:21:16
+
+MST
+20:21:16
+
+PST
+19:21:16
+
+UTC
+2020-11-27
+
+EST
+2020-11-26
+
+CST
+2020-11-26
+
+MST
+2020-11-26
+
+PST
+2020-11-26
+
+```
+
+*Note the above prints each format for each timezone... to print each timezone for each format,
+use a single format and `%n`:*
+
+```text
+$ dtg -z UTC,EST5EDT,CST6CDT,MST7MDT,PST8PDT -f '%Z%n%H:%M:%S%n%n%Z%n%Y-%m-%d%n'
+UTC
+03:21:16
+
+UTC
+2020-11-27
+
+EST
+22:21:16
+
+EST
+2020-11-26
+
+CST
+21:21:16
+
+CST
+2020-11-26
+
+MST
+20:21:16
+
+MST
+2020-11-26
+
+PST
+19:21:16
+
+PST
+2020-11-26
+
+```
+
 # Formats
 
 The following information originates from the
@@ -1001,4 +1078,5 @@ Spec. | Description
 * 3.3.0: Improve doc; upgrade dependencies
 * 3.3.1: Fix tables in readme
 * 3.4.0: Catch overflows; upgrade dependencies
+* 3.5.0: Multiple timezones; cargo fmt; upgrade dependencies
 

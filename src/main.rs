@@ -5,7 +5,7 @@ Date/time CLI utility
 use std::collections::HashMap;
 
 use chrono::{DateTime, TimeZone, Utc};
-use chrono_tz::{TZ_VARIANTS, Tz};
+use chrono_tz::{Tz, TZ_VARIANTS};
 use structopt::StructOpt;
 
 /**
@@ -65,10 +65,10 @@ struct Opt {
     x_format: bool,
 
     /// Give timestamp argument(s) in "x" format (2)
-    #[structopt(short="X")]
+    #[structopt(short = "X")]
     from_x: bool,
 
-    /// Timezone [default: UTC]
+    /// Timezone(s) [default: UTC] (3)
     #[structopt(short)]
     zone: Option<String>,
 
@@ -77,12 +77,12 @@ struct Opt {
     local_zone: bool,
 
     /// Search/list timezones
-    #[structopt(short="Z")]
+    #[structopt(short = "Z")]
     list_zones: bool,
 
     /// Argument [-X: timestamp in "x" format (2), -Z: timezone search term,
     /// timestamp in "%s.%f" format, default: now]
-    #[structopt(name="ARG")]
+    #[structopt(name = "ARG")]
     args: Vec<String>,
 }
 
@@ -90,9 +90,8 @@ struct Opt {
 Main
 */
 fn main() {
-    let app = Opt::clap().set_term_width(80)
-        .after_help(
-            "\
+    let app = Opt::clap().set_term_width(80).after_help(
+        "\
 NOTES:
     1. \"a\" format:
 
@@ -122,9 +121,12 @@ NOTES:
        Hour   | 0-23             | 0-N
        Minute | 0-59             | 0-x
        Second | 0-59             | 0-x
+
+    3. Prints the timestamp in each format with one or more timezones using a
+       comma-separated string (`-z UTC,EST`).
 \
             ",
-        );
+    );
     let opt = Opt::from_clap(&app.get_matches());
 
     if opt.readme {
@@ -174,14 +176,21 @@ NOTES:
             cmds.push(Cmd::Custom(String::from("%Y-%m-%dT%H:%M:%SZ")));
         }
     }
-    let zone = match opt.zone {
-        Some(s) => tz(&s),
-        None => if opt.local_zone || opt.a_format {
-            tz("local")
-        } else {
-            tz("UTC")
+    let mut zones = vec![];
+    match opt.zone {
+        Some(s) => {
+            for i in s.split(",") {
+                zones.push(tz(i));
+            }
         }
-    };
+        None => {
+            if opt.local_zone || opt.a_format {
+                zones.push(tz("local"));
+            } else {
+                zones.push(tz("UTC"));
+            }
+        }
+    }
     let mut args = vec![];
     for timestamp in opt.args.iter() {
         args.push(if opt.from_x {
@@ -225,14 +234,16 @@ NOTES:
         match dt {
             Some(d) => {
                 for cmd in cmds.iter() {
-                    println!("{}", match cmd {
-                        Cmd::Custom(f) => d
-                            .with_timezone(&zone)
-                            .format(&f)
-                            .to_string(),
-                        Cmd::A => format_a(&d, &zone),
-                        Cmd::X => format_x(&d),
-                    });
+                    for zone in zones.iter() {
+                        println!(
+                            "{}",
+                            match cmd {
+                                Cmd::Custom(f) => d.with_timezone(zone).format(&f).to_string(),
+                                Cmd::A => format_a(&d, zone),
+                                Cmd::X => format_x(&d),
+                            }
+                        );
+                    }
                 }
             }
             None => {
@@ -247,7 +258,7 @@ Format "a"
 */
 fn format_a<T: TimeZone>(d: &DateTime<T>, tz: &Tz) -> String
 where
-    T::Offset: std::fmt::Display
+    T::Offset: std::fmt::Display,
 {
     format!(
         "{}\n{}",
@@ -331,5 +342,8 @@ fn from_format_x(arg: &str) -> String {
     if y > 262143 {
         error(4, &format!("Overflow: `{}`", arg));
     }
-    format!("{}", Utc.ymd(y, v[4], v[3]).and_hms(v[2], v[1], v[0]).timestamp())
+    format!(
+        "{}",
+        Utc.ymd(y, v[4], v[3]).and_hms(v[2], v[1], v[0]).timestamp()
+    )
 }
