@@ -273,3 +273,13 @@ fn overflow_x() {
         &format!("Overflow: `{}`", OVERFLOW_X),
     );
 }
+
+#[test]
+fn separator() {
+    let sep = " | ";
+    pass(
+        "dtg",
+        &["-z", "UTC,EST5EDT,CST6CDT,MST7MDT,PST8PDT", "-s", sep, &nanoseconds()],
+        &[UTC, EST, CST, MST, PST].join(sep),
+    );
+}

@@ -80,6 +80,10 @@ struct Opt {
     #[structopt(short = "Z")]
     list_zones: bool,
 
+    /// Separator [default: "\n"]
+    #[structopt(short)]
+    separator: Option<String>,
+
     /// Argument [-X: timestamp in "x" format (2), -Z: timezone search term,
     /// timestamp in "%s.%f" format, default: now]
     #[structopt(name = "ARG")]
@@ -159,6 +163,15 @@ NOTES:
         return;
     }
 
+    let separator = match opt.separator {
+        Some(s) => match s.as_str() {
+            "\\n" => String::from("\n"),
+            "\\t" => String::from("\t"),
+            _ => s.to_string(),
+        }
+        None => String::from("\n"),
+    };
+
     let mut cmds = vec![];
     for i in opt.formats.iter() {
         cmds.push(Cmd::Custom(i.to_string()));
@@ -233,18 +246,20 @@ NOTES:
         }
         match dt {
             Some(d) => {
+                let mut r = vec![];
                 for cmd in cmds.iter() {
                     for zone in zones.iter() {
-                        println!(
+                        r.push(format!(
                             "{}",
                             match cmd {
                                 Cmd::Custom(f) => d.with_timezone(zone).format(&f).to_string(),
                                 Cmd::A => format_a(&d, zone),
                                 Cmd::X => format_x(&d),
                             }
-                        );
+                        ));
                     }
                 }
+                println!("{}", r.join(&separator));
             }
             None => {
                 error(2, &format!("Invalid argument: `{}`", arg));

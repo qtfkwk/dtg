@@ -6,7 +6,7 @@ Date/time CLI utility
 
 ~~~text
 $ dtg -h
-dtg 3.5.0
+dtg 3.6.0
 Date/time CLI utility; https://github.com/qtfkwk/dtg
 
 USAGE:
@@ -25,6 +25,7 @@ FLAGS:
 OPTIONS:
     -f <formats>...        Format(s) [-z/-l: "%a %d %b %Y %H:%M:%S %Z",
                            "%Y-%m-%dT%H:%M:%SZ"]
+    -s <separator>         Separator [default: "\n"]
     -z <zone>              Timezone(s) [default: UTC] (3)
 
 ARGS:
@@ -971,6 +972,13 @@ PST
 
 ```
 
+Use a custom separator between formats/timezones:
+
+```text
+$ dtg -z PST8PDT,MST7MDT,CST6CDT,EST5EDT,UTC -f '[%Z %H:%M:%S]' -s ' '
+[PST 19:21:16] [MST 20:21:16] [CST 21:21:16] [EST 22:21:16] [UTC 03:21:16]
+```
+
 # Formats
 
 The following information originates from the
@@ -1079,4 +1087,5 @@ Spec. | Description
 * 3.3.1: Fix tables in readme
 * 3.4.0: Catch overflows; upgrade dependencies
 * 3.5.0: Multiple timezones; cargo fmt; upgrade dependencies
+* 3.6.0: Separator `-s` option
 
