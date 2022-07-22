@@ -28,4 +28,5 @@
     * Redesign as lib and cli crates in a workspace
     * Replace structopt with clap v3 derive API
 * 4.1.0: Added `Dtg::{a_format,x_format,default}`, `Format::custom` methods to lib
+* 4.1.1: Fix broken `-i`, `-c` in cli
 

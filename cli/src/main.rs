@@ -139,7 +139,7 @@ Notes:
 
     let clear = opt.clear.is_some();
     if opt.interval.is_some() && clear {
-        error(6, "Options `-i` and `-I` are mutually exclusive");
+        error(6, "Options `-i` and `-c` are mutually exclusive");
         return;
     }
     let interval = match opt.interval {
@@ -191,9 +191,25 @@ Notes:
             }
         }
     }
+    let formats = formats.iter().map(|x| Some(x.clone())).collect::<Vec<Option<Format>>>();
+    if interval.is_some() {
+        let duration = interval.unwrap();
+        loop {
+            if clear {
+                clearscreen::clear().unwrap();
+            }
+            core(&opt.args, &formats, &zones, &separator, opt.from_x);
+            std::thread::sleep(duration);
+        }
+    } else {
+        core(&opt.args, &formats, &zones, &separator, opt.from_x);
+    }
+}
+
+fn core(args: &[String], formats: &[Option<Format>], timezones: &[Option<Tz>], separator: &str, from_x: bool) {
     let mut dtgs = vec![];
-    for arg in opt.args.iter() {
-        let dtg = if opt.from_x {
+    for arg in args.iter() {
+        let dtg = if from_x {
             Dtg::from_x(arg)
         } else {
             Dtg::from(arg)
@@ -206,27 +222,10 @@ Notes:
     if dtgs.len() == 0 {
         dtgs.push(Dtg::now());
     }
-    if interval.is_some() {
-        let duration = interval.unwrap();
-        loop {
-            if clear {
-                clearscreen::clear().unwrap();
-            }
-            core(&dtgs, &formats, &zones, &separator);
-            std::thread::sleep(duration);
-        }
-    } else {
-        core(&dtgs, &formats, &zones, &separator);
-    }
-}
-
-fn core(dtgs: &[Dtg], formats: &[Format], timezones: &[Tz], separator: &str) {
-    let formats = formats.iter().map(|x| Some(x.clone())).collect::<Vec<Option<Format>>>();
-    let timezones = timezones.iter().map(|x| Some(x.clone())).collect::<Vec<Option<Tz>>>();
     for i in dtgs.iter() {
         let mut t = vec![];
-        for fmt in &formats {
-            for tz in &timezones {
+        for fmt in formats {
+            for tz in timezones {
                 t.push(i.format(fmt, tz));
             }
         }
@@ -234,7 +233,7 @@ fn core(dtgs: &[Dtg], formats: &[Format], timezones: &[Tz], separator: &str) {
     }
 }
 
-fn tz_(i: &str) -> Tz {
+fn tz_(i: &str) -> Option<Tz> {
     let t = tz(i);
     if let Err(ref e) = t {
         match e.code {
@@ -243,5 +242,5 @@ fn tz_(i: &str) -> Tz {
             _ => error(1, "?"),
         }
     }
-    t.unwrap()
+    Some(t.unwrap())
 }
