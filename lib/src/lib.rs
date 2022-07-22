@@ -183,18 +183,72 @@ impl Dtg {
         }
     }
 
+    /// Format as a string
+    ///
+    /// ```
+    /// use dtg_lib::{tz, Dtg};
+    ///
+    /// let dtg = Dtg::from("1658448142").unwrap();
+    /// let default_utc = "Fri 22 Jul 2022 00:02:22 UTC";
+    /// let default_mt = "Thu 21 Jul 2022 18:02:22 MDT";
+    ///
+    /// assert_eq!(dtg.default(&None), default_utc);
+    /// assert_eq!(dtg.default(&tz("UTC").ok()), default_utc);
+    /// assert_eq!(dtg.default(&tz("MST7MDT").ok()), default_mt);
+    /// ```
+    pub fn default(&self, tz: &Option<Tz>) -> String {
+        self.format(&Some(Format::default()), tz)
+    }
+
     /// Format as an RFC 3339 string
     ///
     /// ```
     /// use dtg_lib::Dtg;
     ///
-    /// assert_eq!(
-    ///     Dtg::from("1658448142").unwrap().rfc_3339(),
-    ///     "2022-07-22T00:02:22Z",
-    /// );
+    /// let dtg = Dtg::from("1658448142").unwrap();
+    ///
+    /// assert_eq!(dtg.rfc_3339(), "2022-07-22T00:02:22Z");
     /// ```
     pub fn rfc_3339(&self) -> String {
         self.format(&None, &None)
+    }
+
+    /// Format as "x" format
+    ///
+    /// ```
+    /// use dtg_lib::Dtg;
+    ///
+    /// let dtg = Dtg::from("1658448142").unwrap();
+    ///
+    /// assert_eq!(dtg.x_format(), "Xg6L02M");
+    /// ```
+    pub fn x_format(&self) -> String {
+        self.format(&Some(Format::X), &None)
+    }
+
+    /// Format as "a" format
+    ///
+    /// ```
+    /// use dtg_lib::{tz, Dtg};
+    ///
+    /// let dtg = Dtg::from("1658448142").unwrap();
+    /// let a_utc = "\
+    /// 1658448142.000000000
+    /// 2022-07-22T00:02:22Z
+    /// Fri 22 Jul 2022 00:02:22 UTC
+    /// Fri 22 Jul 2022 00:02:22 UTC";
+    /// let a_mt = "\
+    /// 1658448142.000000000
+    /// 2022-07-22T00:02:22Z
+    /// Fri 22 Jul 2022 00:02:22 UTC
+    /// Thu 21 Jul 2022 18:02:22 MDT";
+    ///
+    /// assert_eq!(dtg.a_format(&None), a_utc);
+    /// assert_eq!(dtg.a_format(&tz("UTC").ok()), a_utc);
+    /// assert_eq!(dtg.a_format(&tz("MST7MDT").ok()), a_mt);
+    /// ```
+    pub fn a_format(&self, tz: &Option<Tz>) -> String {
+        self.format(&Some(Format::A), tz)
     }
 
     /// Format as a string with format and timezone
@@ -213,7 +267,7 @@ impl Dtg {
     ///     "Xg6L02M",
     /// );
     ///
-    /// let a_fmt = Some(Format::Custom(String::from("%A")));
+    /// let a_fmt = Some(Format::custom("%A"));
     ///
     /// assert_eq!(
     ///     dtg.format(&a_fmt, &None),
@@ -385,6 +439,11 @@ impl Format {
     /// Create an RFC 3339 [Format]
     pub fn rfc_3339() -> Self {
         Self::Custom(RFC_3339.to_string())
+    }
+
+    /// Create a custom [Format]
+    pub fn custom(s: &str) -> Self {
+        Self::Custom(s.to_string())
     }
 
     /// Format a [DateTime<Utc>] with a timezone
