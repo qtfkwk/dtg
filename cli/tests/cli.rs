@@ -27,16 +27,12 @@ const OVERFLOW_X: &str = "1Cn400000";
 
 // # Helper functions
 
-/**
-Retrieve the binary to test
-*/
+/// Retrieve the binary to test
 pub fn cmd(bin: &str) -> Command {
     Command::cargo_bin(bin).unwrap()
 }
 
-/**
-Print the command
-*/
+/// Print the command
 fn p(bin: &str, args: &[&str]) {
     println!(
         "{} {}",
@@ -54,9 +50,7 @@ fn p(bin: &str, args: &[&str]) {
     );
 }
 
-/**
-Run command that fails
-*/
+/// Run command that fails
 fn fail(bin: &str, args: &[&str], code: i32, msg: &str) {
     p(bin, args);
     cmd(bin)
@@ -67,9 +61,7 @@ fn fail(bin: &str, args: &[&str], code: i32, msg: &str) {
         .stderr(format!("ERROR: {}!\n", msg));
 }
 
-/**
-Run command that succeeds
-*/
+/// Run command that succeeds
 fn pass(bin: &str, args: &[&str], want: &str) {
     p(bin, args);
     cmd(bin)
@@ -79,9 +71,7 @@ fn pass(bin: &str, args: &[&str], want: &str) {
         .stdout(format!("{}\n", want));
 }
 
-/**
-Compose timestamp
-*/
+/// Compose timestamp
 fn nanoseconds() -> String {
     format!("{}.{}", SECONDS, NANOSECONDS)
 }
@@ -246,12 +236,12 @@ fn timezone_search_found_zero() {
 
 #[test]
 fn invalid_argument() {
-    fail("dtg", &["blah"], 2, "Invalid argument: `blah`");
+    fail("dtg", &["blah"], 2, "Invalid timestamp: `blah`");
 }
 
 #[test]
 fn invalid_time_zone() {
-    fail("dtg", &["-z", "Z"], 3, "Invalid time zone: `Z`");
+    fail("dtg", &["-z", "Z"], 3, "Invalid timezone: `Z`");
 }
 
 #[test]
@@ -259,8 +249,8 @@ fn overflow_seconds() {
     fail(
         "dtg",
         &[OVERFLOW_SECONDS],
-        4,
-        &format!("Overflow: `{}`", OVERFLOW_SECONDS),
+        2,
+        &format!("Invalid timestamp: `{}`", OVERFLOW_SECONDS),
     );
 }
 
@@ -269,8 +259,8 @@ fn overflow_x() {
     fail(
         "dtg",
         &["-X", OVERFLOW_X],
-        4,
-        &format!("Overflow: `{}`", OVERFLOW_X),
+        2,
+        &format!("Invalid timestamp: `{}`", OVERFLOW_X),
     );
 }
 
@@ -279,7 +269,13 @@ fn separator() {
     let sep = " | ";
     pass(
         "dtg",
-        &["-z", "UTC,EST5EDT,CST6CDT,MST7MDT,PST8PDT", "-s", sep, &nanoseconds()],
+        &[
+            "-z",
+            "UTC,EST5EDT,CST6CDT,MST7MDT,PST8PDT",
+            "-s",
+            sep,
+            &nanoseconds(),
+        ],
         &[UTC, EST, CST, MST, PST].join(sep),
     );
 }

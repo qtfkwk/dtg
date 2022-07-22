@@ -1,0 +1,14 @@
+[package]
+name = "dtg-lib"
+version = "4.0.0"
+edition = "2021"
+authors = ["qtfkwk <qtfkwk@gmail.com>"]
+homepage = "https://github.com/qtfkwk/dtg"
+description = "Date/time library"
+license = "MIT"
+
+[dependencies]
+chrono = "0.4.19"
+chrono-tz = "0.6.0"
+iana-time-zone = "0.1.9"
+lazy_static = "1.4.0"
