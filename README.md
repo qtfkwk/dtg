@@ -2,11 +2,13 @@
 
 Date/time CLI utility
 
+*See also the [dtg-lib] crate.*
+
 # Usage
 
 ~~~text
 $ dtg -h
-dtg 4.0.1
+dtg 4.0.2
 Date/time CLI utility
 
 USAGE:
@@ -75,26 +77,26 @@ Get current date/time in UTC and RFC 3339 format:
 
 ```text
 $ dtg
-2022-07-22T00:37:33Z
+2022-07-22T00:42:39Z
 ```
 
 Get current date/time in the local timezone and default format:
 
 ```text
 $ dtg -l
-Thu 21 Jul 2022 20:37:33 EDT
+Thu 21 Jul 2022 20:42:39 EDT
 ```
 
 Get current date/time in explicit timezone and default format:
 
 ```text
 $ dtg -z MST
-Thu 21 Jul 2022 17:37:33 MST
+Thu 21 Jul 2022 17:42:39 MST
 ```
 
 ```text
 $ dtg -z America/Los_Angeles
-Thu 21 Jul 2022 17:37:33 PDT
+Thu 21 Jul 2022 17:42:39 PDT
 ```
 
 Get current date/time in UTC and specific format:
@@ -106,7 +108,7 @@ Friday
 
 ```text
 $ dtg -f %s.%f
-1658450253.456538143
+1658450559.563670051
 ```
 
 Get current date/time in local timezone and specific format:
@@ -127,27 +129,27 @@ Get current date/time in "a" format:
 
 ```text
 $ dtg -a
-1658450253.470100162
-2022-07-22T00:37:33Z
-Fri 22 Jul 2022 00:37:33 UTC
-Thu 21 Jul 2022 20:37:33 EDT
+1658450559.576073697
+2022-07-22T00:42:39Z
+Fri 22 Jul 2022 00:42:39 UTC
+Thu 21 Jul 2022 20:42:39 EDT
 ```
 
 Get current date/time in explicit timezone and "a" format:
 
 ```text
 $ dtg -a -z MST
-1658450253.474569337
-2022-07-22T00:37:33Z
-Fri 22 Jul 2022 00:37:33 UTC
-Thu 21 Jul 2022 17:37:33 MST
+1658450559.580169423
+2022-07-22T00:42:39Z
+Fri 22 Jul 2022 00:42:39 UTC
+Thu 21 Jul 2022 17:42:39 MST
 ```
 
 Get current date/time in "x" format:
 
 ```text
 $ dtg -x
-Xg6L0bX
+Xg6L0gd
 ```
 
 Get a specific date / time in UTC and RFC 3339 format:
@@ -882,19 +884,19 @@ Multiple timezones:
 ```text
 $ dtg -z UTC,EST5EDT,CST6CDT,MST7MDT,PST8PDT -f '%Z%n%H:%M:%S%n' -f '%Z%n%Y-%m-%d%n'
 UTC
-00:37:33
+00:42:39
 
 EDT
-20:37:33
+20:42:39
 
 CDT
-19:37:33
+19:42:39
 
 MDT
-18:37:33
+18:42:39
 
 PDT
-17:37:33
+17:42:39
 
 UTC
 2022-07-22
@@ -919,31 +921,31 @@ use a single format and `%n`:*
 ```text
 $ dtg -z UTC,EST5EDT,CST6CDT,MST7MDT,PST8PDT -f '%Z%n%H:%M:%S%n%n%Z%n%Y-%m-%d%n'
 UTC
-00:37:33
+00:42:39
 
 UTC
 2022-07-22
 
 EDT
-20:37:33
+20:42:39
 
 EDT
 2022-07-21
 
 CDT
-19:37:33
+19:42:39
 
 CDT
 2022-07-21
 
 MDT
-18:37:33
+18:42:39
 
 MDT
 2022-07-21
 
 PDT
-17:37:33
+17:42:39
 
 PDT
 2022-07-21
@@ -954,7 +956,7 @@ Use a custom separator between formats/timezones:
 
 ```text
 $ dtg -z PST8PDT,MST7MDT,CST6CDT,EST5EDT,UTC -f '[%Z %H:%M:%S]' -s ' '
-[PDT 17:37:33] [MDT 18:37:33] [CDT 19:37:33] [EDT 20:37:33] [UTC 00:37:33]
+[PDT 17:42:39] [MDT 18:42:39] [CDT 19:42:39] [EDT 20:42:39] [UTC 00:42:39]
 ```
 
 # Formats
@@ -1070,4 +1072,5 @@ Spec. | Description
     * Replace structopt with clap v3 derive API
 
 [chrono documentation]: https://docs.rs/chrono/latest/chrono/format/strftime/index.html#specifiers
+[dtg-lib]: https://crates.io/crates/dtg-lib
 

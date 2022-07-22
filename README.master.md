@@ -2,6 +2,8 @@
 
 Date/time CLI utility
 
+*See also the [dtg-lib] crate.*
+
 # Usage
 
 ~~~text
@@ -312,4 +314,5 @@ Spec. | Description
     * Replace structopt with clap v3 derive API
 
 [chrono documentation]: https://docs.rs/chrono/latest/chrono/format/strftime/index.html#specifiers
+[dtg-lib]: https://crates.io/crates/dtg-lib
 
