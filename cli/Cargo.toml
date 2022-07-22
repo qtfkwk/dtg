@@ -1,6 +1,6 @@
 [package]
 name = "dtg"
-version = "4.0.0"
+version = "4.0.1"
 edition = "2021"
 authors = ["qtfkwk <qtfkwk@gmail.com>"]
 homepage = "https://github.com/qtfkwk/dtg"
@@ -11,7 +11,7 @@ license = "MIT"
 chrono-tz = "0.6.0"
 clap = { version = "3.2.14", features = ["derive"] }
 clearscreen = "1.0.7"
-dtg-lib = { version = "4.0.0", path = "../lib" }
+dtg-lib = { version = "4.0.1", path = "../lib" }
 iana-time-zone = "0.1.9"
 
 [dev-dependencies]
