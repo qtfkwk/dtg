@@ -8,7 +8,7 @@ Date/time CLI utility
 
 ~~~text
 $ dtg -h
-dtg 4.0.2
+dtg 4.0.3
 Date/time CLI utility
 
 USAGE:
