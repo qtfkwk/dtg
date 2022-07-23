@@ -1,6 +1,6 @@
 [package]
 name = "dtg-lib"
-version = "4.1.1"
+version = "4.1.2"
 edition = "2021"
 authors = ["qtfkwk <qtfkwk@gmail.com>"]
 homepage = "https://github.com/qtfkwk/dtg"

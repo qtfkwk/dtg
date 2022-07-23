@@ -8,7 +8,7 @@ Date/time CLI utility
 
 ~~~text
 $ dtg -h
-dtg 4.1.1
+dtg 4.1.2
 Date/time CLI utility
 
 USAGE:
@@ -77,79 +77,79 @@ Get current date/time in UTC and RFC 3339 format:
 
 ```text
 $ dtg
-2022-07-22T00:42:39Z
+2022-07-23T16:14:46Z
 ```
 
 Get current date/time in the local timezone and default format:
 
 ```text
 $ dtg -l
-Thu 21 Jul 2022 20:42:39 EDT
+Sat 23 Jul 2022 12:14:46 EDT
 ```
 
 Get current date/time in explicit timezone and default format:
 
 ```text
 $ dtg -z MST
-Thu 21 Jul 2022 17:42:39 MST
+Sat 23 Jul 2022 09:14:46 MST
 ```
 
 ```text
 $ dtg -z America/Los_Angeles
-Thu 21 Jul 2022 17:42:39 PDT
+Sat 23 Jul 2022 09:14:46 PDT
 ```
 
 Get current date/time in UTC and specific format:
 
 ```text
 $ dtg -f %A
-Friday
+Saturday
 ```
 
 ```text
 $ dtg -f %s.%f
-1658450559.563670051
+1658592886.561551852
 ```
 
 Get current date/time in local timezone and specific format:
 
 ```text
 $ dtg -l -f %A
-Thursday
+Saturday
 ```
 
 Get current date/time in explicit timezone and specific format:
 
 ```text
 $ dtg -z MST -f %A
-Thursday
+Saturday
 ```
 
 Get current date/time in "a" format:
 
 ```text
 $ dtg -a
-1658450559.576073697
-2022-07-22T00:42:39Z
-Fri 22 Jul 2022 00:42:39 UTC
-Thu 21 Jul 2022 20:42:39 EDT
+1658592886.574013065
+2022-07-23T16:14:46Z
+Sat 23 Jul 2022 16:14:46 UTC
+Sat 23 Jul 2022 12:14:46 EDT
 ```
 
 Get current date/time in explicit timezone and "a" format:
 
 ```text
 $ dtg -a -z MST
-1658450559.580169423
-2022-07-22T00:42:39Z
-Fri 22 Jul 2022 00:42:39 UTC
-Thu 21 Jul 2022 17:42:39 MST
+1658592886.578177592
+2022-07-23T16:14:46Z
+Sat 23 Jul 2022 16:14:46 UTC
+Sat 23 Jul 2022 09:14:46 MST
 ```
 
 Get current date/time in "x" format:
 
 ```text
 $ dtg -x
-Xg6L0gd
+Xg6MGEk
 ```
 
 Get a specific date / time in UTC and RFC 3339 format:
@@ -884,34 +884,34 @@ Multiple timezones:
 ```text
 $ dtg -z UTC,EST5EDT,CST6CDT,MST7MDT,PST8PDT -f '%Z%n%H:%M:%S%n' -f '%Z%n%Y-%m-%d%n'
 UTC
-00:42:39
+16:14:46
 
 EDT
-20:42:39
+12:14:46
 
 CDT
-19:42:39
+11:14:46
 
 MDT
-18:42:39
+10:14:46
 
 PDT
-17:42:39
+09:14:46
 
 UTC
-2022-07-22
+2022-07-23
 
 EDT
-2022-07-21
+2022-07-23
 
 CDT
-2022-07-21
+2022-07-23
 
 MDT
-2022-07-21
+2022-07-23
 
 PDT
-2022-07-21
+2022-07-23
 
 ```
 
@@ -921,34 +921,34 @@ use a single format and `%n`:*
 ```text
 $ dtg -z UTC,EST5EDT,CST6CDT,MST7MDT,PST8PDT -f '%Z%n%H:%M:%S%n%n%Z%n%Y-%m-%d%n'
 UTC
-00:42:39
+16:14:46
 
 UTC
-2022-07-22
+2022-07-23
 
 EDT
-20:42:39
+12:14:46
 
 EDT
-2022-07-21
+2022-07-23
 
 CDT
-19:42:39
+11:14:46
 
 CDT
-2022-07-21
+2022-07-23
 
 MDT
-18:42:39
+10:14:46
 
 MDT
-2022-07-21
+2022-07-23
 
 PDT
-17:42:39
+09:14:46
 
 PDT
-2022-07-21
+2022-07-23
 
 ```
 
@@ -956,12 +956,13 @@ Use a custom separator between formats/timezones:
 
 ```text
 $ dtg -z PST8PDT,MST7MDT,CST6CDT,EST5EDT,UTC -f '[%Z %H:%M:%S]' -s ' '
-[PDT 17:42:39] [MDT 18:42:39] [CDT 19:42:39] [EDT 20:42:39] [UTC 00:42:39]
+[PDT 09:14:46] [MDT 10:14:46] [CDT 11:14:46] [EDT 12:14:46] [UTC 16:14:46]
 ```
 
 # Formats
 
-The following information originates from the [chrono documentation], which `dtg` uses internally.
+The following information originates from the [chrono documentation], which [dtg] and [dtg-lib] use
+internally.
 
 ## Date specifiers
 
@@ -1042,5 +1043,6 @@ Spec. | Description
 `%%`  | Literal percent sign.
 
 [chrono documentation]: https://docs.rs/chrono/latest/chrono/format/strftime/index.html#specifiers
+[dtg]: https://crates.io/crates/dtg
 [dtg-lib]: https://crates.io/crates/dtg-lib
 

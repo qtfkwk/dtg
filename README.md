@@ -1,14 +1,14 @@
 # About
 
-Date/time CLI utility
+Date/time CLI utility ([dtg]) and library ([dtg-lib])
 
-*See also the [dtg-lib] crate.*
+# CLI
 
-# Usage
+## Usage
 
 ~~~text
 $ dtg -h
-dtg 4.1.1
+dtg 4.1.2
 Date/time CLI utility
 
 USAGE:
@@ -71,85 +71,85 @@ Notes:
        using a comma-separated string (`-z UTC,EST`).
 ~~~
 
-# Examples
+## CLI examples
 
 Get current date/time in UTC and RFC 3339 format:
 
 ```text
 $ dtg
-2022-07-22T00:42:39Z
+2022-07-23T16:14:46Z
 ```
 
 Get current date/time in the local timezone and default format:
 
 ```text
 $ dtg -l
-Thu 21 Jul 2022 20:42:39 EDT
+Sat 23 Jul 2022 12:14:46 EDT
 ```
 
 Get current date/time in explicit timezone and default format:
 
 ```text
 $ dtg -z MST
-Thu 21 Jul 2022 17:42:39 MST
+Sat 23 Jul 2022 09:14:46 MST
 ```
 
 ```text
 $ dtg -z America/Los_Angeles
-Thu 21 Jul 2022 17:42:39 PDT
+Sat 23 Jul 2022 09:14:46 PDT
 ```
 
 Get current date/time in UTC and specific format:
 
 ```text
 $ dtg -f %A
-Friday
+Saturday
 ```
 
 ```text
 $ dtg -f %s.%f
-1658450559.563670051
+1658592886.561551852
 ```
 
 Get current date/time in local timezone and specific format:
 
 ```text
 $ dtg -l -f %A
-Thursday
+Saturday
 ```
 
 Get current date/time in explicit timezone and specific format:
 
 ```text
 $ dtg -z MST -f %A
-Thursday
+Saturday
 ```
 
 Get current date/time in "a" format:
 
 ```text
 $ dtg -a
-1658450559.576073697
-2022-07-22T00:42:39Z
-Fri 22 Jul 2022 00:42:39 UTC
-Thu 21 Jul 2022 20:42:39 EDT
+1658592886.574013065
+2022-07-23T16:14:46Z
+Sat 23 Jul 2022 16:14:46 UTC
+Sat 23 Jul 2022 12:14:46 EDT
 ```
 
 Get current date/time in explicit timezone and "a" format:
 
 ```text
 $ dtg -a -z MST
-1658450559.580169423
-2022-07-22T00:42:39Z
-Fri 22 Jul 2022 00:42:39 UTC
-Thu 21 Jul 2022 17:42:39 MST
+1658592886.578177592
+2022-07-23T16:14:46Z
+Sat 23 Jul 2022 16:14:46 UTC
+Sat 23 Jul 2022 09:14:46 MST
 ```
 
 Get current date/time in "x" format:
 
 ```text
 $ dtg -x
-Xg6L0gd
+Xg6MGEk
 ```
 
 Get a specific date / time in UTC and RFC 3339 format:
@@ -884,34 +884,34 @@ Multiple timezones:
 ```text
 $ dtg -z UTC,EST5EDT,CST6CDT,MST7MDT,PST8PDT -f '%Z%n%H:%M:%S%n' -f '%Z%n%Y-%m-%d%n'
 UTC
-00:42:39
+16:14:46
 
 EDT
-20:42:39
+12:14:46
 
 CDT
-19:42:39
+11:14:46
 
 MDT
-18:42:39
+10:14:46
 
 PDT
-17:42:39
+09:14:46
 
 UTC
-2022-07-22
+2022-07-23
 
 EDT
-2022-07-21
+2022-07-23
 
 CDT
-2022-07-21
+2022-07-23
 
 MDT
-2022-07-21
+2022-07-23
 
 PDT
-2022-07-21
+2022-07-23
 
 ```
 
@@ -921,34 +921,34 @@ use a single format and `%n`:*
 ```text
 $ dtg -z UTC,EST5EDT,CST6CDT,MST7MDT,PST8PDT -f '%Z%n%H:%M:%S%n%n%Z%n%Y-%m-%d%n'
 UTC
-00:42:39
+16:14:46
 
 UTC
-2022-07-22
+2022-07-23
 
 EDT
-20:42:39
+12:14:46
 
 EDT
-2022-07-21
+2022-07-23
 
 CDT
-19:42:39
+11:14:46
 
 CDT
-2022-07-21
+2022-07-23
 
 MDT
-18:42:39
+10:14:46
 
 MDT
-2022-07-21
+2022-07-23
 
 PDT
-17:42:39
+09:14:46
 
 PDT
-2022-07-21
+2022-07-23
 
 ```
 
@@ -956,12 +956,91 @@ Use a custom separator between formats/timezones:
 
 ```text
 $ dtg -z PST8PDT,MST7MDT,CST6CDT,EST5EDT,UTC -f '[%Z %H:%M:%S]' -s ' '
-[PDT 17:42:39] [MDT 18:42:39] [CDT 19:42:39] [EDT 20:42:39] [UTC 00:42:39]
+[PDT 09:14:46] [MDT 10:14:46] [CDT 11:14:46] [EDT 12:14:46] [UTC 16:14:46]
+```
+
+# Library
+
+```Rust
+use chrono::{TimeZone, Utc};
+use dtg_lib::{tz, Dtg, Format};
+
+let epoch = 1658448142;
+let nanoseconds = 936196858;
+let rfc_3339 = "2022-07-22T00:02:22Z";
+let default_utc = "Fri 22 Jul 2022 00:02:22 UTC";
+let default_mt = "Thu 21 Jul 2022 18:02:22 MDT";
+let x = "Xg6L02M";
+let a_utc = format!("{epoch}.000000000\n{rfc_3339}\n{default_utc}\n{default_utc}");
+let a_mt = format!("{epoch}.000000000\n{rfc_3339}\n{default_utc}\n{default_mt}");
+let day_of_week_utc = "Friday";
+let day_of_week_mt = "Thursday";
+let tz_utc = tz("UTC").ok();
+let tz_mt = tz("MST7MDT").ok();
+let default_fmt = Some(Format::default());
+let day_of_week_fmt = Some(Format::custom("%A"));
+
+// Create Dtg
+
+let dtg_1_str = format!("{}", epoch);
+
+let dtg_1_ts = Dtg::from(&dtg_1_str).unwrap();
+let dtg_1_dt = Dtg::from_dt(&Utc.timestamp(epoch, 0));
+let dtg_1_x = Dtg::from_x(x).unwrap();
+
+assert_eq!(dtg_1_ts, dtg_1_dt);
+assert_eq!(dtg_1_dt, dtg_1_x);
+assert_eq!(dtg_1_x, dtg_1_ts);
+
+// Create Dtg with nanoseconds
+
+let dtg_2_str = format!("{}.{}", epoch, nanoseconds);
+
+let dtg_2_ts = Dtg::from(&dtg_2_str).unwrap();
+let dtg_2_dt = Dtg::from_dt(&Utc.timestamp(epoch, nanoseconds));
+
+assert_eq!(dtg_2_ts, dtg_2_dt);
+
+// Default format
+
+assert_eq!(dtg_1_ts.default(&None), default_utc);
+assert_eq!(dtg_1_ts.default(&tz_utc), default_utc);
+assert_eq!(dtg_1_ts.default(&tz_mt), default_mt);
+
+assert_eq!(dtg_1_ts.format(&default_fmt, &None), default_utc);
+assert_eq!(dtg_1_ts.format(&default_fmt, &tz_utc), default_utc);
+assert_eq!(dtg_1_ts.format(&default_fmt, &tz_mt), default_mt);
+
+// RFC 3339 format
+
+assert_eq!(dtg_1_ts.rfc_3339(), rfc_3339);
+assert_eq!(dtg_1_ts.format(&None, &None), rfc_3339);
+
+// "x" format
+
+assert_eq!(dtg_1_ts.x_format(), x);
+assert_eq!(dtg_1_ts.format(&Some(Format::X), &None), x);
+
+// "a" format
+
+assert_eq!(dtg_1_ts.a_format(&None), a_utc);
+assert_eq!(dtg_1_ts.a_format(&tz_utc), a_utc);
+assert_eq!(dtg_1_ts.a_format(&tz_mt), a_mt);
+
+assert_eq!(dtg_1_ts.format(&Some(Format::A), &None), a_utc);
+assert_eq!(dtg_1_ts.format(&Some(Format::A), &tz_utc), a_utc);
+assert_eq!(dtg_1_ts.format(&Some(Format::A), &tz_mt), a_mt);
+
+// Custom format
+
+assert_eq!(dtg_1_ts.format(&day_of_week_fmt, &None), day_of_week_utc);
+assert_eq!(dtg_1_ts.format(&day_of_week_fmt, &tz_mt), day_of_week_mt);
 ```
 
 # Formats
 
-The following information originates from the [chrono documentation], which `dtg` uses internally.
+The following information originates from the [chrono documentation], which [dtg] and [dtg-lib] use
+internally.
 
 ## Date specifiers
 
@@ -1042,5 +1121,6 @@ Spec. | Description
 `%%`  | Literal percent sign.
 
 [chrono documentation]: https://docs.rs/chrono/latest/chrono/format/strftime/index.html#specifiers
+[dtg]: https://crates.io/crates/dtg
 [dtg-lib]: https://crates.io/crates/dtg-lib
 
