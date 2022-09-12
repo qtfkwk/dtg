@@ -8,6 +8,7 @@ check: .check
 
 .check: Cargo.lock Cargo.toml
 	cargo outdated --exit-code 1
+	cargo audit
 	@touch $@
 
 build: README.md target/release/${NAME}

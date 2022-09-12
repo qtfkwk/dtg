@@ -30,4 +30,6 @@
 * 4.1.0: Added `Dtg::{a_format,x_format,default}`, `Format::custom` methods to lib
 * 4.1.1: Fix broken `-i`, `-c` in cli
 * 4.1.2: Generate readme files
+* 4.1.3: Update dependencies (see
+  [comment](https://github.com/chronotope/chrono/issues/602#issuecomment-1242149249))
 

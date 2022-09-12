@@ -8,7 +8,7 @@ Date/time CLI utility ([dtg]) and library ([dtg-lib])
 
 ~~~text
 $ dtg -h
-dtg 4.1.2
+dtg 4.1.3
 Date/time CLI utility
 
 USAGE:
@@ -77,79 +77,79 @@ Get current date/time in UTC and RFC 3339 format:
 
 ```text
 $ dtg
-2022-07-23T16:14:46Z
+2022-09-12T14:13:55Z
 ```
 
 Get current date/time in the local timezone and default format:
 
 ```text
 $ dtg -l
-Sat 23 Jul 2022 12:14:46 EDT
+Mon 12 Sep 2022 10:13:55 EDT
 ```
 
 Get current date/time in explicit timezone and default format:
 
 ```text
 $ dtg -z MST
-Sat 23 Jul 2022 09:14:46 MST
+Mon 12 Sep 2022 07:13:55 MST
 ```
 
 ```text
 $ dtg -z America/Los_Angeles
-Sat 23 Jul 2022 09:14:46 PDT
+Mon 12 Sep 2022 07:13:55 PDT
 ```
 
 Get current date/time in UTC and specific format:
 
 ```text
 $ dtg -f %A
-Saturday
+Monday
 ```
 
 ```text
 $ dtg -f %s.%f
-1658592886.561551852
+1662992035.220709428
 ```
 
 Get current date/time in local timezone and specific format:
 
 ```text
 $ dtg -l -f %A
-Saturday
+Monday
 ```
 
 Get current date/time in explicit timezone and specific format:
 
 ```text
 $ dtg -z MST -f %A
-Saturday
+Monday
 ```
 
 Get current date/time in "a" format:
 
 ```text
 $ dtg -a
-1658592886.574013065
-2022-07-23T16:14:46Z
-Sat 23 Jul 2022 16:14:46 UTC
-Sat 23 Jul 2022 12:14:46 EDT
+1662992035.235636992
+2022-09-12T14:13:55Z
+Mon 12 Sep 2022 14:13:55 UTC
+Mon 12 Sep 2022 10:13:55 EDT
 ```
 
 Get current date/time in explicit timezone and "a" format:
 
 ```text
 $ dtg -a -z MST
-1658592886.578177592
-2022-07-23T16:14:46Z
-Sat 23 Jul 2022 16:14:46 UTC
-Sat 23 Jul 2022 09:14:46 MST
+1662992035.240492006
+2022-09-12T14:13:55Z
+Mon 12 Sep 2022 14:13:55 UTC
+Mon 12 Sep 2022 07:13:55 MST
 ```
 
 Get current date/time in "x" format:
 
 ```text
 $ dtg -x
-Xg6MGEk
+Xg8BEDt
 ```
 
 Get a specific date / time in UTC and RFC 3339 format:
@@ -884,34 +884,34 @@ Multiple timezones:
 ```text
 $ dtg -z UTC,EST5EDT,CST6CDT,MST7MDT,PST8PDT -f '%Z%n%H:%M:%S%n' -f '%Z%n%Y-%m-%d%n'
 UTC
-16:14:46
+14:13:55
 
 EDT
-12:14:46
+10:13:55
 
 CDT
-11:14:46
+09:13:55
 
 MDT
-10:14:46
+08:13:55
 
 PDT
-09:14:46
+07:13:55
 
 UTC
-2022-07-23
+2022-09-12
 
 EDT
-2022-07-23
+2022-09-12
 
 CDT
-2022-07-23
+2022-09-12
 
 MDT
-2022-07-23
+2022-09-12
 
 PDT
-2022-07-23
+2022-09-12
 
 ```
 
@@ -921,34 +921,34 @@ use a single format and `%n`:*
 ```text
 $ dtg -z UTC,EST5EDT,CST6CDT,MST7MDT,PST8PDT -f '%Z%n%H:%M:%S%n%n%Z%n%Y-%m-%d%n'
 UTC
-16:14:46
+14:13:55
 
 UTC
-2022-07-23
+2022-09-12
 
 EDT
-12:14:46
+10:13:55
 
 EDT
-2022-07-23
+2022-09-12
 
 CDT
-11:14:46
+09:13:55
 
 CDT
-2022-07-23
+2022-09-12
 
 MDT
-10:14:46
+08:13:55
 
 MDT
-2022-07-23
+2022-09-12
 
 PDT
-09:14:46
+07:13:55
 
 PDT
-2022-07-23
+2022-09-12
 
 ```
 
@@ -956,7 +956,7 @@ Use a custom separator between formats/timezones:
 
 ```text
 $ dtg -z PST8PDT,MST7MDT,CST6CDT,EST5EDT,UTC -f '[%Z %H:%M:%S]' -s ' '
-[PDT 09:14:46] [MDT 10:14:46] [CDT 11:14:46] [EDT 12:14:46] [UTC 16:14:46]
+[PDT 07:13:55] [MDT 08:13:55] [CDT 09:13:55] [EDT 10:13:55] [UTC 14:13:55]
 ```
 
 # Library
