@@ -8,67 +8,67 @@ Date/time CLI utility ([dtg]) and library ([dtg-lib])
 
 ~~~text
 $ dtg -h
-dtg 4.1.3
 Date/time CLI utility
 
-USAGE:
-    dtg [OPTIONS] [ARG]...
+Usage: dtg [OPTIONS] [ARG]...
 
-ARGS:
-    <ARG>...    Argument [-X: timestamp in "x" format (2), -Z: timezone
-                search term, timestamp in "%s.%f" format, default: now]
+Arguments:
+  [ARG]...  Argument [-X: "x" timestamp (2), -Z: timezone, "%s.%f" timestamp,
+            default: now]
 
-OPTIONS:
-    -l                    Local timezone
-    -a                    "a" format (1)
-    -x                    "x" format (2)
-    -X                    Give timestamp argument(s) in "x" format (2)
-    -Z                    Search/list timezones
-        --readme          Print the readme
-    -f <FORMATS>          Format(s) [-z/-l: "%a %d %b %Y %H:%M:%S %Z",
-                          "%Y-%m-%dT%H:%M:%SZ"]
-    -z <ZONE>             Timezone(s) [default: UTC] (3)
-    -s <SEPARATOR>        Separator [default: "\n"]
-    -i <N>                Run every N seconds
-    -c <N>                Clear and run every N seconds
-    -h, --help            Print help information
-    -V, --version         Print version information
+Options:
+  -l                  Local timezone
+  -a                  "a" format (1)
+  -x                  "x" format (2)
+  -X                  Give timestamp argument(s) in "x" format (2)
+  -Z                  Search/list timezones
+  -f <FORMATS>        Format(s) [-z/-l: "%a %d %b %Y %H:%M:%S %Z",
+                      "%Y-%m-%dT%H:%M:%SZ"]
+  -z <ZONE>           Timezone(s) [default: UTC] (3)
+  -s <SEPARATOR>      Separator [default: "\n"]
+  -i <N>              Run every N seconds
+  -c <N>              Clear and run every N seconds
+  -r, --readme        Print the readme
+  -h, --help          Print help
+  -V, --version       Print version
+
+---
 
 <https://github.com/qtfkwk/dtg>
 
 Notes:
 
-    1. "a" format:
+1. "a" format:
 
-       ```text
-       %s.%f
-       %Y-%m-%dT%H:%M:%SZ
-       %a %d %b %Y %H:%M:%S %Z # UTC
-       %a %d %b %Y %H:%M:%S %Z # Specified or local timezone
-       ```
+   ```text
+   %s.%f
+   %Y-%m-%dT%H:%M:%SZ
+   %a %d %b %Y %H:%M:%S %Z # UTC
+   %a %d %b %Y %H:%M:%S %Z # Specified or local timezone
+   ```
 
-    2. "x" format (novel UTC / base 60 encoding):
+2. "x" format (novel UTC / base 60 encoding):
 
-       ```text
-       0* 0 1 2 3 4 5 6 7 8 9
-       1* A B C D E F G H I J
-       2* K L M N O P Q R S T
-       3* U V W X Y Z a b c d
-       4* e f g h i j k l m n
-       5* o p q r s t u v w x
-       ```
+   ```text
+   0* 0 1 2 3 4 5 6 7 8 9
+   1* A B C D E F G H I J
+   2* K L M N O P Q R S T
+   3* U V W X Y Z a b c d
+   4* e f g h i j k l m n
+   5* o p q r s t u v w x
+   ```
 
-       Field  | Values           | Result
-       -------|------------------|----------
-       Year   | 2020 => 33*60+40 | Xe
-       Month  | Jan-Dec => 0-11  | 0-B
-       Day    | 0-27/28/29/30    | 0-R/S/T/U
-       Hour   | 0-23             | 0-N
-       Minute | 0-59             | 0-x
-       Second | 0-59             | 0-x
+   Field  | Values           | Result
+   -------|------------------|----------
+   Year   | 2020 => 33*60+40 | Xe
+   Month  | Jan-Dec => 0-11  | 0-B
+   Day    | 0-27/28/29/30    | 0-R/S/T/U
+   Hour   | 0-23             | 0-N
+   Minute | 0-59             | 0-x
+   Second | 0-59             | 0-x
 
-    3. Prints the timestamp in each format with one or more timezones
-       using a comma-separated string (`-z UTC,EST`).
+3. Prints the timestamp in each format with one or more timezones using a
+   comma-separated string (`-z UTC,EST`).
 ~~~
 
 ## CLI examples
@@ -77,79 +77,79 @@ Get current date/time in UTC and RFC 3339 format:
 
 ```text
 $ dtg
-2022-09-12T14:13:55Z
+2023-02-21T16:26:15Z
 ```
 
 Get current date/time in the local timezone and default format:
 
 ```text
 $ dtg -l
-Mon 12 Sep 2022 10:13:55 EDT
+Tue 21 Feb 2023 11:26:15 EST
 ```
 
 Get current date/time in explicit timezone and default format:
 
 ```text
 $ dtg -z MST
-Mon 12 Sep 2022 07:13:55 MST
+Tue 21 Feb 2023 09:26:15 MST
 ```
 
 ```text
 $ dtg -z America/Los_Angeles
-Mon 12 Sep 2022 07:13:55 PDT
+Tue 21 Feb 2023 08:26:15 PST
 ```
 
 Get current date/time in UTC and specific format:
 
 ```text
 $ dtg -f %A
-Monday
+Tuesday
 ```
 
 ```text
 $ dtg -f %s.%f
-1662992035.220709428
+1676996775.702286510
 ```
 
 Get current date/time in local timezone and specific format:
 
 ```text
 $ dtg -l -f %A
-Monday
+Tuesday
 ```
 
 Get current date/time in explicit timezone and specific format:
 
 ```text
 $ dtg -z MST -f %A
-Monday
+Tuesday
 ```
 
 Get current date/time in "a" format:
 
 ```text
 $ dtg -a
-1662992035.235636992
-2022-09-12T14:13:55Z
-Mon 12 Sep 2022 14:13:55 UTC
-Mon 12 Sep 2022 10:13:55 EDT
+1676996775.710514889
+2023-02-21T16:26:15Z
+Tue 21 Feb 2023 16:26:15 UTC
+Tue 21 Feb 2023 11:26:15 EST
 ```
 
 Get current date/time in explicit timezone and "a" format:
 
 ```text
 $ dtg -a -z MST
-1662992035.240492006
-2022-09-12T14:13:55Z
-Mon 12 Sep 2022 14:13:55 UTC
-Mon 12 Sep 2022 07:13:55 MST
+1676996775.712272627
+2023-02-21T16:26:15Z
+Tue 21 Feb 2023 16:26:15 UTC
+Tue 21 Feb 2023 09:26:15 MST
 ```
 
 Get current date/time in "x" format:
 
 ```text
 $ dtg -x
-Xg8BEDt
+Xh1KGQF
 ```
 
 Get a specific date / time in UTC and RFC 3339 format:
@@ -163,7 +163,7 @@ Get a specific date/time in the local timezone and default format:
 
 ```text
 $ dtg -l 1606447276.941324100
-Thu 26 Nov 2020 22:21:16 EST
+2020-11-27T03:21:16Z
 ```
 
 Get a specific date/time in explicit timezone and default format:
@@ -369,6 +369,7 @@ America/Cayenne
 America/Cayman
 America/Chicago
 America/Chihuahua
+America/Ciudad_Juarez
 America/Coral_Harbour
 America/Cordoba
 America/Costa_Rica
@@ -723,6 +724,7 @@ Europe/Jersey
 Europe/Kaliningrad
 Europe/Kiev
 Europe/Kirov
+Europe/Kyiv
 Europe/Lisbon
 Europe/Ljubljana
 Europe/London
@@ -884,35 +886,34 @@ Multiple timezones:
 ```text
 $ dtg -z UTC,EST5EDT,CST6CDT,MST7MDT,PST8PDT -f '%Z%n%H:%M:%S%n' -f '%Z%n%Y-%m-%d%n'
 UTC
-14:13:55
+16:26:15
 
-EDT
-10:13:55
+EST
+11:26:15
 
-CDT
-09:13:55
+CST
+10:26:15
 
-MDT
-08:13:55
+MST
+09:26:15
 
-PDT
-07:13:55
+PST
+08:26:15
 
 UTC
-2022-09-12
+2023-02-21
 
-EDT
-2022-09-12
+EST
+2023-02-21
 
-CDT
-2022-09-12
+CST
+2023-02-21
 
-MDT
-2022-09-12
+MST
+2023-02-21
 
-PDT
-2022-09-12
-
+PST
+2023-02-21
 ```
 
 *Note the above prints each format for each timezone... to print each timezone for each format,
@@ -921,45 +922,44 @@ use a single format and `%n`:*
 ```text
 $ dtg -z UTC,EST5EDT,CST6CDT,MST7MDT,PST8PDT -f '%Z%n%H:%M:%S%n%n%Z%n%Y-%m-%d%n'
 UTC
-14:13:55
+16:26:15
 
 UTC
-2022-09-12
+2023-02-21
 
-EDT
-10:13:55
+EST
+11:26:15
 
-EDT
-2022-09-12
+EST
+2023-02-21
 
-CDT
-09:13:55
+CST
+10:26:15
 
-CDT
-2022-09-12
+CST
+2023-02-21
 
-MDT
-08:13:55
+MST
+09:26:15
 
-MDT
-2022-09-12
+MST
+2023-02-21
 
-PDT
-07:13:55
+PST
+08:26:15
 
-PDT
-2022-09-12
-
+PST
+2023-02-21
 ```
 
 Use a custom separator between formats/timezones:
 
 ```text
 $ dtg -z PST8PDT,MST7MDT,CST6CDT,EST5EDT,UTC -f '[%Z %H:%M:%S]' -s ' '
-[PDT 07:13:55] [MDT 08:13:55] [CDT 09:13:55] [EDT 10:13:55] [UTC 14:13:55]
+[PST 08:26:15] [MST 09:26:15] [CST 10:26:15] [EST 11:26:15] [UTC 16:26:15]
 ```
 
-# Library
+-e # Library
 
 ```Rust
 use chrono::{TimeZone, Utc};

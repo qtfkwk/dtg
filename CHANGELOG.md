@@ -32,4 +32,6 @@
 * 4.1.2: Generate readme files
 * 4.1.3: Update dependencies (see
   [comment](https://github.com/chronotope/chrono/issues/602#issuecomment-1242149249))
+* 5.0.0: Update dependencies (clap v3 to v4, chrono 0.4.22 to 0.4.23); apply clippy fixes; replace
+  `Makefile` with a cargo-make `Makefile.toml`
 

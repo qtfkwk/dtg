@@ -4,7 +4,7 @@
 // Crates
 //--------------------------------------------------------------------------------------------------
 
-use chrono::{Datelike, DateTime, Timelike, TimeZone, Utc};
+use chrono::{DateTime, Datelike, TimeZone, Timelike, Utc};
 use chrono_tz::Tz;
 use lazy_static::lazy_static;
 
@@ -93,9 +93,7 @@ pub struct Dtg {
 impl Dtg {
     /// Create a current [Dtg]
     pub fn now() -> Self {
-        Self {
-            dt: Utc::now(),
-        }
+        Self { dt: Utc::now() }
     }
 
     /// Create a [Dtg] from a string timestamp
@@ -106,11 +104,11 @@ impl Dtg {
     ///
     /// assert_eq!(
     ///     Dtg::from("1658448142").unwrap(),
-    ///     Dtg::from_dt(&Utc.timestamp(1658448142, 0)),
+    ///     Dtg::from_dt(&Utc.timestamp_opt(1658448142, 0).unwrap()),
     /// );
     /// assert_eq!(
     ///     Dtg::from("1658448142.936196858").unwrap(),
-    ///     Dtg::from_dt(&Utc.timestamp(1658448142, 936196858)),
+    ///     Dtg::from_dt(&Utc.timestamp_opt(1658448142, 936196858).unwrap()),
     /// );
     /// ```
     pub fn from(s: &str) -> Result<Self, DtgError> {
@@ -124,10 +122,14 @@ impl Dtg {
                             nanoseconds.push('0');
                         }
                         if let Ok(nanoseconds) = nanoseconds[..9].parse::<u32>() {
-                            return Ok(Self { dt: Utc.timestamp(seconds, nanoseconds) });
+                            return Ok(Self {
+                                dt: Utc.timestamp_opt(seconds, nanoseconds).unwrap(),
+                            });
                         }
                     } else {
-                        return Ok(Self { dt: Utc.timestamp(seconds, 0) });
+                        return Ok(Self {
+                            dt: Utc.timestamp_opt(seconds, 0).unwrap(),
+                        });
                     }
                 }
             }
@@ -143,7 +145,7 @@ impl Dtg {
     ///
     /// assert_eq!(
     ///     Dtg::from_x("Xg6L02M").unwrap(),
-    ///     Dtg::from_dt(&Utc.timestamp(1658448142, 0)),
+    ///     Dtg::from_dt(&Utc.timestamp_opt(1658448142, 0).unwrap()),
     /// );
     /// ```
     pub fn from_x(s: &str) -> Result<Self, DtgError> {
@@ -162,25 +164,25 @@ impl Dtg {
         if y > 262143 {
             return Err(DtgError::new(&format!("Invalid timestamp: `{}`", s), 101));
         }
-        let dt = Utc.ymd(y, v[4], v[3]).and_hms(v[2], v[1], v[0]);
+        let dt = Utc
+            .with_ymd_and_hms(y, v[4], v[3], v[2], v[1], v[0])
+            .unwrap();
         Ok(Self { dt })
     }
 
-    /// Create a [Dtg] from a [DateTime<Utc>]
+    /// Create a [Dtg] from a [`DateTime<Utc>`]
     ///
     /// ```
     /// use chrono::{TimeZone, Utc};
     /// use dtg_lib::Dtg;
     ///
     /// assert_eq!(
-    ///     Dtg::from_dt(&Utc.timestamp(1658448142, 0)),
+    ///     Dtg::from_dt(&Utc.timestamp_opt(1658448142, 0).unwrap()),
     ///     Dtg::from("1658448142").unwrap(),
     /// );
     /// ```
     pub fn from_dt(dt: &DateTime<Utc>) -> Self {
-        Self {
-            dt: dt.clone(),
-        }
+        Self { dt: *dt }
     }
 
     /// Format as a string
@@ -432,7 +434,7 @@ pub enum Format {
 
 impl Format {
     /// Create a default [Format]
-    pub fn default() -> Self {
+    pub fn new() -> Self {
         Self::Custom(DEFAULT.to_string())
     }
 
@@ -449,7 +451,7 @@ impl Format {
     /// Format a [DateTime<Utc>] with a timezone
     fn with(&self, dt: &DateTime<Utc>, tz: &Tz) -> String {
         match self {
-            Format::Custom(f) => dt.with_timezone(tz).format(&f).to_string(),
+            Format::Custom(f) => dt.with_timezone(tz).format(f).to_string(),
             Format::A => format!(
                 "{}\n{}\n{}\n{}",
                 dt.format(EPOCH),
@@ -483,6 +485,12 @@ impl Format {
         let m = ITOC.get(&(dt.minute() as u8)).unwrap();
         let s = ITOC.get(&(dt.second() as u8)).unwrap();
         format!("{}{}{}{}{}{}", year, mon, day, h, m, s)
+    }
+}
+
+impl Default for Format {
+    fn default() -> Format {
+        Format::new()
     }
 }
 
@@ -1112,10 +1120,7 @@ pub fn tz(s: &str) -> Result<Tz, DtgError> {
         },
         _ => match s.parse() {
             Ok(z) => Ok(z),
-            Err(_) => Err(DtgError::new(
-                &format!("Invalid timezone: `{}`", s),
-                102,
-            )),
+            Err(_) => Err(DtgError::new(&format!("Invalid timezone: `{}`", s), 102)),
         },
     }
 }

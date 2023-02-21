@@ -8,5 +8,6 @@ Date/time CLI utility
 
 ~~~text
 $ dtg -h
+!run:./target/release/dtg -h
 ~~~
 
