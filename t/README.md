@@ -8,7 +8,7 @@ Date/time CLI utility ([dtg]) and library ([dtg-lib])
 
 ~~~text
 $ dtg -h
-!run:./target/release/dtg -h
+!run:../target/release/dtg -h
 ~~~
 
 ## CLI examples

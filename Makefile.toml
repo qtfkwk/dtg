@@ -52,13 +52,15 @@ cargo build --release --color=always
 [tasks.readme]
 dependencies = ["prebuild"]
 script = '''
-kapow cli/README.template.md >cli/README.md
+#!/usr/bin/env bash
+set -xeo pipefail
+kapow cli/t/README.md >cli/README.md
 kapow cli/EXAMPLES.md >>cli/README.md
 cat FORMATS.md >>cli/README.md
-cp lib/README.template.md lib/README.md
+kapow lib/t/README.md >lib/README.md
 cat lib/EXAMPLES.md >>lib/README.md
 cat FORMATS.md >>lib/README.md
-kapow README.template.md >README.md
+kapow t/README.md >README.md
 sed -n $(($(grep -n '^# Examples$' cli/README.md |cut -d: -f1)+2)),\
 $(($(grep -n '^# Formats$' cli/README.md |cut -d: -f1)-1))p cli/README.md >>README.md
 echo -e "# Library\n" >>README.md
