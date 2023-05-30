@@ -2,7 +2,6 @@
 
 //--------------------------------------------------------------------------------------------------
 // Crates
-//--------------------------------------------------------------------------------------------------
 
 use chrono::{DateTime, Datelike, TimeZone, Timelike, Utc};
 use chrono_tz::Tz;
@@ -12,7 +11,6 @@ use std::collections::HashMap;
 
 //--------------------------------------------------------------------------------------------------
 // Constants / lazy static
-//--------------------------------------------------------------------------------------------------
 
 const DEFAULT: &str = "%a %d %b %Y %H:%M:%S %Z";
 const EPOCH: &str = "%s.%f";
@@ -45,13 +43,14 @@ lazy_static! {
 
 //--------------------------------------------------------------------------------------------------
 // DtgError struct
-//--------------------------------------------------------------------------------------------------
 
-/// Custom error
-///
-/// * 101: Invalid timestamp
-/// * 102: Invalid timezone
-/// * 103: Failed to get local timezone
+/**
+Custom error
+
+* 101: Invalid timestamp
+* 102: Invalid timezone
+* 103: Failed to get local timezone
+*/
 #[derive(Debug)]
 pub struct DtgError {
     pub code: usize,
@@ -60,8 +59,8 @@ pub struct DtgError {
 
 impl DtgError {
     /// Create error
-    pub fn new(message: &str, code: usize) -> Self {
-        Self {
+    pub fn new(message: &str, code: usize) -> DtgError {
+        DtgError {
             code,
             message: message.to_string(),
         }
@@ -75,43 +74,48 @@ impl std::fmt::Display for DtgError {
 }
 
 impl std::cmp::PartialEq for DtgError {
-    fn eq(&self, other: &Self) -> bool {
+    fn eq(&self, other: &DtgError) -> bool {
         self.code == other.code && self.message == other.message
     }
 }
 
 //--------------------------------------------------------------------------------------------------
 // Dtg struct
-//--------------------------------------------------------------------------------------------------
 
-/// Date time group
+/**
+Date time group
+*/
 #[derive(Debug)]
 pub struct Dtg {
     dt: DateTime<Utc>,
 }
 
 impl Dtg {
-    /// Create a current [Dtg]
-    pub fn now() -> Self {
-        Self { dt: Utc::now() }
+    /**
+    Create a current [Dtg]
+    */
+    pub fn now() -> Dtg {
+        Dtg { dt: Utc::now() }
     }
 
-    /// Create a [Dtg] from a string timestamp
-    ///
-    /// ```
-    /// use chrono::{TimeZone, Utc};
-    /// use dtg_lib::Dtg;
-    ///
-    /// assert_eq!(
-    ///     Dtg::from("1658448142").unwrap(),
-    ///     Dtg::from_dt(&Utc.timestamp_opt(1658448142, 0).unwrap()),
-    /// );
-    /// assert_eq!(
-    ///     Dtg::from("1658448142.936196858").unwrap(),
-    ///     Dtg::from_dt(&Utc.timestamp_opt(1658448142, 936196858).unwrap()),
-    /// );
-    /// ```
-    pub fn from(s: &str) -> Result<Self, DtgError> {
+    /**
+    Create a [Dtg] from a string timestamp
+
+    ```
+    use chrono::{TimeZone, Utc};
+    use dtg_lib::Dtg;
+
+    assert_eq!(
+        Dtg::from("1658448142").unwrap(),
+        Dtg::from_dt(&Utc.timestamp_opt(1658448142, 0).unwrap()),
+    );
+    assert_eq!(
+        Dtg::from("1658448142.936196858").unwrap(),
+        Dtg::from_dt(&Utc.timestamp_opt(1658448142, 936196858).unwrap()),
+    );
+    ```
+    */
+    pub fn from(s: &str) -> Result<Dtg, DtgError> {
         let mut x = s.split('.');
         if let Some(seconds) = x.next() {
             if let Ok(seconds) = seconds.parse::<i64>() {
@@ -122,33 +126,34 @@ impl Dtg {
                             nanoseconds.push('0');
                         }
                         if let Ok(nanoseconds) = nanoseconds[..9].parse::<u32>() {
-                            return Ok(Self {
+                            return Ok(Dtg {
                                 dt: Utc.timestamp_opt(seconds, nanoseconds).unwrap(),
                             });
                         }
                     } else {
-                        return Ok(Self {
+                        return Ok(Dtg {
                             dt: Utc.timestamp_opt(seconds, 0).unwrap(),
                         });
                     }
                 }
             }
         }
-        Err(DtgError::new(&format!("Invalid timestamp: `{}`", s), 101))
+        Err(DtgError::new(&format!("Invalid timestamp: `{s}`"), 101))
     }
 
-    /// Create a [Dtg] from an "x" format timestamp
-    ///
-    /// ```
-    /// use chrono::{TimeZone, Utc};
-    /// use dtg_lib::Dtg;
-    ///
-    /// assert_eq!(
-    ///     Dtg::from_x("Xg6L02M").unwrap(),
-    ///     Dtg::from_dt(&Utc.timestamp_opt(1658448142, 0).unwrap()),
-    /// );
-    /// ```
-    pub fn from_x(s: &str) -> Result<Self, DtgError> {
+    /**
+    Create a [Dtg] from an "x" format timestamp
+
+    ```
+    use dtg_lib::{Dtg, Format};
+
+    let dtg = Dtg::from_x("Xg6L02M").unwrap();
+
+    assert_eq!(dtg.format(&Some(Format::custom("%s")), &None), "1658448142");
+    assert_eq!(dtg.rfc_3339(), "2022-07-22T00:02:22Z");
+    ```
+    */
+    pub fn from_x(s: &str) -> Result<Dtg, DtgError> {
         let mut v: Vec<u32> = s
             .chars()
             .rev()
@@ -162,124 +167,136 @@ impl Dtg {
             y += (*CTOI.get(&c).unwrap() as i32) * 60_i32.pow(exp as u32);
         }
         if y > 262143 {
-            return Err(DtgError::new(&format!("Invalid timestamp: `{}`", s), 101));
+            return Err(DtgError::new(&format!("Invalid timestamp: `{s}`"), 101));
         }
         let dt = Utc
             .with_ymd_and_hms(y, v[4], v[3], v[2], v[1], v[0])
             .unwrap();
-        Ok(Self { dt })
+        Ok(Dtg { dt })
     }
 
-    /// Create a [Dtg] from a [`DateTime<Utc>`]
-    ///
-    /// ```
-    /// use chrono::{TimeZone, Utc};
-    /// use dtg_lib::Dtg;
-    ///
-    /// assert_eq!(
-    ///     Dtg::from_dt(&Utc.timestamp_opt(1658448142, 0).unwrap()),
-    ///     Dtg::from("1658448142").unwrap(),
-    /// );
-    /// ```
-    pub fn from_dt(dt: &DateTime<Utc>) -> Self {
-        Self { dt: *dt }
+    /**
+    Create a [Dtg] from a [`DateTime<Utc>`]
+
+    ```
+    use chrono::{TimeZone, Utc};
+    use dtg_lib::Dtg;
+
+    assert_eq!(
+        Dtg::from("1658448142").unwrap(),
+        Dtg::from_dt(&Utc.timestamp_opt(1658448142, 0).unwrap()),
+    );
+    ```
+    */
+    pub fn from_dt(dt: &DateTime<Utc>) -> Dtg {
+        Dtg { dt: *dt }
     }
 
-    /// Format as a string
-    ///
-    /// ```
-    /// use dtg_lib::{tz, Dtg};
-    ///
-    /// let dtg = Dtg::from("1658448142").unwrap();
-    /// let default_utc = "Fri 22 Jul 2022 00:02:22 UTC";
-    /// let default_mt = "Thu 21 Jul 2022 18:02:22 MDT";
-    ///
-    /// assert_eq!(dtg.default(&None), default_utc);
-    /// assert_eq!(dtg.default(&tz("UTC").ok()), default_utc);
-    /// assert_eq!(dtg.default(&tz("MST7MDT").ok()), default_mt);
-    /// ```
+    /**
+    Format as a string
+
+    ```
+    use dtg_lib::{tz, Dtg};
+
+    let dtg = Dtg::from("1658448142").unwrap();
+    let default_utc = "Fri 22 Jul 2022 00:02:22 UTC";
+    let default_mt = "Thu 21 Jul 2022 18:02:22 MDT";
+
+    assert_eq!(dtg.default(&None), default_utc);
+    assert_eq!(dtg.default(&tz("UTC").ok()), default_utc);
+    assert_eq!(dtg.default(&tz("MST7MDT").ok()), default_mt);
+    ```
+    */
     pub fn default(&self, tz: &Option<Tz>) -> String {
         self.format(&Some(Format::default()), tz)
     }
 
-    /// Format as an RFC 3339 string
-    ///
-    /// ```
-    /// use dtg_lib::Dtg;
-    ///
-    /// let dtg = Dtg::from("1658448142").unwrap();
-    ///
-    /// assert_eq!(dtg.rfc_3339(), "2022-07-22T00:02:22Z");
-    /// ```
+    /**
+    Format as an RFC 3339 string
+
+    ```
+    use dtg_lib::Dtg;
+
+    let dtg = Dtg::from("1658448142").unwrap();
+
+    assert_eq!(dtg.rfc_3339(), "2022-07-22T00:02:22Z");
+    ```
+    */
     pub fn rfc_3339(&self) -> String {
         self.format(&None, &None)
     }
 
-    /// Format as "x" format
-    ///
-    /// ```
-    /// use dtg_lib::Dtg;
-    ///
-    /// let dtg = Dtg::from("1658448142").unwrap();
-    ///
-    /// assert_eq!(dtg.x_format(), "Xg6L02M");
-    /// ```
+    /**
+    Format as "x" format
+
+    ```
+    use dtg_lib::Dtg;
+
+    let dtg = Dtg::from("1658448142").unwrap();
+
+    assert_eq!(dtg.x_format(), "Xg6L02M");
+    ```
+    */
     pub fn x_format(&self) -> String {
         self.format(&Some(Format::X), &None)
     }
 
-    /// Format as "a" format
-    ///
-    /// ```
-    /// use dtg_lib::{tz, Dtg};
-    ///
-    /// let dtg = Dtg::from("1658448142").unwrap();
-    /// let a_utc = "\
-    /// 1658448142.000000000
-    /// 2022-07-22T00:02:22Z
-    /// Fri 22 Jul 2022 00:02:22 UTC
-    /// Fri 22 Jul 2022 00:02:22 UTC";
-    /// let a_mt = "\
-    /// 1658448142.000000000
-    /// 2022-07-22T00:02:22Z
-    /// Fri 22 Jul 2022 00:02:22 UTC
-    /// Thu 21 Jul 2022 18:02:22 MDT";
-    ///
-    /// assert_eq!(dtg.a_format(&None), a_utc);
-    /// assert_eq!(dtg.a_format(&tz("UTC").ok()), a_utc);
-    /// assert_eq!(dtg.a_format(&tz("MST7MDT").ok()), a_mt);
-    /// ```
+    /**
+    Format as "a" format
+
+    ```
+    use dtg_lib::{tz, Dtg};
+
+    let dtg = Dtg::from("1658448142").unwrap();
+    let a_utc = "\
+    1658448142.000000000
+    2022-07-22T00:02:22Z
+    Fri 22 Jul 2022 00:02:22 UTC
+    Fri 22 Jul 2022 00:02:22 UTC";
+    let a_mt = "\
+    1658448142.000000000
+    2022-07-22T00:02:22Z
+    Fri 22 Jul 2022 00:02:22 UTC
+    Thu 21 Jul 2022 18:02:22 MDT";
+
+    assert_eq!(dtg.a_format(&None), a_utc);
+    assert_eq!(dtg.a_format(&tz("UTC").ok()), a_utc);
+    assert_eq!(dtg.a_format(&tz("MST7MDT").ok()), a_mt);
+    ```
+    */
     pub fn a_format(&self, tz: &Option<Tz>) -> String {
         self.format(&Some(Format::A), tz)
     }
 
-    /// Format as a string with format and timezone
-    ///
-    /// ```
-    /// use dtg_lib::{tz, Dtg, Format};
-    ///
-    /// let dtg = Dtg::from("1658448142").unwrap();
-    ///
-    /// assert_eq!(
-    ///     dtg.format(&None, &None),
-    ///     "2022-07-22T00:02:22Z",
-    /// );
-    /// assert_eq!(
-    ///     dtg.format(&Some(Format::X), &None),
-    ///     "Xg6L02M",
-    /// );
-    ///
-    /// let a_fmt = Some(Format::custom("%A"));
-    ///
-    /// assert_eq!(
-    ///     dtg.format(&a_fmt, &None),
-    ///     "Friday",
-    /// );
-    /// assert_eq!(
-    ///     dtg.format(&a_fmt, &tz("MST7MDT").ok()),
-    ///     "Thursday",
-    /// );
-    /// ```
+    /**
+    Format as a string with format and timezone
+
+    ```
+    use dtg_lib::{tz, Dtg, Format};
+
+    let dtg = Dtg::from("1658448142").unwrap();
+
+    assert_eq!(
+        dtg.format(&None, &None),
+        "2022-07-22T00:02:22Z",
+    );
+    assert_eq!(
+        dtg.format(&Some(Format::X), &None),
+        "Xg6L02M",
+    );
+
+    let a_fmt = Some(Format::custom("%A"));
+
+    assert_eq!(
+        dtg.format(&a_fmt, &None),
+        "Friday",
+    );
+    assert_eq!(
+        dtg.format(&a_fmt, &tz("MST7MDT").ok()),
+        "Thursday",
+    );
+    ```
+    */
     pub fn format(&self, fmt: &Option<Format>, tz: &Option<Tz>) -> String {
         let tz = tz.unwrap_or(Tz::UTC);
         match fmt {
@@ -290,14 +307,13 @@ impl Dtg {
 }
 
 impl std::cmp::PartialEq for Dtg {
-    fn eq(&self, other: &Self) -> bool {
+    fn eq(&self, other: &Dtg) -> bool {
         self.dt == other.dt
     }
 }
 
 //--------------------------------------------------------------------------------------------------
 // Format enum
-//--------------------------------------------------------------------------------------------------
 
 /**
 Format
@@ -433,22 +449,30 @@ pub enum Format {
 }
 
 impl Format {
-    /// Create a default [Format]
-    pub fn new() -> Self {
-        Self::Custom(DEFAULT.to_string())
+    /**
+    Create a default [Format]
+    */
+    pub fn new() -> Format {
+        Format::Custom(DEFAULT.to_string())
     }
 
-    /// Create an RFC 3339 [Format]
-    pub fn rfc_3339() -> Self {
-        Self::Custom(RFC_3339.to_string())
+    /**
+    Create an RFC 3339 [Format]
+    */
+    pub fn rfc_3339() -> Format {
+        Format::Custom(RFC_3339.to_string())
     }
 
-    /// Create a custom [Format]
-    pub fn custom(s: &str) -> Self {
-        Self::Custom(s.to_string())
+    /**
+    Create a custom [Format]
+    */
+    pub fn custom(s: &str) -> Format {
+        Format::Custom(s.to_string())
     }
 
-    /// Format a [DateTime<Utc>] with a timezone
+    /**
+    Format a [DateTime<Utc>] with a timezone
+    */
     fn with(&self, dt: &DateTime<Utc>, tz: &Tz) -> String {
         match self {
             Format::Custom(f) => dt.with_timezone(tz).format(f).to_string(),
@@ -463,7 +487,9 @@ impl Format {
         }
     }
 
-    /// Format a [DateTime<Utc>] with "x" format
+    /**
+    Format a [DateTime<Utc>] with "x" format
+    */
     fn x(&self, dt: &DateTime<Utc>) -> String {
         let mut year = dt.year() as u32;
         let mut y: Vec<u8> = vec![];
@@ -484,7 +510,7 @@ impl Format {
         let h = ITOC.get(&(dt.hour() as u8)).unwrap();
         let m = ITOC.get(&(dt.minute() as u8)).unwrap();
         let s = ITOC.get(&(dt.second() as u8)).unwrap();
-        format!("{}{}{}{}{}{}", year, mon, day, h, m, s)
+        format!("{year}{mon}{day}{h}{m}{s}")
     }
 }
 
@@ -496,622 +522,622 @@ impl Default for Format {
 
 //--------------------------------------------------------------------------------------------------
 // Functions
-//--------------------------------------------------------------------------------------------------
 
-/// Get a timezone by name
-///
-/// ```
-/// use chrono_tz::Tz;
-/// use dtg_lib::DtgError;
-/// use dtg_lib::tz;
-///
-/// assert_eq!(tz("UTC"), Ok(Tz::UTC));
-/// assert_eq!(tz("GMT"), Ok(Tz::GMT));
-/// assert_eq!(tz("America/New_York"), Ok(Tz::America__New_York));
-/// assert_eq!(tz("EST5EDT"), Ok(Tz::EST5EDT));
-/// //assert_eq!(tz("local"), Ok(Tz::America__New_York));
-///
-/// assert_eq!(tz("nonexistent"), Err(DtgError::new("Invalid timezone: `nonexistent`", 102)));
-/// ```
-///
-/// Timezones:
-///
-/// ```text
-/// Africa/Abidjan
-/// Africa/Accra
-/// Africa/Addis_Ababa
-/// Africa/Algiers
-/// Africa/Asmara
-/// Africa/Asmera
-/// Africa/Bamako
-/// Africa/Bangui
-/// Africa/Banjul
-/// Africa/Bissau
-/// Africa/Blantyre
-/// Africa/Brazzaville
-/// Africa/Bujumbura
-/// Africa/Cairo
-/// Africa/Casablanca
-/// Africa/Ceuta
-/// Africa/Conakry
-/// Africa/Dakar
-/// Africa/Dar_es_Salaam
-/// Africa/Djibouti
-/// Africa/Douala
-/// Africa/El_Aaiun
-/// Africa/Freetown
-/// Africa/Gaborone
-/// Africa/Harare
-/// Africa/Johannesburg
-/// Africa/Juba
-/// Africa/Kampala
-/// Africa/Khartoum
-/// Africa/Kigali
-/// Africa/Kinshasa
-/// Africa/Lagos
-/// Africa/Libreville
-/// Africa/Lome
-/// Africa/Luanda
-/// Africa/Lubumbashi
-/// Africa/Lusaka
-/// Africa/Malabo
-/// Africa/Maputo
-/// Africa/Maseru
-/// Africa/Mbabane
-/// Africa/Mogadishu
-/// Africa/Monrovia
-/// Africa/Nairobi
-/// Africa/Ndjamena
-/// Africa/Niamey
-/// Africa/Nouakchott
-/// Africa/Ouagadougou
-/// Africa/Porto-Novo
-/// Africa/Sao_Tome
-/// Africa/Timbuktu
-/// Africa/Tripoli
-/// Africa/Tunis
-/// Africa/Windhoek
-/// America/Adak
-/// America/Anchorage
-/// America/Anguilla
-/// America/Antigua
-/// America/Araguaina
-/// America/Argentina/Buenos_Aires
-/// America/Argentina/Catamarca
-/// America/Argentina/ComodRivadavia
-/// America/Argentina/Cordoba
-/// America/Argentina/Jujuy
-/// America/Argentina/La_Rioja
-/// America/Argentina/Mendoza
-/// America/Argentina/Rio_Gallegos
-/// America/Argentina/Salta
-/// America/Argentina/San_Juan
-/// America/Argentina/San_Luis
-/// America/Argentina/Tucuman
-/// America/Argentina/Ushuaia
-/// America/Aruba
-/// America/Asuncion
-/// America/Atikokan
-/// America/Atka
-/// America/Bahia
-/// America/Bahia_Banderas
-/// America/Barbados
-/// America/Belem
-/// America/Belize
-/// America/Blanc-Sablon
-/// America/Boa_Vista
-/// America/Bogota
-/// America/Boise
-/// America/Buenos_Aires
-/// America/Cambridge_Bay
-/// America/Campo_Grande
-/// America/Cancun
-/// America/Caracas
-/// America/Catamarca
-/// America/Cayenne
-/// America/Cayman
-/// America/Chicago
-/// America/Chihuahua
-/// America/Coral_Harbour
-/// America/Cordoba
-/// America/Costa_Rica
-/// America/Creston
-/// America/Cuiaba
-/// America/Curacao
-/// America/Danmarkshavn
-/// America/Dawson
-/// America/Dawson_Creek
-/// America/Denver
-/// America/Detroit
-/// America/Dominica
-/// America/Edmonton
-/// America/Eirunepe
-/// America/El_Salvador
-/// America/Ensenada
-/// America/Fort_Nelson
-/// America/Fort_Wayne
-/// America/Fortaleza
-/// America/Glace_Bay
-/// America/Godthab
-/// America/Goose_Bay
-/// America/Grand_Turk
-/// America/Grenada
-/// America/Guadeloupe
-/// America/Guatemala
-/// America/Guayaquil
-/// America/Guyana
-/// America/Halifax
-/// America/Havana
-/// America/Hermosillo
-/// America/Indiana/Indianapolis
-/// America/Indiana/Knox
-/// America/Indiana/Marengo
-/// America/Indiana/Petersburg
-/// America/Indiana/Tell_City
-/// America/Indiana/Vevay
-/// America/Indiana/Vincennes
-/// America/Indiana/Winamac
-/// America/Indianapolis
-/// America/Inuvik
-/// America/Iqaluit
-/// America/Jamaica
-/// America/Jujuy
-/// America/Juneau
-/// America/Kentucky/Louisville
-/// America/Kentucky/Monticello
-/// America/Knox_IN
-/// America/Kralendijk
-/// America/La_Paz
-/// America/Lima
-/// America/Los_Angeles
-/// America/Louisville
-/// America/Lower_Princes
-/// America/Maceio
-/// America/Managua
-/// America/Manaus
-/// America/Marigot
-/// America/Martinique
-/// America/Matamoros
-/// America/Mazatlan
-/// America/Mendoza
-/// America/Menominee
-/// America/Merida
-/// America/Metlakatla
-/// America/Mexico_City
-/// America/Miquelon
-/// America/Moncton
-/// America/Monterrey
-/// America/Montevideo
-/// America/Montreal
-/// America/Montserrat
-/// America/Nassau
-/// America/New_York
-/// America/Nipigon
-/// America/Nome
-/// America/Noronha
-/// America/North_Dakota/Beulah
-/// America/North_Dakota/Center
-/// America/North_Dakota/New_Salem
-/// America/Nuuk
-/// America/Ojinaga
-/// America/Panama
-/// America/Pangnirtung
-/// America/Paramaribo
-/// America/Phoenix
-/// America/Port-au-Prince
-/// America/Port_of_Spain
-/// America/Porto_Acre
-/// America/Porto_Velho
-/// America/Puerto_Rico
-/// America/Punta_Arenas
-/// America/Rainy_River
-/// America/Rankin_Inlet
-/// America/Recife
-/// America/Regina
-/// America/Resolute
-/// America/Rio_Branco
-/// America/Rosario
-/// America/Santa_Isabel
-/// America/Santarem
-/// America/Santiago
-/// America/Santo_Domingo
-/// America/Sao_Paulo
-/// America/Scoresbysund
-/// America/Shiprock
-/// America/Sitka
-/// America/St_Barthelemy
-/// America/St_Johns
-/// America/St_Kitts
-/// America/St_Lucia
-/// America/St_Thomas
-/// America/St_Vincent
-/// America/Swift_Current
-/// America/Tegucigalpa
-/// America/Thule
-/// America/Thunder_Bay
-/// America/Tijuana
-/// America/Toronto
-/// America/Tortola
-/// America/Vancouver
-/// America/Virgin
-/// America/Whitehorse
-/// America/Winnipeg
-/// America/Yakutat
-/// America/Yellowknife
-/// Antarctica/Casey
-/// Antarctica/Davis
-/// Antarctica/DumontDUrville
-/// Antarctica/Macquarie
-/// Antarctica/Mawson
-/// Antarctica/McMurdo
-/// Antarctica/Palmer
-/// Antarctica/Rothera
-/// Antarctica/South_Pole
-/// Antarctica/Syowa
-/// Antarctica/Troll
-/// Antarctica/Vostok
-/// Arctic/Longyearbyen
-/// Asia/Aden
-/// Asia/Almaty
-/// Asia/Amman
-/// Asia/Anadyr
-/// Asia/Aqtau
-/// Asia/Aqtobe
-/// Asia/Ashgabat
-/// Asia/Ashkhabad
-/// Asia/Atyrau
-/// Asia/Baghdad
-/// Asia/Bahrain
-/// Asia/Baku
-/// Asia/Bangkok
-/// Asia/Barnaul
-/// Asia/Beirut
-/// Asia/Bishkek
-/// Asia/Brunei
-/// Asia/Calcutta
-/// Asia/Chita
-/// Asia/Choibalsan
-/// Asia/Chongqing
-/// Asia/Chungking
-/// Asia/Colombo
-/// Asia/Dacca
-/// Asia/Damascus
-/// Asia/Dhaka
-/// Asia/Dili
-/// Asia/Dubai
-/// Asia/Dushanbe
-/// Asia/Famagusta
-/// Asia/Gaza
-/// Asia/Harbin
-/// Asia/Hebron
-/// Asia/Ho_Chi_Minh
-/// Asia/Hong_Kong
-/// Asia/Hovd
-/// Asia/Irkutsk
-/// Asia/Istanbul
-/// Asia/Jakarta
-/// Asia/Jayapura
-/// Asia/Jerusalem
-/// Asia/Kabul
-/// Asia/Kamchatka
-/// Asia/Karachi
-/// Asia/Kashgar
-/// Asia/Kathmandu
-/// Asia/Katmandu
-/// Asia/Khandyga
-/// Asia/Kolkata
-/// Asia/Krasnoyarsk
-/// Asia/Kuala_Lumpur
-/// Asia/Kuching
-/// Asia/Kuwait
-/// Asia/Macao
-/// Asia/Macau
-/// Asia/Magadan
-/// Asia/Makassar
-/// Asia/Manila
-/// Asia/Muscat
-/// Asia/Nicosia
-/// Asia/Novokuznetsk
-/// Asia/Novosibirsk
-/// Asia/Omsk
-/// Asia/Oral
-/// Asia/Phnom_Penh
-/// Asia/Pontianak
-/// Asia/Pyongyang
-/// Asia/Qatar
-/// Asia/Qostanay
-/// Asia/Qyzylorda
-/// Asia/Rangoon
-/// Asia/Riyadh
-/// Asia/Saigon
-/// Asia/Sakhalin
-/// Asia/Samarkand
-/// Asia/Seoul
-/// Asia/Shanghai
-/// Asia/Singapore
-/// Asia/Srednekolymsk
-/// Asia/Taipei
-/// Asia/Tashkent
-/// Asia/Tbilisi
-/// Asia/Tehran
-/// Asia/Tel_Aviv
-/// Asia/Thimbu
-/// Asia/Thimphu
-/// Asia/Tokyo
-/// Asia/Tomsk
-/// Asia/Ujung_Pandang
-/// Asia/Ulaanbaatar
-/// Asia/Ulan_Bator
-/// Asia/Urumqi
-/// Asia/Ust-Nera
-/// Asia/Vientiane
-/// Asia/Vladivostok
-/// Asia/Yakutsk
-/// Asia/Yangon
-/// Asia/Yekaterinburg
-/// Asia/Yerevan
-/// Atlantic/Azores
-/// Atlantic/Bermuda
-/// Atlantic/Canary
-/// Atlantic/Cape_Verde
-/// Atlantic/Faeroe
-/// Atlantic/Faroe
-/// Atlantic/Jan_Mayen
-/// Atlantic/Madeira
-/// Atlantic/Reykjavik
-/// Atlantic/South_Georgia
-/// Atlantic/St_Helena
-/// Atlantic/Stanley
-/// Australia/ACT
-/// Australia/Adelaide
-/// Australia/Brisbane
-/// Australia/Broken_Hill
-/// Australia/Canberra
-/// Australia/Currie
-/// Australia/Darwin
-/// Australia/Eucla
-/// Australia/Hobart
-/// Australia/LHI
-/// Australia/Lindeman
-/// Australia/Lord_Howe
-/// Australia/Melbourne
-/// Australia/NSW
-/// Australia/North
-/// Australia/Perth
-/// Australia/Queensland
-/// Australia/South
-/// Australia/Sydney
-/// Australia/Tasmania
-/// Australia/Victoria
-/// Australia/West
-/// Australia/Yancowinna
-/// Brazil/Acre
-/// Brazil/DeNoronha
-/// Brazil/East
-/// Brazil/West
-/// CET
-/// CST6CDT
-/// Canada/Atlantic
-/// Canada/Central
-/// Canada/Eastern
-/// Canada/Mountain
-/// Canada/Newfoundland
-/// Canada/Pacific
-/// Canada/Saskatchewan
-/// Canada/Yukon
-/// Chile/Continental
-/// Chile/EasterIsland
-/// Cuba
-/// EET
-/// EST
-/// EST5EDT
-/// Egypt
-/// Eire
-/// Etc/GMT
-/// Etc/GMT+0
-/// Etc/GMT+1
-/// Etc/GMT+10
-/// Etc/GMT+11
-/// Etc/GMT+12
-/// Etc/GMT+2
-/// Etc/GMT+3
-/// Etc/GMT+4
-/// Etc/GMT+5
-/// Etc/GMT+6
-/// Etc/GMT+7
-/// Etc/GMT+8
-/// Etc/GMT+9
-/// Etc/GMT-0
-/// Etc/GMT-1
-/// Etc/GMT-10
-/// Etc/GMT-11
-/// Etc/GMT-12
-/// Etc/GMT-13
-/// Etc/GMT-14
-/// Etc/GMT-2
-/// Etc/GMT-3
-/// Etc/GMT-4
-/// Etc/GMT-5
-/// Etc/GMT-6
-/// Etc/GMT-7
-/// Etc/GMT-8
-/// Etc/GMT-9
-/// Etc/GMT0
-/// Etc/Greenwich
-/// Etc/UCT
-/// Etc/UTC
-/// Etc/Universal
-/// Etc/Zulu
-/// Europe/Amsterdam
-/// Europe/Andorra
-/// Europe/Astrakhan
-/// Europe/Athens
-/// Europe/Belfast
-/// Europe/Belgrade
-/// Europe/Berlin
-/// Europe/Bratislava
-/// Europe/Brussels
-/// Europe/Bucharest
-/// Europe/Budapest
-/// Europe/Busingen
-/// Europe/Chisinau
-/// Europe/Copenhagen
-/// Europe/Dublin
-/// Europe/Gibraltar
-/// Europe/Guernsey
-/// Europe/Helsinki
-/// Europe/Isle_of_Man
-/// Europe/Istanbul
-/// Europe/Jersey
-/// Europe/Kaliningrad
-/// Europe/Kiev
-/// Europe/Kirov
-/// Europe/Lisbon
-/// Europe/Ljubljana
-/// Europe/London
-/// Europe/Luxembourg
-/// Europe/Madrid
-/// Europe/Malta
-/// Europe/Mariehamn
-/// Europe/Minsk
-/// Europe/Monaco
-/// Europe/Moscow
-/// Europe/Nicosia
-/// Europe/Oslo
-/// Europe/Paris
-/// Europe/Podgorica
-/// Europe/Prague
-/// Europe/Riga
-/// Europe/Rome
-/// Europe/Samara
-/// Europe/San_Marino
-/// Europe/Sarajevo
-/// Europe/Saratov
-/// Europe/Simferopol
-/// Europe/Skopje
-/// Europe/Sofia
-/// Europe/Stockholm
-/// Europe/Tallinn
-/// Europe/Tirane
-/// Europe/Tiraspol
-/// Europe/Ulyanovsk
-/// Europe/Uzhgorod
-/// Europe/Vaduz
-/// Europe/Vatican
-/// Europe/Vienna
-/// Europe/Vilnius
-/// Europe/Volgograd
-/// Europe/Warsaw
-/// Europe/Zagreb
-/// Europe/Zaporozhye
-/// Europe/Zurich
-/// GB
-/// GB-Eire
-/// GMT
-/// GMT+0
-/// GMT-0
-/// GMT0
-/// Greenwich
-/// HST
-/// Hongkong
-/// Iceland
-/// Indian/Antananarivo
-/// Indian/Chagos
-/// Indian/Christmas
-/// Indian/Cocos
-/// Indian/Comoro
-/// Indian/Kerguelen
-/// Indian/Mahe
-/// Indian/Maldives
-/// Indian/Mauritius
-/// Indian/Mayotte
-/// Indian/Reunion
-/// Iran
-/// Israel
-/// Jamaica
-/// Japan
-/// Kwajalein
-/// Libya
-/// MET
-/// MST
-/// MST7MDT
-/// Mexico/BajaNorte
-/// Mexico/BajaSur
-/// Mexico/General
-/// NZ
-/// NZ-CHAT
-/// Navajo
-/// PRC
-/// PST8PDT
-/// Pacific/Apia
-/// Pacific/Auckland
-/// Pacific/Bougainville
-/// Pacific/Chatham
-/// Pacific/Chuuk
-/// Pacific/Easter
-/// Pacific/Efate
-/// Pacific/Enderbury
-/// Pacific/Fakaofo
-/// Pacific/Fiji
-/// Pacific/Funafuti
-/// Pacific/Galapagos
-/// Pacific/Gambier
-/// Pacific/Guadalcanal
-/// Pacific/Guam
-/// Pacific/Honolulu
-/// Pacific/Johnston
-/// Pacific/Kanton
-/// Pacific/Kiritimati
-/// Pacific/Kosrae
-/// Pacific/Kwajalein
-/// Pacific/Majuro
-/// Pacific/Marquesas
-/// Pacific/Midway
-/// Pacific/Nauru
-/// Pacific/Niue
-/// Pacific/Norfolk
-/// Pacific/Noumea
-/// Pacific/Pago_Pago
-/// Pacific/Palau
-/// Pacific/Pitcairn
-/// Pacific/Pohnpei
-/// Pacific/Ponape
-/// Pacific/Port_Moresby
-/// Pacific/Rarotonga
-/// Pacific/Saipan
-/// Pacific/Samoa
-/// Pacific/Tahiti
-/// Pacific/Tarawa
-/// Pacific/Tongatapu
-/// Pacific/Truk
-/// Pacific/Wake
-/// Pacific/Wallis
-/// Pacific/Yap
-/// Poland
-/// Portugal
-/// ROC
-/// ROK
-/// Singapore
-/// Turkey
-/// UCT
-/// US/Alaska
-/// US/Aleutian
-/// US/Arizona
-/// US/Central
-/// US/East-Indiana
-/// US/Eastern
-/// US/Hawaii
-/// US/Indiana-Starke
-/// US/Michigan
-/// US/Mountain
-/// US/Pacific
-/// US/Samoa
-/// UTC
-/// Universal
-/// W-SU
-/// WET
-/// Zulu
-/// ```
+/**
+Get a timezone by name
+
+```
+use chrono_tz::Tz;
+use dtg_lib::{tz, DtgError};
+
+assert_eq!(tz("UTC"), Ok(Tz::UTC));
+assert_eq!(tz("GMT"), Ok(Tz::GMT));
+assert_eq!(tz("America/New_York"), Ok(Tz::America__New_York));
+assert_eq!(tz("EST5EDT"), Ok(Tz::EST5EDT));
+//assert_eq!(tz("local"), Ok(Tz::America__New_York));
+
+assert_eq!(tz("nonexistent"), Err(DtgError::new("Invalid timezone: `nonexistent`", 102)));
+```
+
+Timezones:
+
+```text
+Africa/Abidjan
+Africa/Accra
+Africa/Addis_Ababa
+Africa/Algiers
+Africa/Asmara
+Africa/Asmera
+Africa/Bamako
+Africa/Bangui
+Africa/Banjul
+Africa/Bissau
+Africa/Blantyre
+Africa/Brazzaville
+Africa/Bujumbura
+Africa/Cairo
+Africa/Casablanca
+Africa/Ceuta
+Africa/Conakry
+Africa/Dakar
+Africa/Dar_es_Salaam
+Africa/Djibouti
+Africa/Douala
+Africa/El_Aaiun
+Africa/Freetown
+Africa/Gaborone
+Africa/Harare
+Africa/Johannesburg
+Africa/Juba
+Africa/Kampala
+Africa/Khartoum
+Africa/Kigali
+Africa/Kinshasa
+Africa/Lagos
+Africa/Libreville
+Africa/Lome
+Africa/Luanda
+Africa/Lubumbashi
+Africa/Lusaka
+Africa/Malabo
+Africa/Maputo
+Africa/Maseru
+Africa/Mbabane
+Africa/Mogadishu
+Africa/Monrovia
+Africa/Nairobi
+Africa/Ndjamena
+Africa/Niamey
+Africa/Nouakchott
+Africa/Ouagadougou
+Africa/Porto-Novo
+Africa/Sao_Tome
+Africa/Timbuktu
+Africa/Tripoli
+Africa/Tunis
+Africa/Windhoek
+America/Adak
+America/Anchorage
+America/Anguilla
+America/Antigua
+America/Araguaina
+America/Argentina/Buenos_Aires
+America/Argentina/Catamarca
+America/Argentina/ComodRivadavia
+America/Argentina/Cordoba
+America/Argentina/Jujuy
+America/Argentina/La_Rioja
+America/Argentina/Mendoza
+America/Argentina/Rio_Gallegos
+America/Argentina/Salta
+America/Argentina/San_Juan
+America/Argentina/San_Luis
+America/Argentina/Tucuman
+America/Argentina/Ushuaia
+America/Aruba
+America/Asuncion
+America/Atikokan
+America/Atka
+America/Bahia
+America/Bahia_Banderas
+America/Barbados
+America/Belem
+America/Belize
+America/Blanc-Sablon
+America/Boa_Vista
+America/Bogota
+America/Boise
+America/Buenos_Aires
+America/Cambridge_Bay
+America/Campo_Grande
+America/Cancun
+America/Caracas
+America/Catamarca
+America/Cayenne
+America/Cayman
+America/Chicago
+America/Chihuahua
+America/Coral_Harbour
+America/Cordoba
+America/Costa_Rica
+America/Creston
+America/Cuiaba
+America/Curacao
+America/Danmarkshavn
+America/Dawson
+America/Dawson_Creek
+America/Denver
+America/Detroit
+America/Dominica
+America/Edmonton
+America/Eirunepe
+America/El_Salvador
+America/Ensenada
+America/Fort_Nelson
+America/Fort_Wayne
+America/Fortaleza
+America/Glace_Bay
+America/Godthab
+America/Goose_Bay
+America/Grand_Turk
+America/Grenada
+America/Guadeloupe
+America/Guatemala
+America/Guayaquil
+America/Guyana
+America/Halifax
+America/Havana
+America/Hermosillo
+America/Indiana/Indianapolis
+America/Indiana/Knox
+America/Indiana/Marengo
+America/Indiana/Petersburg
+America/Indiana/Tell_City
+America/Indiana/Vevay
+America/Indiana/Vincennes
+America/Indiana/Winamac
+America/Indianapolis
+America/Inuvik
+America/Iqaluit
+America/Jamaica
+America/Jujuy
+America/Juneau
+America/Kentucky/Louisville
+America/Kentucky/Monticello
+America/Knox_IN
+America/Kralendijk
+America/La_Paz
+America/Lima
+America/Los_Angeles
+America/Louisville
+America/Lower_Princes
+America/Maceio
+America/Managua
+America/Manaus
+America/Marigot
+America/Martinique
+America/Matamoros
+America/Mazatlan
+America/Mendoza
+America/Menominee
+America/Merida
+America/Metlakatla
+America/Mexico_City
+America/Miquelon
+America/Moncton
+America/Monterrey
+America/Montevideo
+America/Montreal
+America/Montserrat
+America/Nassau
+America/New_York
+America/Nipigon
+America/Nome
+America/Noronha
+America/North_Dakota/Beulah
+America/North_Dakota/Center
+America/North_Dakota/New_Salem
+America/Nuuk
+America/Ojinaga
+America/Panama
+America/Pangnirtung
+America/Paramaribo
+America/Phoenix
+America/Port-au-Prince
+America/Port_of_Spain
+America/Porto_Acre
+America/Porto_Velho
+America/Puerto_Rico
+America/Punta_Arenas
+America/Rainy_River
+America/Rankin_Inlet
+America/Recife
+America/Regina
+America/Resolute
+America/Rio_Branco
+America/Rosario
+America/Santa_Isabel
+America/Santarem
+America/Santiago
+America/Santo_Domingo
+America/Sao_Paulo
+America/Scoresbysund
+America/Shiprock
+America/Sitka
+America/St_Barthelemy
+America/St_Johns
+America/St_Kitts
+America/St_Lucia
+America/St_Thomas
+America/St_Vincent
+America/Swift_Current
+America/Tegucigalpa
+America/Thule
+America/Thunder_Bay
+America/Tijuana
+America/Toronto
+America/Tortola
+America/Vancouver
+America/Virgin
+America/Whitehorse
+America/Winnipeg
+America/Yakutat
+America/Yellowknife
+Antarctica/Casey
+Antarctica/Davis
+Antarctica/DumontDUrville
+Antarctica/Macquarie
+Antarctica/Mawson
+Antarctica/McMurdo
+Antarctica/Palmer
+Antarctica/Rothera
+Antarctica/South_Pole
+Antarctica/Syowa
+Antarctica/Troll
+Antarctica/Vostok
+Arctic/Longyearbyen
+Asia/Aden
+Asia/Almaty
+Asia/Amman
+Asia/Anadyr
+Asia/Aqtau
+Asia/Aqtobe
+Asia/Ashgabat
+Asia/Ashkhabad
+Asia/Atyrau
+Asia/Baghdad
+Asia/Bahrain
+Asia/Baku
+Asia/Bangkok
+Asia/Barnaul
+Asia/Beirut
+Asia/Bishkek
+Asia/Brunei
+Asia/Calcutta
+Asia/Chita
+Asia/Choibalsan
+Asia/Chongqing
+Asia/Chungking
+Asia/Colombo
+Asia/Dacca
+Asia/Damascus
+Asia/Dhaka
+Asia/Dili
+Asia/Dubai
+Asia/Dushanbe
+Asia/Famagusta
+Asia/Gaza
+Asia/Harbin
+Asia/Hebron
+Asia/Ho_Chi_Minh
+Asia/Hong_Kong
+Asia/Hovd
+Asia/Irkutsk
+Asia/Istanbul
+Asia/Jakarta
+Asia/Jayapura
+Asia/Jerusalem
+Asia/Kabul
+Asia/Kamchatka
+Asia/Karachi
+Asia/Kashgar
+Asia/Kathmandu
+Asia/Katmandu
+Asia/Khandyga
+Asia/Kolkata
+Asia/Krasnoyarsk
+Asia/Kuala_Lumpur
+Asia/Kuching
+Asia/Kuwait
+Asia/Macao
+Asia/Macau
+Asia/Magadan
+Asia/Makassar
+Asia/Manila
+Asia/Muscat
+Asia/Nicosia
+Asia/Novokuznetsk
+Asia/Novosibirsk
+Asia/Omsk
+Asia/Oral
+Asia/Phnom_Penh
+Asia/Pontianak
+Asia/Pyongyang
+Asia/Qatar
+Asia/Qostanay
+Asia/Qyzylorda
+Asia/Rangoon
+Asia/Riyadh
+Asia/Saigon
+Asia/Sakhalin
+Asia/Samarkand
+Asia/Seoul
+Asia/Shanghai
+Asia/Singapore
+Asia/Srednekolymsk
+Asia/Taipei
+Asia/Tashkent
+Asia/Tbilisi
+Asia/Tehran
+Asia/Tel_Aviv
+Asia/Thimbu
+Asia/Thimphu
+Asia/Tokyo
+Asia/Tomsk
+Asia/Ujung_Pandang
+Asia/Ulaanbaatar
+Asia/Ulan_Bator
+Asia/Urumqi
+Asia/Ust-Nera
+Asia/Vientiane
+Asia/Vladivostok
+Asia/Yakutsk
+Asia/Yangon
+Asia/Yekaterinburg
+Asia/Yerevan
+Atlantic/Azores
+Atlantic/Bermuda
+Atlantic/Canary
+Atlantic/Cape_Verde
+Atlantic/Faeroe
+Atlantic/Faroe
+Atlantic/Jan_Mayen
+Atlantic/Madeira
+Atlantic/Reykjavik
+Atlantic/South_Georgia
+Atlantic/St_Helena
+Atlantic/Stanley
+Australia/ACT
+Australia/Adelaide
+Australia/Brisbane
+Australia/Broken_Hill
+Australia/Canberra
+Australia/Currie
+Australia/Darwin
+Australia/Eucla
+Australia/Hobart
+Australia/LHI
+Australia/Lindeman
+Australia/Lord_Howe
+Australia/Melbourne
+Australia/NSW
+Australia/North
+Australia/Perth
+Australia/Queensland
+Australia/South
+Australia/Sydney
+Australia/Tasmania
+Australia/Victoria
+Australia/West
+Australia/Yancowinna
+Brazil/Acre
+Brazil/DeNoronha
+Brazil/East
+Brazil/West
+CET
+CST6CDT
+Canada/Atlantic
+Canada/Central
+Canada/Eastern
+Canada/Mountain
+Canada/Newfoundland
+Canada/Pacific
+Canada/Saskatchewan
+Canada/Yukon
+Chile/Continental
+Chile/EasterIsland
+Cuba
+EET
+EST
+EST5EDT
+Egypt
+Eire
+Etc/GMT
+Etc/GMT+0
+Etc/GMT+1
+Etc/GMT+10
+Etc/GMT+11
+Etc/GMT+12
+Etc/GMT+2
+Etc/GMT+3
+Etc/GMT+4
+Etc/GMT+5
+Etc/GMT+6
+Etc/GMT+7
+Etc/GMT+8
+Etc/GMT+9
+Etc/GMT-0
+Etc/GMT-1
+Etc/GMT-10
+Etc/GMT-11
+Etc/GMT-12
+Etc/GMT-13
+Etc/GMT-14
+Etc/GMT-2
+Etc/GMT-3
+Etc/GMT-4
+Etc/GMT-5
+Etc/GMT-6
+Etc/GMT-7
+Etc/GMT-8
+Etc/GMT-9
+Etc/GMT0
+Etc/Greenwich
+Etc/UCT
+Etc/UTC
+Etc/Universal
+Etc/Zulu
+Europe/Amsterdam
+Europe/Andorra
+Europe/Astrakhan
+Europe/Athens
+Europe/Belfast
+Europe/Belgrade
+Europe/Berlin
+Europe/Bratislava
+Europe/Brussels
+Europe/Bucharest
+Europe/Budapest
+Europe/Busingen
+Europe/Chisinau
+Europe/Copenhagen
+Europe/Dublin
+Europe/Gibraltar
+Europe/Guernsey
+Europe/Helsinki
+Europe/Isle_of_Man
+Europe/Istanbul
+Europe/Jersey
+Europe/Kaliningrad
+Europe/Kiev
+Europe/Kirov
+Europe/Lisbon
+Europe/Ljubljana
+Europe/London
+Europe/Luxembourg
+Europe/Madrid
+Europe/Malta
+Europe/Mariehamn
+Europe/Minsk
+Europe/Monaco
+Europe/Moscow
+Europe/Nicosia
+Europe/Oslo
+Europe/Paris
+Europe/Podgorica
+Europe/Prague
+Europe/Riga
+Europe/Rome
+Europe/Samara
+Europe/San_Marino
+Europe/Sarajevo
+Europe/Saratov
+Europe/Simferopol
+Europe/Skopje
+Europe/Sofia
+Europe/Stockholm
+Europe/Tallinn
+Europe/Tirane
+Europe/Tiraspol
+Europe/Ulyanovsk
+Europe/Uzhgorod
+Europe/Vaduz
+Europe/Vatican
+Europe/Vienna
+Europe/Vilnius
+Europe/Volgograd
+Europe/Warsaw
+Europe/Zagreb
+Europe/Zaporozhye
+Europe/Zurich
+GB
+GB-Eire
+GMT
+GMT+0
+GMT-0
+GMT0
+Greenwich
+HST
+Hongkong
+Iceland
+Indian/Antananarivo
+Indian/Chagos
+Indian/Christmas
+Indian/Cocos
+Indian/Comoro
+Indian/Kerguelen
+Indian/Mahe
+Indian/Maldives
+Indian/Mauritius
+Indian/Mayotte
+Indian/Reunion
+Iran
+Israel
+Jamaica
+Japan
+Kwajalein
+Libya
+MET
+MST
+MST7MDT
+Mexico/BajaNorte
+Mexico/BajaSur
+Mexico/General
+NZ
+NZ-CHAT
+Navajo
+PRC
+PST8PDT
+Pacific/Apia
+Pacific/Auckland
+Pacific/Bougainville
+Pacific/Chatham
+Pacific/Chuuk
+Pacific/Easter
+Pacific/Efate
+Pacific/Enderbury
+Pacific/Fakaofo
+Pacific/Fiji
+Pacific/Funafuti
+Pacific/Galapagos
+Pacific/Gambier
+Pacific/Guadalcanal
+Pacific/Guam
+Pacific/Honolulu
+Pacific/Johnston
+Pacific/Kanton
+Pacific/Kiritimati
+Pacific/Kosrae
+Pacific/Kwajalein
+Pacific/Majuro
+Pacific/Marquesas
+Pacific/Midway
+Pacific/Nauru
+Pacific/Niue
+Pacific/Norfolk
+Pacific/Noumea
+Pacific/Pago_Pago
+Pacific/Palau
+Pacific/Pitcairn
+Pacific/Pohnpei
+Pacific/Ponape
+Pacific/Port_Moresby
+Pacific/Rarotonga
+Pacific/Saipan
+Pacific/Samoa
+Pacific/Tahiti
+Pacific/Tarawa
+Pacific/Tongatapu
+Pacific/Truk
+Pacific/Wake
+Pacific/Wallis
+Pacific/Yap
+Poland
+Portugal
+ROC
+ROK
+Singapore
+Turkey
+UCT
+US/Alaska
+US/Aleutian
+US/Arizona
+US/Central
+US/East-Indiana
+US/Eastern
+US/Hawaii
+US/Indiana-Starke
+US/Michigan
+US/Mountain
+US/Pacific
+US/Samoa
+UTC
+Universal
+W-SU
+WET
+Zulu
+```
+*/
 pub fn tz(s: &str) -> Result<Tz, DtgError> {
     match s {
         "local" => match iana_time_zone::get_timezone() {
@@ -1120,7 +1146,7 @@ pub fn tz(s: &str) -> Result<Tz, DtgError> {
         },
         _ => match s.parse() {
             Ok(z) => Ok(z),
-            Err(_) => Err(DtgError::new(&format!("Invalid timezone: `{}`", s), 102)),
+            Err(_) => Err(DtgError::new(&format!("Invalid timezone: `{s}`"), 102)),
         },
     }
 }

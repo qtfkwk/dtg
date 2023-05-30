@@ -3,9 +3,10 @@
 use chrono_tz::{Tz, TZ_VARIANTS};
 use clap::Parser;
 use dtg_lib::{tz, Dtg, Format};
+use pager::Pager;
 
 fn error(code: i32, msg: &str) {
-    eprintln!("ERROR: {}!", msg);
+    eprintln!("ERROR: {msg}!");
     std::process::exit(code);
 }
 
@@ -107,8 +108,8 @@ fn main() {
     let cli = Cli::parse();
 
     if cli.readme {
-        let readme = include_str!("../README.md");
-        print!("{}", readme);
+        Pager::with_pager("bat -pl md").setup();
+        print!("{}", include_str!("../README.md"));
         return;
     }
 
@@ -116,7 +117,7 @@ fn main() {
         let mut found = 0;
         if cli.args.is_empty() {
             for zone in TZ_VARIANTS.iter() {
-                println!("{}", zone);
+                println!("{zone}");
                 found += 1;
             }
         } else {
@@ -125,12 +126,12 @@ fn main() {
             for zone in TZ_VARIANTS.iter() {
                 let name = zone.to_string().to_lowercase();
                 if name.contains(&search_lc) {
-                    println!("{}", zone);
+                    println!("{zone}");
                     found += 1;
                 }
             }
             if found == 0 {
-                error(1, &format!("Zero timezones found matching `{}`", search));
+                error(1, &format!("Zero timezones found matching `{search}`"));
             }
         }
         return;
@@ -219,7 +220,7 @@ fn core(
             Dtg::from(arg)
         };
         if dtg.is_err() {
-            error(2, &format!("Invalid timestamp: `{}`", arg));
+            error(2, &format!("Invalid timestamp: `{arg}`"));
         }
         dtgs.push(dtg.unwrap());
     }
@@ -246,5 +247,5 @@ fn tz_(i: &str) -> Option<Tz> {
             _ => error(1, "?"),
         }
     }
-    Some(t.unwrap())
+    t.ok()
 }

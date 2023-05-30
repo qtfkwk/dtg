@@ -77,79 +77,79 @@ Get current date/time in UTC and RFC 3339 format:
 
 ```text
 $ dtg
-2023-05-24T13:51:18Z
+2023-05-30T11:20:22Z
 ```
 
 Get current date/time in the local timezone and default format:
 
 ```text
 $ dtg -l
-Wed 24 May 2023 09:51:18 EDT
+Tue 30 May 2023 07:20:22 EDT
 ```
 
 Get current date/time in explicit timezone and default format:
 
 ```text
 $ dtg -z MST
-Wed 24 May 2023 06:51:18 MST
+Tue 30 May 2023 04:20:22 MST
 ```
 
 ```text
 $ dtg -z America/Los_Angeles
-Wed 24 May 2023 06:51:18 PDT
+Tue 30 May 2023 04:20:22 PDT
 ```
 
 Get current date/time in UTC and specific format:
 
 ```text
 $ dtg -f %A
-Wednesday
+Tuesday
 ```
 
 ```text
 $ dtg -f %s.%f
-1684936278.756926942
+1685445622.196651087
 ```
 
 Get current date/time in local timezone and specific format:
 
 ```text
 $ dtg -l -f %A
-Wednesday
+Tuesday
 ```
 
 Get current date/time in explicit timezone and specific format:
 
 ```text
 $ dtg -z MST -f %A
-Wednesday
+Tuesday
 ```
 
 Get current date/time in "a" format:
 
 ```text
 $ dtg -a
-1684936278.769759518
-2023-05-24T13:51:18Z
-Wed 24 May 2023 13:51:18 UTC
-Wed 24 May 2023 09:51:18 EDT
+1685445622.213050662
+2023-05-30T11:20:22Z
+Tue 30 May 2023 11:20:22 UTC
+Tue 30 May 2023 07:20:22 EDT
 ```
 
 Get current date/time in explicit timezone and "a" format:
 
 ```text
 $ dtg -a -z MST
-1684936278.775596937
-2023-05-24T13:51:18Z
-Wed 24 May 2023 13:51:18 UTC
-Wed 24 May 2023 06:51:18 MST
+1685445622.216700659
+2023-05-30T11:20:22Z
+Tue 30 May 2023 11:20:22 UTC
+Tue 30 May 2023 04:20:22 MST
 ```
 
 Get current date/time in "x" format:
 
 ```text
 $ dtg -x
-Xh4NDpI
+Xh4TBKM
 ```
 
 Get a specific date / time in UTC and RFC 3339 format:
@@ -886,34 +886,34 @@ Multiple timezones:
 ```text
 $ dtg -z UTC,EST5EDT,CST6CDT,MST7MDT,PST8PDT -f '%Z%n%H:%M:%S%n' -f '%Z%n%Y-%m-%d%n'
 UTC
-13:51:18
+11:20:22
 
 EDT
-09:51:18
+07:20:22
 
 CDT
-08:51:18
+06:20:22
 
 MDT
-07:51:18
+05:20:22
 
 PDT
-06:51:18
+04:20:22
 
 UTC
-2023-05-24
+2023-05-30
 
 EDT
-2023-05-24
+2023-05-30
 
 CDT
-2023-05-24
+2023-05-30
 
 MDT
-2023-05-24
+2023-05-30
 
 PDT
-2023-05-24
+2023-05-30
 
 ```
 
@@ -923,34 +923,34 @@ use a single format and `%n`:*
 ```text
 $ dtg -z UTC,EST5EDT,CST6CDT,MST7MDT,PST8PDT -f '%Z%n%H:%M:%S%n%n%Z%n%Y-%m-%d%n'
 UTC
-13:51:18
+11:20:22
 
 UTC
-2023-05-24
+2023-05-30
 
 EDT
-09:51:18
+07:20:22
 
 EDT
-2023-05-24
+2023-05-30
 
 CDT
-08:51:18
+06:20:22
 
 CDT
-2023-05-24
+2023-05-30
 
 MDT
-07:51:18
+05:20:22
 
 MDT
-2023-05-24
+2023-05-30
 
 PDT
-06:51:18
+04:20:22
 
 PDT
-2023-05-24
+2023-05-30
 
 ```
 
@@ -958,7 +958,7 @@ Use a custom separator between formats/timezones:
 
 ```text
 $ dtg -z PST8PDT,MST7MDT,CST6CDT,EST5EDT,UTC -f '[%Z %H:%M:%S]' -s ' '
-[PDT 06:51:18] [MDT 07:51:18] [CDT 08:51:18] [EDT 09:51:18] [UTC 13:51:18]
+[PDT 04:20:22] [MDT 05:20:22] [CDT 06:20:22] [EDT 07:20:22] [UTC 11:20:22]
 ```
 
 # Library

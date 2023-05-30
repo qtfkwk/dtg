@@ -35,4 +35,5 @@
 * 5.0.0: Update dependencies (clap v3 to v4, chrono 0.4.22 to 0.4.23); apply clippy fixes; replace
   `Makefile` with a cargo-make `Makefile.toml`
 * 5.1.0: Update dependencies; fix readme
+* 5.2.0: Add bat pager to `-r` option; clean up; update dependencies
 
