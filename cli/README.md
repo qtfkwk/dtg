@@ -79,26 +79,26 @@ Get current date/time in UTC and RFC 3339 format:
 
 ```text
 $ dtg
-2023-05-31T11:40:44Z
+2023-05-31T11:44:00Z
 ```
 
 Get current date/time in the local timezone and default format:
 
 ```text
 $ dtg -l
-Wed 31 May 2023 07:40:44 EDT
+Wed 31 May 2023 07:44:00 EDT
 ```
 
 Get current date/time in explicit timezone and default format:
 
 ```text
 $ dtg -z MST
-Wed 31 May 2023 04:40:44 MST
+Wed 31 May 2023 04:44:00 MST
 ```
 
 ```text
 $ dtg -z America/Los_Angeles
-Wed 31 May 2023 04:40:44 PDT
+Wed 31 May 2023 04:44:00 PDT
 ```
 
 Get current date/time in UTC and specific format:
@@ -110,7 +110,7 @@ Wednesday
 
 ```text
 $ dtg -f %s.%f
-1685533244.029794801
+1685533440.776636221
 ```
 
 Get current date/time in local timezone and specific format:
@@ -131,27 +131,27 @@ Get current date/time in "a" format:
 
 ```text
 $ dtg -a
-1685533244.041220500
-2023-05-31T11:40:44Z
-Wed 31 May 2023 11:40:44 UTC
-Wed 31 May 2023 07:40:44 EDT
+1685533440.790356664
+2023-05-31T11:44:00Z
+Wed 31 May 2023 11:44:00 UTC
+Wed 31 May 2023 07:44:00 EDT
 ```
 
 Get current date/time in explicit timezone and "a" format:
 
 ```text
 $ dtg -a -z MST
-1685533244.044481332
-2023-05-31T11:40:44Z
-Wed 31 May 2023 11:40:44 UTC
-Wed 31 May 2023 04:40:44 MST
+1685533440.793608881
+2023-05-31T11:44:00Z
+Wed 31 May 2023 11:44:00 UTC
+Wed 31 May 2023 04:44:00 MST
 ```
 
 Get current date/time in "x" format:
 
 ```text
 $ dtg -x
-Xh4UBei
+Xh4UBi0
 ```
 
 Get a specific date / time in UTC and RFC 3339 format:
@@ -888,19 +888,19 @@ Multiple timezones:
 ```text
 $ dtg -z UTC,EST5EDT,CST6CDT,MST7MDT,PST8PDT -f '%Z%n%H:%M:%S%n' -f '%Z%n%Y-%m-%d%n'
 UTC
-11:40:44
+11:44:00
 
 EDT
-07:40:44
+07:44:00
 
 CDT
-06:40:44
+06:44:00
 
 MDT
-05:40:44
+05:44:00
 
 PDT
-04:40:44
+04:44:00
 
 UTC
 2023-05-31
@@ -925,31 +925,31 @@ use a single format and `%n`:*
 ```text
 $ dtg -z UTC,EST5EDT,CST6CDT,MST7MDT,PST8PDT -f '%Z%n%H:%M:%S%n%n%Z%n%Y-%m-%d%n'
 UTC
-11:40:44
+11:44:00
 
 UTC
 2023-05-31
 
 EDT
-07:40:44
+07:44:00
 
 EDT
 2023-05-31
 
 CDT
-06:40:44
+06:44:00
 
 CDT
 2023-05-31
 
 MDT
-05:40:44
+05:44:00
 
 MDT
 2023-05-31
 
 PDT
-04:40:44
+04:44:00
 
 PDT
 2023-05-31
@@ -960,7 +960,7 @@ Use a custom separator between formats/timezones:
 
 ```text
 $ dtg -z PST8PDT,MST7MDT,CST6CDT,EST5EDT,UTC -f '[%Z %H:%M:%S]' -s ' '
-[PDT 04:40:44] [MDT 05:40:44] [CDT 06:40:44] [EDT 07:40:44] [UTC 11:40:44]
+[PDT 04:44:00] [MDT 05:44:00] [CDT 06:44:00] [EDT 07:44:00] [UTC 11:44:00]
 ```
 
 # Formats
