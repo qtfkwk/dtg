@@ -1,13 +1,13 @@
 [package]
 name = "dtg-lib"
-version = "5.2.0"
+version = "5.3.0"
 edition = "2021"
 repository = "https://github.com/qtfkwk/dtg"
 description = "Date/time library"
 license = "MIT"
 
 [dependencies]
-chrono = { version = "0.4.25", default-features = false, features = ["clock"] }
+chrono = { version = "0.4.26", default-features = false, features = ["clock"] }
 chrono-tz = "0.8.2"
 iana-time-zone = "0.1.56"
 lazy_static = "1.4.0"

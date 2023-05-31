@@ -10,14 +10,17 @@ fn error(code: i32, msg: &str) {
     std::process::exit(code);
 }
 
-/// Date/time CLI utility
 #[derive(Parser)]
 #[command(
+    about = "\
+Date/time CLI utility
+
+<https://crates.io/crates/dtg> / <https://github.com/qtfkwk/dtg>
+
+---",
     version,
     max_term_width = 80,
     after_help = "---
-
-<https://github.com/qtfkwk/dtg>
 
 Notes:
 
@@ -76,7 +79,7 @@ struct Cli {
     list_zones: bool,
 
     /// Format(s) [-z/-l: "%a %d %b %Y %H:%M:%S %Z", "%Y-%m-%dT%H:%M:%SZ"]
-    #[arg(short)]
+    #[arg(short, value_name = "FORMAT")]
     formats: Vec<String>,
 
     /// Timezone(s) [default: UTC] (3)
