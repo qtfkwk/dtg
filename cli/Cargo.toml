@@ -1,17 +1,19 @@
 [package]
 name = "dtg"
-version = "5.3.1"
+version = "5.4.0"
 edition = "2021"
 repository = "https://github.com/qtfkwk/dtg"
 description = "Date/time CLI utility"
 license = "MIT"
 
 [dependencies]
-chrono-tz = "0.8.2"
-clap = { version = "4.3.0", features = ["derive", "wrap_help"] }
+chrono-tz = "0.8.3"
+clap = { version = "4.3.11", features = ["derive", "wrap_help"] }
 clearscreen = "2.0.1"
-dtg-lib = { version = "5.3.1", path = "../lib" }
-iana-time-zone = "0.1.56"
+dtg-lib = { version = "5.4.0", path = "../lib" }
+iana-time-zone = "0.1.57"
+
+[target.'cfg(unix)'.dependencies]
 pager = "0.16.1"
 
 [dev-dependencies]

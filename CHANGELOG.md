@@ -38,4 +38,5 @@
 * 5.2.0: Add bat pager to `-r` option; clean up; update dependencies
 * 5.3.0: Update dependencies; fix usage
 * 5.3.1: Fix changelog
+* 5.4.0: Neuter pager on windows; update dependencies
 

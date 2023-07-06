@@ -3,6 +3,8 @@
 use chrono_tz::{Tz, TZ_VARIANTS};
 use clap::Parser;
 use dtg_lib::{tz, Dtg, Format};
+
+#[cfg(unix)]
 use pager::Pager;
 
 fn error(code: i32, msg: &str) {
@@ -111,7 +113,9 @@ fn main() {
     let cli = Cli::parse();
 
     if cli.readme {
+        #[cfg(unix)]
         Pager::with_pager("bat -pl md").setup();
+
         print!("{}", include_str!("../README.md"));
         return;
     }
