@@ -86,26 +86,26 @@ Get current date/time in UTC and RFC 3339 format:
 
 ```text
 $ dtg
-2023-07-22T10:05:01Z
+2023-07-22T10:29:27Z
 ```
 
 Get current date/time in the local timezone and default format:
 
 ```text
 $ dtg -l
-Sat 22 Jul 2023 06:05:01 EDT
+Sat 22 Jul 2023 06:29:27 EDT
 ```
 
 Get current date/time in explicit timezone and default format:
 
 ```text
 $ dtg -z MST
-Sat 22 Jul 2023 03:05:01 MST
+Sat 22 Jul 2023 03:29:27 MST
 ```
 
 ```text
 $ dtg -z America/Los_Angeles
-Sat 22 Jul 2023 03:05:01 PDT
+Sat 22 Jul 2023 03:29:27 PDT
 ```
 
 Get current date/time in UTC and specific format:
@@ -117,7 +117,7 @@ Saturday
 
 ```text
 $ dtg -f %s.%f
-1690020301.970107340
+1690021767.631574130
 ```
 
 Get current date/time in local timezone and specific format:
@@ -138,27 +138,27 @@ Get current date/time in "a" format:
 
 ```text
 $ dtg -a
-1690020301.991133672
-2023-07-22T10:05:01Z
-Sat 22 Jul 2023 10:05:01 UTC
-Sat 22 Jul 2023 06:05:01 EDT
+1690021767.638645604
+2023-07-22T10:29:27Z
+Sat 22 Jul 2023 10:29:27 UTC
+Sat 22 Jul 2023 06:29:27 EDT
 ```
 
 Get current date/time in explicit timezone and "a" format:
 
 ```text
 $ dtg -a -z MST
-1690020301.998153952
-2023-07-22T10:05:01Z
-Sat 22 Jul 2023 10:05:01 UTC
-Sat 22 Jul 2023 03:05:01 MST
+1690021767.640809775
+2023-07-22T10:29:27Z
+Sat 22 Jul 2023 10:29:27 UTC
+Sat 22 Jul 2023 03:29:27 MST
 ```
 
 Get current date/time in "x" format:
 
 ```text
 $ dtg -x
-Xh6LA52
+Xh6LATR
 ```
 
 Get a specific date / time in UTC and RFC 3339 format:
@@ -895,19 +895,19 @@ Multiple timezones:
 ```text
 $ dtg -z UTC,EST5EDT,CST6CDT,MST7MDT,PST8PDT -f '%Z%n%H:%M:%S%n' -f '%Z%n%Y-%m-%d%n'
 UTC
-10:05:02
+10:29:27
 
 EDT
-06:05:02
+06:29:27
 
 CDT
-05:05:02
+05:29:27
 
 MDT
-04:05:02
+04:29:27
 
 PDT
-03:05:02
+03:29:27
 
 UTC
 2023-07-22
@@ -932,31 +932,31 @@ use a single format and `%n`:*
 ```text
 $ dtg -z UTC,EST5EDT,CST6CDT,MST7MDT,PST8PDT -f '%Z%n%H:%M:%S%n%n%Z%n%Y-%m-%d%n'
 UTC
-10:05:02
+10:29:27
 
 UTC
 2023-07-22
 
 EDT
-06:05:02
+06:29:27
 
 EDT
 2023-07-22
 
 CDT
-05:05:02
+05:29:27
 
 CDT
 2023-07-22
 
 MDT
-04:05:02
+04:29:27
 
 MDT
 2023-07-22
 
 PDT
-03:05:02
+03:29:27
 
 PDT
 2023-07-22
@@ -967,84 +967,84 @@ Use a custom separator between formats/timezones:
 
 ```text
 $ dtg -z PST8PDT,MST7MDT,CST6CDT,EST5EDT,UTC -f '[%Z %H:%M:%S]' -s ' '
-[PDT 03:05:02] [MDT 04:05:02] [CDT 05:05:02] [EDT 06:05:02] [UTC 10:05:02]
+[PDT 03:29:27] [MDT 04:29:27] [CDT 05:29:27] [EDT 06:29:27] [UTC 10:29:27]
 ```
 
 Named formats:
 
 * a, all
-* cd, custom-date
-* cdt, custom-date-time
-* ct, custom-time
+* cd, compact-date
+* cdt, compact-date-time
+* ct, compact-time
 * d, default
 * i, r, rfc, rfc-3339
 * x
 
 ```text
 $ dtg -n all
-1690020302.145139618
-2023-07-22T10:05:02Z
-Sat 22 Jul 2023 10:05:02 UTC
-Sat 22 Jul 2023 10:05:02 UTC
+1690021767.696383709
+2023-07-22T10:29:27Z
+Sat 22 Jul 2023 10:29:27 UTC
+Sat 22 Jul 2023 10:29:27 UTC
 ```
 
 ```text
-$ dtg -n custom-date
-custom-date
+$ dtg -n compact-date
+20230722
 ```
 
 ```text
-$ dtg -n custom-date-time
-custom-date-time
+$ dtg -n compact-date-time
+20230722-102927
 ```
 
 ```text
-$ dtg -n custom-time
-custom-time
+$ dtg -n compact-time
+102927
 ```
 
 ```text
 $ dtg -n default
-Sat 22 Jul 2023 10:05:02 UTC
+Sat 22 Jul 2023 10:29:27 UTC
 ```
 
 ```text
 $ dtg -n rfc-3339
-2023-07-22T10:05:02Z
+2023-07-22T10:29:27Z
 ```
 
 ```text
 $ dtg -n x
-Xh6LA52
+Xh6LATR
 ```
 
 Ordered named formats:
 
 ```text
 $ dtg -x -a
-1690020302.189570951
-2023-07-22T10:05:02Z
-Sat 22 Jul 2023 10:05:02 UTC
-Sat 22 Jul 2023 06:05:02 EDT
-Xh6LA52
+1690021767.729792005
+2023-07-22T10:29:27Z
+Sat 22 Jul 2023 10:29:27 UTC
+Sat 22 Jul 2023 06:29:27 EDT
+Xh6LATR
 $ dtg -a -x
-1690020302.195929456
-2023-07-22T10:05:02Z
-Sat 22 Jul 2023 10:05:02 UTC
-Sat 22 Jul 2023 06:05:02 EDT
-Xh6LA52
+1690021767.735185803
+2023-07-22T10:29:27Z
+Sat 22 Jul 2023 10:29:27 UTC
+Sat 22 Jul 2023 06:29:27 EDT
+Xh6LATR
 $ dtg -n x -n all
-Xh6LA52
-1690020302.202365152
-2023-07-22T10:05:02Z
-Sat 22 Jul 2023 10:05:02 UTC
-Sat 22 Jul 2023 10:05:02 UTC
+Xh6LATR
+1690021767.740678684
+2023-07-22T10:29:27Z
+Sat 22 Jul 2023 10:29:27 UTC
+Sat 22 Jul 2023 10:29:27 UTC
 $ dtg -n all -n x
-1690020302.208711131
-2023-07-22T10:05:02Z
-Sat 22 Jul 2023 10:05:02 UTC
-Sat 22 Jul 2023 10:05:02 UTC
-Xh6LA52
+1690021767.746064965
+2023-07-22T10:29:27Z
+Sat 22 Jul 2023 10:29:27 UTC
+Sat 22 Jul 2023 10:29:27 UTC
+Xh6LATR
 ```
 
 # Formats
