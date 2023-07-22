@@ -19,10 +19,12 @@ Date/time CLI utility
 
 <https://crates.io/crates/dtg> / <https://github.com/qtfkwk/dtg>
 
----",
+---\
+    ",
     version,
     max_term_width = 80,
-    after_help = "---
+    after_help = "\
+---
 
 Notes:
 
@@ -57,6 +59,10 @@ Notes:
 
 3. Prints the timestamp in each format with one or more timezones using a
    comma-separated string (`-z UTC,EST`).
+
+4. The `-f`, `-a`, and `-x` options are processed *in that order* and do not
+   enable any reordering, however the `-n` option processes its arguments in the
+   order given and handles custom, \"a\", \"x\", and named formats.
 "
 )]
 struct Cli {
@@ -91,6 +97,11 @@ struct Cli {
     /// Separator [default: "\n"]
     #[arg(short)]
     separator: Option<String>,
+
+    /// Named format(s) [all (`-a`), compact-date (%Y%m%d), compact-date-time (%Y%m%d-%H%M%S),
+    /// compact-time (%H%M%S), default, rfc-3339, x (-x), or any custom format (-f)] (4)
+    #[arg(short, value_name = "NAME")]
+    named_formats: Vec<String>,
 
     /// Run every N seconds
     #[arg(short, value_name = "N")]
@@ -172,6 +183,18 @@ fn main() {
     }
     if cli.x_format {
         formats.push(Format::X);
+    }
+    for n in &cli.named_formats {
+        formats.push(match n.as_str() {
+            "a" | "all" => Format::A,
+            "cd" | "compact-date" => Format::Custom(String::from("%Y%m%d")),
+            "cdt" | "compact-date-time" => Format::Custom(String::from("%Y%m%d-%H%M%S")),
+            "ct" | "compact-time" => Format::Custom(String::from("%H%M%S")),
+            "d" | "default" => Format::default(),
+            "i" | "r" | "iso" | "rfc" | "rfc-3339" => Format::rfc_3339(),
+            "x" => Format::X,
+            _ => Format::Custom(n.clone()),
+        });
     }
     if formats.is_empty() {
         formats.push(if cli.local_zone || cli.zone.is_some() {

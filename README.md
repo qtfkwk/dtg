@@ -30,6 +30,9 @@ Options:
                       "%Y-%m-%dT%H:%M:%SZ"]
   -z <ZONE>           Timezone(s) [default: UTC] (3)
   -s <SEPARATOR>      Separator [default: "\n"]
+  -n <NAME>           Named format(s) [all (`-a`), compact-date (%Y%m%d),
+                      compact-date-time (%Y%m%d-%H%M%S), compact-time (%H%M%S),
+                      default, rfc-3339, x (-x), or any custom format (-f)] (4)
   -i <N>              Run every N seconds
   -c <N>              Clear and run every N seconds
   -r, --readme        Print the readme
@@ -71,6 +74,10 @@ Notes:
 
 3. Prints the timestamp in each format with one or more timezones using a
    comma-separated string (`-z UTC,EST`).
+
+4. The `-f`, `-a`, and `-x` options are processed *in that order* and do not
+   enable any reordering, however the `-n` option processes its arguments in the
+   order given and handles custom, "a", "x", and named formats.
 ~~~
 
 ## CLI examples
@@ -79,79 +86,79 @@ Get current date/time in UTC and RFC 3339 format:
 
 ```text
 $ dtg
-2023-07-06T08:11:10Z
+2023-07-22T10:05:01Z
 ```
 
 Get current date/time in the local timezone and default format:
 
 ```text
 $ dtg -l
-Thu 06 Jul 2023 04:11:10 EDT
+Sat 22 Jul 2023 06:05:01 EDT
 ```
 
 Get current date/time in explicit timezone and default format:
 
 ```text
 $ dtg -z MST
-Thu 06 Jul 2023 01:11:10 MST
+Sat 22 Jul 2023 03:05:01 MST
 ```
 
 ```text
 $ dtg -z America/Los_Angeles
-Thu 06 Jul 2023 01:11:10 PDT
+Sat 22 Jul 2023 03:05:01 PDT
 ```
 
 Get current date/time in UTC and specific format:
 
 ```text
 $ dtg -f %A
-Thursday
+Saturday
 ```
 
 ```text
 $ dtg -f %s.%f
-1688631070.240937052
+1690020301.970107340
 ```
 
 Get current date/time in local timezone and specific format:
 
 ```text
 $ dtg -l -f %A
-Thursday
+Saturday
 ```
 
 Get current date/time in explicit timezone and specific format:
 
 ```text
 $ dtg -z MST -f %A
-Thursday
+Saturday
 ```
 
 Get current date/time in "a" format:
 
 ```text
 $ dtg -a
-1688631070.247614655
-2023-07-06T08:11:10Z
-Thu 06 Jul 2023 08:11:10 UTC
-Thu 06 Jul 2023 04:11:10 EDT
+1690020301.991133672
+2023-07-22T10:05:01Z
+Sat 22 Jul 2023 10:05:01 UTC
+Sat 22 Jul 2023 06:05:01 EDT
 ```
 
 Get current date/time in explicit timezone and "a" format:
 
 ```text
 $ dtg -a -z MST
-1688631070.252376656
-2023-07-06T08:11:10Z
-Thu 06 Jul 2023 08:11:10 UTC
-Thu 06 Jul 2023 01:11:10 MST
+1690020301.998153952
+2023-07-22T10:05:01Z
+Sat 22 Jul 2023 10:05:01 UTC
+Sat 22 Jul 2023 03:05:01 MST
 ```
 
 Get current date/time in "x" format:
 
 ```text
 $ dtg -x
-Xh658BA
+Xh6LA52
 ```
 
 Get a specific date / time in UTC and RFC 3339 format:
@@ -888,34 +895,34 @@ Multiple timezones:
 ```text
 $ dtg -z UTC,EST5EDT,CST6CDT,MST7MDT,PST8PDT -f '%Z%n%H:%M:%S%n' -f '%Z%n%Y-%m-%d%n'
 UTC
-08:11:10
+10:05:02
 
 EDT
-04:11:10
+06:05:02
 
 CDT
-03:11:10
+05:05:02
 
 MDT
-02:11:10
+04:05:02
 
 PDT
-01:11:10
+03:05:02
 
 UTC
-2023-07-06
+2023-07-22
 
 EDT
-2023-07-06
+2023-07-22
 
 CDT
-2023-07-06
+2023-07-22
 
 MDT
-2023-07-06
+2023-07-22
 
 PDT
-2023-07-06
+2023-07-22
 
 ```
 
@@ -925,34 +932,34 @@ use a single format and `%n`:*
 ```text
 $ dtg -z UTC,EST5EDT,CST6CDT,MST7MDT,PST8PDT -f '%Z%n%H:%M:%S%n%n%Z%n%Y-%m-%d%n'
 UTC
-08:11:10
+10:05:02
 
 UTC
-2023-07-06
+2023-07-22
 
 EDT
-04:11:10
+06:05:02
 
 EDT
-2023-07-06
+2023-07-22
 
 CDT
-03:11:10
+05:05:02
 
 CDT
-2023-07-06
+2023-07-22
 
 MDT
-02:11:10
+04:05:02
 
 MDT
-2023-07-06
+2023-07-22
 
 PDT
-01:11:10
+03:05:02
 
 PDT
-2023-07-06
+2023-07-22
 
 ```
 
@@ -960,7 +967,84 @@ Use a custom separator between formats/timezones:
 
 ```text
 $ dtg -z PST8PDT,MST7MDT,CST6CDT,EST5EDT,UTC -f '[%Z %H:%M:%S]' -s ' '
-[PDT 01:11:10] [MDT 02:11:10] [CDT 03:11:10] [EDT 04:11:10] [UTC 08:11:10]
+[PDT 03:05:02] [MDT 04:05:02] [CDT 05:05:02] [EDT 06:05:02] [UTC 10:05:02]
+```
+
+Named formats:
+
+* a, all
+* cd, custom-date
+* cdt, custom-date-time
+* ct, custom-time
+* d, default
+* i, r, rfc, rfc-3339
+* x
+
+```text
+$ dtg -n all
+1690020302.145139618
+2023-07-22T10:05:02Z
+Sat 22 Jul 2023 10:05:02 UTC
+Sat 22 Jul 2023 10:05:02 UTC
+```
+
+```text
+$ dtg -n custom-date
+custom-date
+```
+
+```text
+$ dtg -n custom-date-time
+custom-date-time
+```
+
+```text
+$ dtg -n custom-time
+custom-time
+```
+
+```text
+$ dtg -n default
+Sat 22 Jul 2023 10:05:02 UTC
+```
+
+```text
+$ dtg -n rfc-3339
+2023-07-22T10:05:02Z
+```
+
+```text
+$ dtg -n x
+Xh6LA52
+```
+
+Ordered named formats:
+
+```text
+$ dtg -x -a
+1690020302.189570951
+2023-07-22T10:05:02Z
+Sat 22 Jul 2023 10:05:02 UTC
+Sat 22 Jul 2023 06:05:02 EDT
+Xh6LA52
+$ dtg -a -x
+1690020302.195929456
+2023-07-22T10:05:02Z
+Sat 22 Jul 2023 10:05:02 UTC
+Sat 22 Jul 2023 06:05:02 EDT
+Xh6LA52
+$ dtg -n x -n all
+Xh6LA52
+1690020302.202365152
+2023-07-22T10:05:02Z
+Sat 22 Jul 2023 10:05:02 UTC
+Sat 22 Jul 2023 10:05:02 UTC
+$ dtg -n all -n x
+1690020302.208711131
+2023-07-22T10:05:02Z
+Sat 22 Jul 2023 10:05:02 UTC
+Sat 22 Jul 2023 10:05:02 UTC
+Xh6LA52
 ```
 
 # Library

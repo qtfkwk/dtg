@@ -39,4 +39,5 @@
 * 5.3.0: Update dependencies; fix usage
 * 5.3.1: Fix changelog
 * 5.4.0: Neuter pager on windows; update dependencies
+* 5.5.0: Add `-n` / named format option; update dependencies
 

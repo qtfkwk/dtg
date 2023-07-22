@@ -221,3 +221,61 @@ $ dtg -z PST8PDT,MST7MDT,CST6CDT,EST5EDT,UTC -f '[%Z %H:%M:%S]' -s ' '
 !run:../target/release/dtg -z PST8PDT,MST7MDT,CST6CDT,EST5EDT,UTC -f '[%Z %H:%M:%S]' -s ' '
 ```
 
+Named formats:
+
+* a, all
+* cd, custom-date
+* cdt, custom-date-time
+* ct, custom-time
+* d, default
+* i, r, rfc, rfc-3339
+* x
+
+```text
+$ dtg -n all
+!run:../target/release/dtg -n all
+```
+
+```text
+$ dtg -n custom-date
+!run:../target/release/dtg -n custom-date
+```
+
+```text
+$ dtg -n custom-date-time
+!run:../target/release/dtg -n custom-date-time
+```
+
+```text
+$ dtg -n custom-time
+!run:../target/release/dtg -n custom-time
+```
+
+```text
+$ dtg -n default
+!run:../target/release/dtg -n default
+```
+
+```text
+$ dtg -n rfc-3339
+!run:../target/release/dtg -n rfc-3339
+```
+
+```text
+$ dtg -n x
+!run:../target/release/dtg -n x
+```
+
+Ordered named formats:
+
+```text
+$ dtg -x -a
+!run:../target/release/dtg -x -a
+$ dtg -a -x
+!run:../target/release/dtg -a -x
+$ dtg -n x -n all
+!run:../target/release/dtg -n x -n all
+$ dtg -n all -n x
+!run:../target/release/dtg -n all -n x
+```
+
