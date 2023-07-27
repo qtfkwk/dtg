@@ -224,6 +224,7 @@ $ dtg -z PST8PDT,MST7MDT,CST6CDT,EST5EDT,UTC -f '[%Z %H:%M:%S]' -s ' '
 Named formats:
 
 * a, all
+* bcd
 * cd, compact-date
 * cdt, compact-date-time
 * ct, compact-time
@@ -232,8 +233,23 @@ Named formats:
 * x
 
 ```text
-$ dtg -n all
-!run:../target/release/dtg -n all
+$ dtg -l -n all
+!run:../target/release/dtg -l -n all
+```
+
+```text
+$ dtg -n bcd
+!run:../target/release/dtg -n bcd
+```
+
+```text
+$ dtg -l -n bcd
+!run:../target/release/dtg -l -n bcd
+```
+
+```text
+$ dtg -z MST7MDT -n bcd
+!run:../target/release/dtg -z MST7MDT -n bcd
 ```
 
 ```text

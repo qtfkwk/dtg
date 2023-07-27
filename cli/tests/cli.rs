@@ -19,6 +19,13 @@ const PST: &str = "Wed 25 Nov 2020 06:32:37 PST";
 const MONTH: &str = "November";
 const DOW: &str = "Wednesday";
 const X: &str = "XeAOEWb";
+const BCD: &str = "⠄⠄|⣀|⢔|⡐|⡤|⣴";
+const BCD_EST: &str = "⠄⠄|⣀|⢔|⢈|⡤|⣴";
+const BCD_MST: &str = "⠄⠄|⣀|⢔|⢰|⡤|⣴";
+const COMPACT_DATE: &str = "20201125";
+const COMPACT_TIME: &str = "143237";
+const COMPACT_TIME_EST: &str = "093237";
+const COMPACT_TIME_MST: &str = "073237";
 const MAX: &str = "+262143-12-31T23:59:59Z";
 const MAX_SECONDS: &str = "8210298412799";
 const MAX_X: &str = "1Cn3BUNxx";
@@ -220,6 +227,80 @@ fn max_seconds() {
 #[test]
 fn max_x() {
     pass("dtg", &["-X", MAX_X], MAX);
+}
+
+#[test]
+fn named_format_all() {
+    let want = format!("{}.{}\n{}\n{}\n{}", SECONDS, NANOSECONDS, RFC3339, UTC, UTC);
+    let want_est = format!("{}.{}\n{}\n{}\n{}", SECONDS, NANOSECONDS, RFC3339, UTC, EST);
+    let want_mst = format!("{}.{}\n{}\n{}\n{}", SECONDS, NANOSECONDS, RFC3339, UTC, MST);
+    let ns = nanoseconds();
+    for i in ["a", "all"] {
+        pass("dtg", &["-n", i, &ns], &want);
+        pass("dtg", &["-z", "EST5EDT", "-n", i, &ns], &want_est);
+        pass("dtg", &["-z", "MST7MDT", "-n", i, &ns], &want_mst);
+    }
+}
+
+#[test]
+fn named_format_bcd() {
+    let ns = nanoseconds();
+    pass("dtg", &["-n", "bcd", &ns], BCD);
+    pass("dtg", &["-z", "EST5EDT", "-n", "bcd", &ns], BCD_EST);
+    pass("dtg", &["-z", "MST7MDT", "-n", "bcd", &ns], BCD_MST);
+}
+
+#[test]
+fn named_format_compact_date() {
+    let ns = nanoseconds();
+    for i in ["cd", "compact-date"] {
+        pass("dtg", &["-n", i, &ns], &COMPACT_DATE);
+        pass("dtg", &["-z", "EST5EDT", "-n", i, &ns], &COMPACT_DATE);
+        pass("dtg", &["-z", "EST5EDT", "-n", i, &ns], &COMPACT_DATE);
+    }
+}
+
+#[test]
+fn named_format_compact_date_time() {
+    let ns = nanoseconds();
+    let want = format!("{COMPACT_DATE}-{COMPACT_TIME}");
+    let want_est = format!("{COMPACT_DATE}-{COMPACT_TIME_EST}");
+    let want_mst = format!("{COMPACT_DATE}-{COMPACT_TIME_MST}");
+    for i in ["cdt", "compact-date-time"] {
+        pass("dtg", &["-n", i, &ns], &want);
+        pass("dtg", &["-z", "EST5EDT", "-n", i, &ns], &want_est);
+        pass("dtg", &["-z", "MST7MDT", "-n", i, &ns], &want_mst);
+    }
+}
+
+#[test]
+fn named_format_compact_time() {
+    let ns = nanoseconds();
+    for i in ["ct", "compact-time"] {
+        pass("dtg", &["-n", i, &ns], &COMPACT_TIME);
+        pass("dtg", &["-z", "EST5EDT", "-n", i, &ns], &COMPACT_TIME_EST);
+        pass("dtg", &["-z", "MST7MDT", "-n", i, &ns], &COMPACT_TIME_MST);
+    }
+}
+
+#[test]
+fn named_format_default() {
+    let ns = nanoseconds();
+    for i in ["d", "default"] {
+        pass("dtg", &["-n", i, &ns], UTC);
+        pass("dtg", &["-z", "EST5EDT", "-n", i, &ns], EST);
+        pass("dtg", &["-z", "MST7MDT", "-n", i, &ns], MST);
+    }
+}
+
+#[test]
+fn named_format_rfc_3339() {
+    let ns = nanoseconds();
+    for i in ["i", "r", "rfc", "rfc-3339"] {
+        pass("dtg", &["-n", i, &ns], RFC3339);
+        pass("dtg", &["-z", "EST5EDT", "-n", i, &ns], RFC3339);
+        pass("dtg", &["-z", "MST7MDT", "-n", i, &ns], RFC3339);
+    }
 }
 
 // ## Errors

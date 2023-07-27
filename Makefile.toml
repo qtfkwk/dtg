@@ -141,3 +141,8 @@ script = '''
 PORT=8080
 while ! miniserve -vp $PORT .; do PORT=$((PORT+1)); done
 '''
+
+[tasks.install]
+script = '''
+cargo install --path cli
+'''

@@ -269,6 +269,21 @@ impl Dtg {
     }
 
     /**
+    Format like a binary clock using the Braille Patterns Unicode Block and `|` separators
+
+    ```
+    use dtg_lib::Dtg;
+
+    let dtg = Dtg::from("1658448142").unwrap();
+
+    assert_eq!(dtg.bcd_format(), "⠄⠤|⢰|⠤|⠀|⠠|⠤"); // 2022|07|22|00|02|22
+    ```
+    */
+    pub fn bcd_format(&self) -> String {
+        self.format(&Some(Format::BCD), &None)
+    }
+
+    /**
     Format as a string with format and timezone
 
     ```
@@ -444,6 +459,7 @@ Spec. | Description
 #[derive(Clone)]
 pub enum Format {
     A,
+    BCD,
     X,
     Custom(String),
 }
@@ -475,7 +491,13 @@ impl Format {
     */
     fn with(&self, dt: &DateTime<Utc>, tz: &Tz) -> String {
         match self {
-            Format::Custom(f) => dt.with_timezone(tz).format(f).to_string(),
+            Format::Custom(f) => {
+                if f == RFC_3339 {
+                    dt.format(f).to_string()
+                } else {
+                    dt.with_timezone(tz).format(f).to_string()
+                }
+            }
             Format::A => format!(
                 "{}\n{}\n{}\n{}",
                 dt.format(EPOCH),
@@ -484,6 +506,7 @@ impl Format {
                 dt.with_timezone(tz).format(DEFAULT),
             ),
             Format::X => self.x(dt),
+            Format::BCD => self.bcd(dt, tz),
         }
     }
 
@@ -511,6 +534,40 @@ impl Format {
         let m = ITOC.get(&(dt.minute() as u8)).unwrap();
         let s = ITOC.get(&(dt.second() as u8)).unwrap();
         format!("{year}{mon}{day}{h}{m}{s}")
+    }
+
+    /**
+    Format a [DateTime<Utc>] like a binary clock using the Braille Patterns Unicode Block and `|`
+    separators
+    */
+    fn bcd(&self, dt: &DateTime<Utc>, tz: &Tz) -> String {
+        let dt = dt.with_timezone(tz);
+        let yyyy = dt.year();
+        let (mut r, yyyy) = if yyyy < 0 {
+            (String::from("-"), (-yyyy) as u32)
+        } else {
+            (String::new(), yyyy as u32)
+        };
+        let cc = (yyyy / 100) as u8;
+        let yy = (yyyy - yyyy / 100 * 100) as u8;
+        for (i, n) in [
+            cc,
+            yy,
+            dt.month() as u8,
+            dt.day() as u8,
+            dt.hour() as u8,
+            dt.minute() as u8,
+            dt.second() as u8,
+        ]
+        .iter()
+        .enumerate()
+        {
+            if i >= 2 {
+                r.push('|');
+            }
+            r.push(bcd_braille(*n));
+        }
+        r
     }
 }
 
@@ -1149,4 +1206,46 @@ pub fn tz(s: &str) -> Result<Tz, DtgError> {
             Err(_) => Err(DtgError::new(&format!("Invalid timezone: `{s}`"), 102)),
         },
     }
+}
+
+/**
+Translate a [u8] in the range 0 to 99 to a "binary clock style" / Binary Code Decimal (BCD)
+representation using a single character from the Braille Patterns Unicode Block
+*/
+fn bcd_braille(x: u8) -> char {
+    if x > 99 {
+        panic!("Invalid BCD value: {x}! Must in range `0..=99`.")
+    }
+    let tens = x / 10;
+    let ones = x - tens * 10;
+    char::from_u32(
+        0x2800
+            + match tens {
+                0 => 0x00,
+                1 => 0x40,
+                2 => 0x04,
+                3 => 0x44,
+                4 => 0x02,
+                5 => 0x42,
+                6 => 0x06,
+                7 => 0x46,
+                8 => 0x01,
+                9 => 0x41,
+                _ => unreachable!(),
+            }
+            + match ones {
+                0 => 0x00,
+                1 => 0x80,
+                2 => 0x20,
+                3 => 0xA0,
+                4 => 0x10,
+                5 => 0x90,
+                6 => 0x30,
+                7 => 0xB0,
+                8 => 0x08,
+                9 => 0x88,
+                _ => unreachable!(),
+            },
+    )
+    .unwrap()
 }

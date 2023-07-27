@@ -63,10 +63,15 @@ Notes:
 4. The `-f`, `-a`, and `-x` options are processed *in that order* and do not
    enable any reordering, however the `-n` option processes its arguments in the
    order given and handles custom, \"a\", \"x\", and named formats.
+
+5. \"bcd\" format: year, month, day, hour, minute, and second displayed like a
+   binary clock with the Braille Patterns Unicode Block and `|` separators.
+
+6. `-l` / `-z` are ignored when processing UTC-only formats like `-n rfc-3339`.
 "
 )]
 struct Cli {
-    /// Local timezone
+    /// Local timezone (6)
     #[arg(short)]
     local_zone: bool,
 
@@ -90,7 +95,7 @@ struct Cli {
     #[arg(short, value_name = "FORMAT")]
     formats: Vec<String>,
 
-    /// Timezone(s) [default: UTC] (3)
+    /// Timezone(s) [default: UTC] (3) (6)
     #[arg(short)]
     zone: Option<String>,
 
@@ -98,8 +103,8 @@ struct Cli {
     #[arg(short)]
     separator: Option<String>,
 
-    /// Named format(s) [all (`-a`), compact-date (%Y%m%d), compact-date-time (%Y%m%d-%H%M%S),
-    /// compact-time (%H%M%S), default, rfc-3339, x (-x), or any custom format (-f)] (4)
+    /// Named format(s) [all, bcd, compact-date (%Y%m%d), compact-date-time (%Y%m%d-%H%M%S),
+    /// compact-time (%H%M%S), default, rfc-3339, x, or any custom format] (4) (5)
     #[arg(short, value_name = "NAME")]
     named_formats: Vec<String>,
 
@@ -193,6 +198,7 @@ fn main() {
             "d" | "default" => Format::default(),
             "i" | "r" | "iso" | "rfc" | "rfc-3339" => Format::rfc_3339(),
             "x" => Format::X,
+            "bcd" => Format::BCD,
             _ => Format::Custom(n.clone()),
         });
     }
