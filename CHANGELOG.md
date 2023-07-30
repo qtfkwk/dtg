@@ -43,4 +43,5 @@
 * 5.5.1: Fix CLI examples
 * 5.6.0: Add "bcd" format and cargo-make install task; fix bug when using `-l` or `-z` with
   `-n rfc-3339`; update dependencies
+* 5.7.0: Use `bbd_lib::encode_bcd`; update dependencies
 
