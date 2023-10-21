@@ -45,4 +45,5 @@
   `-n rfc-3339`; update dependencies
 * 5.7.0: Use `bbd_lib::encode_bcd`; update dependencies
 * 5.8.0: Update dependencies
+* 5.8.1: Update dependencies
 

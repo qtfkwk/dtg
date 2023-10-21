@@ -91,26 +91,26 @@ Get current date/time in UTC and RFC 3339 format:
 
 ```text
 $ dtg
-2023-09-09T13:25:58Z
+2023-10-21T19:29:49Z
 ```
 
 Get current date/time in the local timezone and default format:
 
 ```text
 $ dtg -l
-Sat 09 Sep 2023 09:25:58 EDT
+Sat 21 Oct 2023 15:29:49 EDT
 ```
 
 Get current date/time in explicit timezone and default format:
 
 ```text
 $ dtg -z MST
-Sat 09 Sep 2023 06:25:58 MST
+Sat 21 Oct 2023 12:29:49 MST
 ```
 
 ```text
 $ dtg -z America/Los_Angeles
-Sat 09 Sep 2023 06:25:58 PDT
+Sat 21 Oct 2023 12:29:49 PDT
 ```
 
 Get current date/time in UTC and specific format:
@@ -122,7 +122,7 @@ Saturday
 
 ```text
 $ dtg -f %s.%f
-1694265958.643512618
+1697916589.696094112
 ```
 
 Get current date/time in local timezone and specific format:
@@ -143,27 +143,27 @@ Get current date/time in "a" format:
 
 ```text
 $ dtg -a
-1694265958.656293638
-2023-09-09T13:25:58Z
-Sat 09 Sep 2023 13:25:58 UTC
-Sat 09 Sep 2023 09:25:58 EDT
+1697916589.711706661
+2023-10-21T19:29:49Z
+Sat 21 Oct 2023 19:29:49 UTC
+Sat 21 Oct 2023 15:29:49 EDT
 ```
 
 Get current date/time in explicit timezone and "a" format:
 
 ```text
 $ dtg -a -z MST
-1694265958.661960683
-2023-09-09T13:25:58Z
-Sat 09 Sep 2023 13:25:58 UTC
-Sat 09 Sep 2023 06:25:58 MST
+1697916589.716848396
+2023-10-21T19:29:49Z
+Sat 21 Oct 2023 19:29:49 UTC
+Sat 21 Oct 2023 12:29:49 MST
 ```
 
 Get current date/time in "x" format:
 
 ```text
 $ dtg -x
-Xh88DPw
+Xh9KJTn
 ```
 
 Get a specific date / time in UTC and RFC 3339 format:
@@ -900,34 +900,34 @@ Multiple timezones:
 ```text
 $ dtg -z UTC,EST5EDT,CST6CDT,MST7MDT,PST8PDT -f '%Z%n%H:%M:%S%n' -f '%Z%n%Y-%m-%d%n'
 UTC
-13:25:58
+19:29:49
 
 EDT
-09:25:58
+15:29:49
 
 CDT
-08:25:58
+14:29:49
 
 MDT
-07:25:58
+13:29:49
 
 PDT
-06:25:58
+12:29:49
 
 UTC
-2023-09-09
+2023-10-21
 
 EDT
-2023-09-09
+2023-10-21
 
 CDT
-2023-09-09
+2023-10-21
 
 MDT
-2023-09-09
+2023-10-21
 
 PDT
-2023-09-09
+2023-10-21
 
 ```
 
@@ -937,34 +937,34 @@ use a single format and `%n`:*
 ```text
 $ dtg -z UTC,EST5EDT,CST6CDT,MST7MDT,PST8PDT -f '%Z%n%H:%M:%S%n%n%Z%n%Y-%m-%d%n'
 UTC
-13:25:58
+19:29:49
 
 UTC
-2023-09-09
+2023-10-21
 
 EDT
-09:25:58
+15:29:49
 
 EDT
-2023-09-09
+2023-10-21
 
 CDT
-08:25:58
+14:29:49
 
 CDT
-2023-09-09
+2023-10-21
 
 MDT
-07:25:58
+13:29:49
 
 MDT
-2023-09-09
+2023-10-21
 
 PDT
-06:25:58
+12:29:49
 
 PDT
-2023-09-09
+2023-10-21
 
 ```
 
@@ -972,7 +972,7 @@ Use a custom separator between formats/timezones:
 
 ```text
 $ dtg -z PST8PDT,MST7MDT,CST6CDT,EST5EDT,UTC -f '[%Z %H:%M:%S]' -s ' '
-[PDT 06:25:58] [MDT 07:25:58] [CDT 08:25:58] [EDT 09:25:58] [UTC 13:25:58]
+[PDT 12:29:49] [MDT 13:29:49] [CDT 14:29:49] [EDT 15:29:49] [UTC 19:29:49]
 ```
 
 Named formats:
@@ -988,84 +988,84 @@ Named formats:
 
 ```text
 $ dtg -l -n all
-1694265958.771779784
-2023-09-09T13:25:58Z
-Sat 09 Sep 2023 13:25:58 UTC
-Sat 09 Sep 2023 09:25:58 EDT
+1697916589.830886936
+2023-10-21T19:29:49Z
+Sat 21 Oct 2023 19:29:49 UTC
+Sat 21 Oct 2023 15:29:49 EDT
 ```
 
 ```text
 $ dtg -n bcd
-⠄⢤|⢈|⢈|⣠|⢔|⡊
+⠄⢤|⡀|⢄|⣈|⢌|⢊
 ```
 
 ```text
 $ dtg -l -n bcd
-⠄⢤|⢈|⢈|⢈|⢔|⡊
+⠄⢤|⡀|⢄|⣐|⢌|⢊
 ```
 
 ```text
 $ dtg -z MST7MDT -n bcd
-⠄⢤|⢈|⢈|⢰|⢔|⡊
+⠄⢤|⡀|⢄|⣠|⢌|⢊
 ```
 
 ```text
 $ dtg -n compact-date
-20230909
+20231021
 ```
 
 ```text
 $ dtg -n compact-date-time
-20230909-132558
+20231021-192949
 ```
 
 ```text
 $ dtg -n compact-time
-132558
+192949
 ```
 
 ```text
 $ dtg -n default
-Sat 09 Sep 2023 13:25:58 UTC
+Sat 21 Oct 2023 19:29:49 UTC
 ```
 
 ```text
 $ dtg -n rfc-3339
-2023-09-09T13:25:58Z
+2023-10-21T19:29:49Z
 ```
 
 ```text
 $ dtg -n x
-Xh88DPw
+Xh9KJTn
 ```
 
 Ordered named formats:
 
 ```text
 $ dtg -x -a
-1694265958.820950078
-2023-09-09T13:25:58Z
-Sat 09 Sep 2023 13:25:58 UTC
-Sat 09 Sep 2023 09:25:58 EDT
-Xh88DPw
+1697916589.878648541
+2023-10-21T19:29:49Z
+Sat 21 Oct 2023 19:29:49 UTC
+Sat 21 Oct 2023 15:29:49 EDT
+Xh9KJTn
 $ dtg -a -x
-1694265958.824126805
-2023-09-09T13:25:58Z
-Sat 09 Sep 2023 13:25:58 UTC
-Sat 09 Sep 2023 09:25:58 EDT
-Xh88DPw
+1697916589.885390866
+2023-10-21T19:29:49Z
+Sat 21 Oct 2023 19:29:49 UTC
+Sat 21 Oct 2023 15:29:49 EDT
+Xh9KJTn
 $ dtg -n x -n all
-Xh88DPw
-1694265958.827776273
-2023-09-09T13:25:58Z
-Sat 09 Sep 2023 13:25:58 UTC
-Sat 09 Sep 2023 13:25:58 UTC
+Xh9KJTn
+1697916589.891867159
+2023-10-21T19:29:49Z
+Sat 21 Oct 2023 19:29:49 UTC
+Sat 21 Oct 2023 19:29:49 UTC
 $ dtg -n all -n x
-1694265958.832814219
-2023-09-09T13:25:58Z
-Sat 09 Sep 2023 13:25:58 UTC
-Sat 09 Sep 2023 13:25:58 UTC
-Xh88DPw
+1697916589.899236133
+2023-10-21T19:29:49Z
+Sat 21 Oct 2023 19:29:49 UTC
+Sat 21 Oct 2023 19:29:49 UTC
+Xh9KJTn
 ```
 
 # Library
