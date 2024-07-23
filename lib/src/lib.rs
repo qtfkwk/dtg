@@ -3,7 +3,7 @@
 //--------------------------------------------------------------------------------------------------
 // Crates
 
-use chrono::{DateTime, Datelike, TimeZone, Timelike, Utc};
+use chrono::{offset::LocalResult, DateTime, Datelike, TimeZone, Timelike, Utc};
 use chrono_tz::Tz;
 use lazy_static::lazy_static;
 
@@ -117,6 +117,12 @@ impl Dtg {
     */
     pub fn from(s: &str) -> Result<Dtg, DtgError> {
         let mut x = s.split('.');
+        fn inner(seconds: i64, nanoseconds: u32) -> Option<DateTime<Utc>> {
+            if let chrono::MappedLocalTime::Single(dt) = Utc.timestamp_opt(seconds, nanoseconds) {
+                return Some(dt);
+            }
+            None
+        }
         if let Some(seconds) = x.next() {
             if let Ok(seconds) = seconds.parse::<i64>() {
                 if seconds <= 8210298412799 {
@@ -126,14 +132,12 @@ impl Dtg {
                             nanoseconds.push('0');
                         }
                         if let Ok(nanoseconds) = nanoseconds[..9].parse::<u32>() {
-                            return Ok(Dtg {
-                                dt: Utc.timestamp_opt(seconds, nanoseconds).unwrap(),
-                            });
+                            if let Some(dt) = inner(seconds, nanoseconds) {
+                                return Ok(Dtg { dt });
+                            }
                         }
-                    } else {
-                        return Ok(Dtg {
-                            dt: Utc.timestamp_opt(seconds, 0).unwrap(),
-                        });
+                    } else if let Some(dt) = inner(seconds, 0) {
+                        return Ok(Dtg { dt });
                     }
                 }
             }
@@ -169,10 +173,11 @@ impl Dtg {
         if y > 262143 {
             return Err(DtgError::new(&format!("Invalid timestamp: `{s}`"), 101));
         }
-        let dt = Utc
-            .with_ymd_and_hms(y, v[4], v[3], v[2], v[1], v[0])
-            .unwrap();
-        Ok(Dtg { dt })
+        if let LocalResult::Single(dt) = Utc.with_ymd_and_hms(y, v[4], v[3], v[2], v[1], v[0]) {
+            Ok(Dtg { dt })
+        } else {
+            Err(DtgError::new(&format!("Invalid timestamp: `{s}`"), 101))
+        }
     }
 
     /**

@@ -26,11 +26,11 @@ const COMPACT_DATE: &str = "20201125";
 const COMPACT_TIME: &str = "143237";
 const COMPACT_TIME_EST: &str = "093237";
 const COMPACT_TIME_MST: &str = "073237";
-const MAX: &str = "+262143-12-31T23:59:59Z";
-const MAX_SECONDS: &str = "8210298412799";
-const MAX_X: &str = "1Cn3BUNxx";
-const OVERFLOW_SECONDS: &str = "8210298412800";
-const OVERFLOW_X: &str = "1Cn400000";
+const MAX: &str = "+262142-12-31T23:59:59Z";
+const MAX_SECONDS: &str = "8210266876799";
+const MAX_X: &str = "1Cn2BUNxx";
+const OVERFLOW_SECONDS: &str = "8210266876800";
+const OVERFLOW_X: &str = "1Cn300000";
 
 // # Helper functions
 
