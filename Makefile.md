@@ -40,7 +40,7 @@ cargo clippy -- -D clippy::all
 * `**/*.rs`
 
 ```
-cargo test --release
+cargo test
 ```
 
 # build
@@ -67,6 +67,7 @@ cargo build --release
 
 ```bash
 set -xeo pipefail
+cargo build --release
 kapow cli/t/README.md >cli/README.md
 kapow cli/EXAMPLES.md >>cli/README.md
 cat FORMATS.md >>cli/README.md

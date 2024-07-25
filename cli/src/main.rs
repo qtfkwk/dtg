@@ -1,8 +1,8 @@
 #![doc = include_str!("../README.md")]
 
-use chrono_tz::{Tz, TZ_VARIANTS};
 use clap::Parser;
 use dtg_lib::{tz, Dtg, Format};
+use jiff::tz::TimeZone;
 
 #[cfg(unix)]
 use pager::Pager;
@@ -138,15 +138,18 @@ fn main() {
 
     if cli.list_zones {
         let mut found = 0;
+        let zones = jiff::tz::db().available().filter(|x| {
+            !x.starts_with("right/") && !["Factory", "posixrules"].contains(&x.as_str())
+        });
         if cli.args.is_empty() {
-            for zone in TZ_VARIANTS.iter() {
+            for zone in zones {
                 println!("{zone}");
                 found += 1;
             }
         } else {
             let search = &cli.args[0];
             let search_lc = search.to_lowercase();
-            for zone in TZ_VARIANTS.iter() {
+            for zone in zones {
                 let name = zone.to_string().to_lowercase();
                 if name.contains(&search_lc) {
                     println!("{zone}");
@@ -244,7 +247,7 @@ fn main() {
 fn core(
     args: &[String],
     formats: &[Option<Format>],
-    timezones: &[Option<Tz>],
+    timezones: &[Option<TimeZone>],
     separator: &str,
     from_x: bool,
 ) {
@@ -274,7 +277,7 @@ fn core(
     }
 }
 
-fn tz_(i: &str) -> Option<Tz> {
+fn tz_(i: &str) -> Option<TimeZone> {
     let t = tz(i);
     if let Err(ref e) = t {
         match e.code {

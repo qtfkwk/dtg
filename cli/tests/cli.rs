@@ -26,11 +26,11 @@ const COMPACT_DATE: &str = "20201125";
 const COMPACT_TIME: &str = "143237";
 const COMPACT_TIME_EST: &str = "093237";
 const COMPACT_TIME_MST: &str = "073237";
-const MAX: &str = "+262142-12-31T23:59:59Z";
-const MAX_SECONDS: &str = "8210266876799";
-const MAX_X: &str = "1Cn2BUNxx";
-const OVERFLOW_SECONDS: &str = "8210266876800";
-const OVERFLOW_X: &str = "1Cn300000";
+const MAX: &str = "9999-12-30T22:00:00Z";
+const MAX_SECONDS: &str = "253402207200";
+const MAX_X: &str = "2kdBTM00";
+const OVERFLOW_SECONDS: &str = "253402207201";
+const OVERFLOW_X: &str = "2kdBTM01";
 
 // # Helper functions
 
@@ -207,7 +207,7 @@ fn mulitple_f_options() {
 
 #[test]
 fn timezone_list() {
-    cmd("dtg").args(&["-Z"]).assert().success();
+    cmd("dtg").args(["-Z"]).assert().success();
 }
 
 #[test]
@@ -254,9 +254,9 @@ fn named_format_bcd() {
 fn named_format_compact_date() {
     let ns = nanoseconds();
     for i in ["cd", "compact-date"] {
-        pass("dtg", &["-n", i, &ns], &COMPACT_DATE);
-        pass("dtg", &["-z", "EST5EDT", "-n", i, &ns], &COMPACT_DATE);
-        pass("dtg", &["-z", "EST5EDT", "-n", i, &ns], &COMPACT_DATE);
+        pass("dtg", &["-n", i, &ns], COMPACT_DATE);
+        pass("dtg", &["-z", "EST5EDT", "-n", i, &ns], COMPACT_DATE);
+        pass("dtg", &["-z", "EST5EDT", "-n", i, &ns], COMPACT_DATE);
     }
 }
 
@@ -277,9 +277,9 @@ fn named_format_compact_date_time() {
 fn named_format_compact_time() {
     let ns = nanoseconds();
     for i in ["ct", "compact-time"] {
-        pass("dtg", &["-n", i, &ns], &COMPACT_TIME);
-        pass("dtg", &["-z", "EST5EDT", "-n", i, &ns], &COMPACT_TIME_EST);
-        pass("dtg", &["-z", "MST7MDT", "-n", i, &ns], &COMPACT_TIME_MST);
+        pass("dtg", &["-n", i, &ns], COMPACT_TIME);
+        pass("dtg", &["-z", "EST5EDT", "-n", i, &ns], COMPACT_TIME_EST);
+        pass("dtg", &["-z", "MST7MDT", "-n", i, &ns], COMPACT_TIME_MST);
     }
 }
 
