@@ -2,6 +2,9 @@
 
 Date/time CLI utility ([dtg]) and library ([dtg-lib])
 
+[dtg]: https://crates.io/crates/dtg
+[dtg-lib]: https://crates.io/crates/dtg-lib
+
 # CLI
 
 ## Usage

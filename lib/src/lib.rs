@@ -377,11 +377,6 @@ See also [Dtg::from_x]
 
 See also [Dtg::format]
 
-The following information originates from the [jiff documentation], which `dtg-lib` uses
-internally.
-
-[jiff documentation]: https://docs.rs/jiff/latest/jiff/fmt/strtime/index.html#conversion-specifications
-
 ## Date specifiers
 
 Spec. | Example       | Description
@@ -707,6 +702,7 @@ America/Cayenne
 America/Cayman
 America/Chicago
 America/Chihuahua
+America/Ciudad_Juarez
 America/Coral_Harbour
 America/Cordoba
 America/Costa_Rica
@@ -1061,6 +1057,7 @@ Europe/Jersey
 Europe/Kaliningrad
 Europe/Kiev
 Europe/Kirov
+Europe/Kyiv
 Europe/Lisbon
 Europe/Ljubljana
 Europe/London
@@ -1206,6 +1203,7 @@ Universal
 W-SU
 WET
 Zulu
+localtime
 ```
 */
 pub fn tz(s: &str) -> Result<TimeZone, DtgError> {

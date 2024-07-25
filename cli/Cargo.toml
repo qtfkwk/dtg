@@ -1,6 +1,6 @@
 [package]
 name = "dtg"
-version = "6.0.0"
+version = "6.0.1"
 edition = "2021"
 repository = "https://github.com/qtfkwk/dtg"
 description = "Date/time CLI utility"
@@ -9,7 +9,7 @@ license = "MIT"
 [dependencies]
 clap = { version = "4.5.11", features = ["derive", "wrap_help"] }
 clearscreen = "3.0.0"
-dtg-lib = { version = "6.0.0", path = "../lib" }
+dtg-lib = { version = "6.0.1", path = "../lib" }
 iana-time-zone = "0.1.60"
 jiff = "0.1.0"
 

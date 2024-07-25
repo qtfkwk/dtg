@@ -2,6 +2,9 @@
 
 Date/time CLI utility ([dtg]) and library ([dtg-lib])
 
+[dtg]: https://crates.io/crates/dtg
+[dtg-lib]: https://crates.io/crates/dtg-lib
+
 # CLI
 
 ## Usage
@@ -91,26 +94,26 @@ Get current date/time in UTC and RFC 3339 format:
 
 ```text
 $ dtg
-2024-07-25T20:06:45Z
+2024-07-25T20:30:26Z
 ```
 
 Get current date/time in the local timezone and default format:
 
 ```text
 $ dtg -l
-Thu 25 Jul 2024 16:06:45 EDT
+Thu 25 Jul 2024 16:30:26 EDT
 ```
 
 Get current date/time in explicit timezone and default format:
 
 ```text
 $ dtg -z MST
-Thu 25 Jul 2024 13:06:45 MST
+Thu 25 Jul 2024 13:30:26 MST
 ```
 
 ```text
 $ dtg -z America/Los_Angeles
-Thu 25 Jul 2024 13:06:45 PDT
+Thu 25 Jul 2024 13:30:26 PDT
 ```
 
 Get current date/time in UTC and specific format:
@@ -122,7 +125,7 @@ Thursday
 
 ```text
 $ dtg -f %s.%f
-1721938005.449170241
+1721939426.911549740
 ```
 
 Get current date/time in local timezone and specific format:
@@ -143,27 +146,27 @@ Get current date/time in "a" format:
 
 ```text
 $ dtg -a
-1721938005.501688268
-2024-07-25T20:06:45Z
-Thu 25 Jul 2024 20:06:45 UTC
-Thu 25 Jul 2024 16:06:45 EDT
+1721939426.972113828
+2024-07-25T20:30:26Z
+Thu 25 Jul 2024 20:30:26 UTC
+Thu 25 Jul 2024 16:30:26 EDT
 ```
 
 Get current date/time in explicit timezone and "a" format:
 
 ```text
 $ dtg -a -z MST
-1721938005.522335758
-2024-07-25T20:06:45Z
-Thu 25 Jul 2024 20:06:45 UTC
-Thu 25 Jul 2024 13:06:45 MST
+1721939426.991186608
+2024-07-25T20:30:26Z
+Thu 25 Jul 2024 20:30:26 UTC
+Thu 25 Jul 2024 13:30:26 MST
 ```
 
 Get current date/time in "x" format:
 
 ```text
 $ dtg -x
-Xi6OK6j
+Xi6OKUR
 ```
 
 Get a specific date / time in UTC and RFC 3339 format:
@@ -901,19 +904,19 @@ Multiple timezones:
 ```text
 $ dtg -z UTC,EST5EDT,CST6CDT,MST7MDT,PST8PDT -f '%Z%n%H:%M:%S%n' -f '%Z%n%Y-%m-%d%n'
 UTC
-20:06:45
+20:30:27
 
 EDT
-16:06:45
+16:30:27
 
 CDT
-15:06:45
+15:30:27
 
 MDT
-14:06:45
+14:30:27
 
 PDT
-13:06:45
+13:30:27
 
 UTC
 2024-07-25
@@ -938,31 +941,31 @@ use a single format and `%n`:*
 ```text
 $ dtg -z UTC,EST5EDT,CST6CDT,MST7MDT,PST8PDT -f '%Z%n%H:%M:%S%n%n%Z%n%Y-%m-%d%n'
 UTC
-20:06:45
+20:30:27
 
 UTC
 2024-07-25
 
 EDT
-16:06:45
+16:30:27
 
 EDT
 2024-07-25
 
 CDT
-15:06:45
+15:30:27
 
 CDT
 2024-07-25
 
 MDT
-14:06:45
+14:30:27
 
 MDT
 2024-07-25
 
 PDT
-13:06:45
+13:30:27
 
 PDT
 2024-07-25
@@ -973,7 +976,7 @@ Use a custom separator between formats/timezones:
 
 ```text
 $ dtg -z PST8PDT,MST7MDT,CST6CDT,EST5EDT,UTC -f '[%Z %H:%M:%S]' -s ' '
-[PDT 13:06:45] [MDT 14:06:45] [CDT 15:06:45] [EDT 16:06:45] [UTC 20:06:45]
+[PDT 13:30:27] [MDT 14:30:27] [CDT 15:30:27] [EDT 16:30:27] [UTC 20:30:27]
 ```
 
 Named formats:
@@ -989,25 +992,25 @@ Named formats:
 
 ```text
 $ dtg -l -n all
-1721938006.002548651
-2024-07-25T20:06:46Z
-Thu 25 Jul 2024 20:06:46 UTC
-Thu 25 Jul 2024 16:06:46 EDT
+1721939427.462713837
+2024-07-25T20:30:27Z
+Thu 25 Jul 2024 20:30:27 UTC
+Thu 25 Jul 2024 16:30:27 EDT
 ```
 
 ```text
 $ dtg -n bcd
-⠄⠔|⢰|⢔|⠄|⠰|⠲
+⠄⠔|⢰|⢔|⠄|⡄|⢴
 ```
 
 ```text
 $ dtg -l -n bcd
-⠄⠔|⢰|⢔|⡰|⠰|⠲
+⠄⠔|⢰|⢔|⡰|⡄|⢴
 ```
 
 ```text
 $ dtg -z MST7MDT -n bcd
-⠄⠔|⢰|⢔|⡐|⠰|⠲
+⠄⠔|⢰|⢔|⡐|⡄|⢴
 ```
 
 ```text
@@ -1017,56 +1020,56 @@ $ dtg -n compact-date
 
 ```text
 $ dtg -n compact-date-time
-20240725-200646
+20240725-203027
 ```
 
 ```text
 $ dtg -n compact-time
-200646
+203027
 ```
 
 ```text
 $ dtg -n default
-Thu 25 Jul 2024 20:06:46 UTC
+Thu 25 Jul 2024 20:30:27 UTC
 ```
 
 ```text
 $ dtg -n rfc-3339
-2024-07-25T20:06:46Z
+2024-07-25T20:30:27Z
 ```
 
 ```text
 $ dtg -n x
-Xi6OK6k
+Xi6OKUR
 ```
 
 Ordered named formats:
 
 ```text
 $ dtg -x -a
-1721938006.181815184
-2024-07-25T20:06:46Z
-Thu 25 Jul 2024 20:06:46 UTC
-Thu 25 Jul 2024 16:06:46 EDT
-Xi6OK6k
+1721939427.664714782
+2024-07-25T20:30:27Z
+Thu 25 Jul 2024 20:30:27 UTC
+Thu 25 Jul 2024 16:30:27 EDT
+Xi6OKUR
 $ dtg -a -x
-1721938006.204148147
-2024-07-25T20:06:46Z
-Thu 25 Jul 2024 20:06:46 UTC
-Thu 25 Jul 2024 16:06:46 EDT
-Xi6OK6k
+1721939427.684911613
+2024-07-25T20:30:27Z
+Thu 25 Jul 2024 20:30:27 UTC
+Thu 25 Jul 2024 16:30:27 EDT
+Xi6OKUR
 $ dtg -n x -n all
-Xi6OK6k
-1721938006.226455067
-2024-07-25T20:06:46Z
-Thu 25 Jul 2024 20:06:46 UTC
-Thu 25 Jul 2024 20:06:46 UTC
+Xi6OKUR
+1721939427.704855734
+2024-07-25T20:30:27Z
+Thu 25 Jul 2024 20:30:27 UTC
+Thu 25 Jul 2024 20:30:27 UTC
 $ dtg -n all -n x
-1721938006.245726614
-2024-07-25T20:06:46Z
-Thu 25 Jul 2024 20:06:46 UTC
-Thu 25 Jul 2024 20:06:46 UTC
-Xi6OK6k
+1721939427.725714721
+2024-07-25T20:30:27Z
+Thu 25 Jul 2024 20:30:27 UTC
+Thu 25 Jul 2024 20:30:27 UTC
+Xi6OKUR
 ```
 
 # Library
@@ -1149,9 +1152,6 @@ assert_eq!(dtg_1_ts.format(&day_of_week_fmt, &tz_mt), day_of_week_mt);
 
 # Formats
 
-The following information originates from the [chrono documentation], which [dtg] and [dtg-lib] use
-internally.
-
 ## Date specifiers
 
 Spec. | Example       | Description
@@ -1229,8 +1229,4 @@ Spec. | Description
 `%t`  | Literal tab (`\t`).
 `%n`  | Literal newline (`\n`).
 `%%`  | Literal percent sign.
-
-[chrono documentation]: https://docs.rs/chrono/latest/chrono/format/strftime/index.html#specifiers
-[dtg]: https://crates.io/crates/dtg
-[dtg-lib]: https://crates.io/crates/dtg-lib
 

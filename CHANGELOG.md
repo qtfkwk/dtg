@@ -49,4 +49,5 @@
             * Now: 8210266876799 (262142-12-31T23:59:59Z)
 * 6.0.0 (2024-07-25): Replace chrono and chrono-tz for jiff; maximum timestamp is now 253402207200
   (9999-12-30T22:00:00Z); update dependencies
+    * 6.0.1 (2024-07-25): Fix documentation
 

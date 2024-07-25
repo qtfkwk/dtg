@@ -5,6 +5,7 @@ Date/time library
 *See also the [API documentation] and [dtg] crate.*
 
 [API documentation]: https://docs.rs/dtg-lib
+[dtg]: https://crates.io/crates/dtg
 
 # Examples
 
@@ -86,9 +87,6 @@ assert_eq!(dtg_1_ts.format(&day_of_week_fmt, &tz_mt), day_of_week_mt);
 
 # Formats
 
-The following information originates from the [chrono documentation], which [dtg] and [dtg-lib] use
-internally.
-
 ## Date specifiers
 
 Spec. | Example       | Description
@@ -166,8 +164,4 @@ Spec. | Description
 `%t`  | Literal tab (`\t`).
 `%n`  | Literal newline (`\n`).
 `%%`  | Literal percent sign.
-
-[chrono documentation]: https://docs.rs/chrono/latest/chrono/format/strftime/index.html#specifiers
-[dtg]: https://crates.io/crates/dtg
-[dtg-lib]: https://crates.io/crates/dtg-lib
 

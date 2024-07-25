@@ -1,8 +1,5 @@
 # Formats
 
-The following information originates from the [chrono documentation], which [dtg] and [dtg-lib] use
-internally.
-
 ## Date specifiers
 
 Spec. | Example       | Description
@@ -80,8 +77,4 @@ Spec. | Description
 `%t`  | Literal tab (`\t`).
 `%n`  | Literal newline (`\n`).
 `%%`  | Literal percent sign.
-
-[chrono documentation]: https://docs.rs/chrono/latest/chrono/format/strftime/index.html#specifiers
-[dtg]: https://crates.io/crates/dtg
-[dtg-lib]: https://crates.io/crates/dtg-lib
 
