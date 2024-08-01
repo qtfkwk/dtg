@@ -6,7 +6,11 @@
 use lazy_static::lazy_static;
 use std::collections::HashMap;
 
-pub use jiff::{tz::TimeZone, Timestamp};
+pub use jiff::{
+    civil::{Date, Time},
+    tz::TimeZone,
+    Timestamp,
+};
 
 //--------------------------------------------------------------------------------------------------
 // Constants / lazy static
@@ -17,7 +21,7 @@ const RFC_3339: &str = "%Y-%m-%dT%H:%M:%SZ";
 
 lazy_static! {
     #[rustfmt::skip]
-    static ref ITOC: HashMap<u8, char> = {
+    static ref ITOC: HashMap<i8, char> = {
         [
             (0, '0'), (10, 'A'), (20, 'K'), (30, 'U'), (40, 'e'), (50, 'o'),
             (1, '1'), (11, 'B'), (21, 'L'), (31, 'V'), (41, 'f'), (51, 'p'),
@@ -35,7 +39,7 @@ lazy_static! {
         .collect()
     };
 
-    static ref CTOI: HashMap<char, u8> = {
+    static ref CTOI: HashMap<char, i8> = {
         ITOC.iter().map(|(i, c)| (*c, *i)).collect()
     };
 }
@@ -140,6 +144,42 @@ impl Dtg {
     }
 
     /**
+    Create a [Dtg] from separate year, month, day, hour, minute, second values
+
+    ```
+    use dtg_lib::{Dtg, Format};
+
+    let dtg = Dtg::from_ymd_hms(2022, 7, 22, 0, 2, 22).unwrap();
+
+    assert_eq!(dtg.format(&Some(Format::custom("%s")), &None), "1658448142");
+    assert_eq!(dtg.rfc_3339(), "2022-07-22T00:02:22Z");
+    ```
+    */
+    pub fn from_ymd_hms(
+        year: i16,
+        month: i8,
+        day: i8,
+        hour: i8,
+        minute: i8,
+        second: i8,
+    ) -> Result<Dtg, DtgError> {
+        if let Ok(dt) = Date::new(year, month, day)
+            .and_then(|d| Ok(d.to_datetime(Time::new(hour, minute, second, 0)?)))
+            .and_then(|dt| dt.to_zoned(TimeZone::UTC))
+            .map(|zdt| zdt.timestamp())
+        {
+            return Ok(Dtg { dt });
+        }
+
+        Err(DtgError::new(
+            &format!(
+                "Invalid timestamp: `{year}-{month:02}-{day:02}T{hour:02}:{minute:02}:{second:02}Z`",
+            ),
+            101,
+        ))
+    }
+
+    /**
     Create a [Dtg] from an "x" format timestamp
 
     ```
@@ -152,31 +192,29 @@ impl Dtg {
     ```
     */
     pub fn from_x(s: &str) -> Result<Dtg, DtgError> {
-        let mut v: Vec<u32> = s
-            .chars()
-            .rev()
-            .take(5)
-            .map(|x| *CTOI.get(&x).unwrap() as u32)
-            .collect();
-        v[3] += 1; // day
-        v[4] += 1; // month
-        let mut y = 0;
-        for (exp, c) in s.chars().rev().skip(5).enumerate() {
-            y += (*CTOI.get(&c).unwrap() as i32) * 60_i32.pow(exp as u32);
+        let mut chars = s.chars().rev();
+
+        fn next(chars: &mut std::iter::Rev<std::str::Chars>) -> Option<i8> {
+            if let Some(x) = chars.next() {
+                CTOI.get(&x).copied()
+            } else {
+                None
+            }
         }
-        if y > 262143 {
-            return Err(DtgError::new(&format!("Invalid timestamp: `{s}`"), 101));
+
+        let second = next(&mut chars).expect("second");
+        let minute = next(&mut chars).expect("minute");
+        let hour = next(&mut chars).expect("hour");
+        let day = next(&mut chars).expect("day") + 1;
+        let month = next(&mut chars).expect("month") + 1;
+
+        let mut year = 0;
+        for (exp, c) in chars.enumerate() {
+            year += (*CTOI.get(&c).unwrap() as i16) * 60_i16.pow(exp as u32);
         }
-        if let Ok(dt) = format!(
-            "{y}-{:02}-{:02}T{:02}:{:02}:{:02}Z",
-            v[4], v[3], v[2], v[1], v[0]
-        )
-        .parse::<Timestamp>()
-        {
-            Ok(Dtg { dt })
-        } else {
-            Err(DtgError::new(&format!("Invalid timestamp: `{s}`"), 101))
-        }
+
+        Dtg::from_ymd_hms(year, month, day, hour, minute, second)
+            .map_err(|e| DtgError::new(&format!("Invalid timestamp: `{s}`: {e}"), 101))
     }
 
     /**
@@ -527,13 +565,13 @@ impl Format {
     */
     fn x(&self, dt: &Timestamp) -> String {
         let dt = dt.to_zoned(TimeZone::UTC);
-        let mut year = dt.year() as u32;
-        let mut y: Vec<u8> = vec![];
+        let mut year = dt.year();
+        let mut y = vec![];
         if year == 0 {
             y.push(0);
         }
         while year > 0 {
-            y.push((year % 60) as u8);
+            y.push((year % 60) as i8);
             year /= 60;
         }
         let year = y
@@ -541,11 +579,11 @@ impl Format {
             .rev()
             .map(|x| ITOC.get(x).unwrap())
             .collect::<String>();
-        let mon = ITOC.get(&(dt.month() as u8 - 1)).unwrap();
-        let day = ITOC.get(&(dt.day() as u8 - 1)).unwrap();
-        let h = ITOC.get(&(dt.hour() as u8)).unwrap();
-        let m = ITOC.get(&(dt.minute() as u8)).unwrap();
-        let s = ITOC.get(&(dt.second() as u8)).unwrap();
+        let mon = ITOC.get(&(dt.month() - 1)).unwrap();
+        let day = ITOC.get(&(dt.day() - 1)).unwrap();
+        let h = ITOC.get(&(dt.hour())).unwrap();
+        let m = ITOC.get(&(dt.minute())).unwrap();
+        let s = ITOC.get(&(dt.second())).unwrap();
         format!("{year}{mon}{day}{h}{m}{s}")
     }
 

@@ -50,4 +50,5 @@
 * 6.0.0 (2024-07-25): Replace chrono and chrono-tz for jiff; maximum timestamp is now 253402207200
   (9999-12-30T22:00:00Z); update dependencies
     * 6.0.1 (2024-07-25): Fix documentation
+    * 6.1.0 (2024-08-01): Add `Dtg::from_ymd_hms()` function to apply [BurntSushi's suggestion](https://github.com/BurntSushi/jiff/discussions/43#discussioncomment-10160135) to create a Timestamp from components instead of allocating a string and parsing it; improve `Dtg::from_x()`; fix changelog; update dependencies
 
