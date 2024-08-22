@@ -1,6 +1,6 @@
 [package]
 name = "dtg-lib"
-version = "6.1.1"
+version = "6.2.0"
 edition = "2021"
 repository = "https://github.com/qtfkwk/dtg"
 description = "Date/time library"

@@ -9,7 +9,7 @@ use std::collections::HashMap;
 pub use jiff::{
     civil::{Date, Time},
     tz::TimeZone,
-    Timestamp,
+    Span, Timestamp,
 };
 
 //--------------------------------------------------------------------------------------------------
@@ -53,6 +53,7 @@ Custom error
 * 101: Invalid timestamp
 * 102: Invalid timezone
 * 103: Failed to get local timezone
+* 104: Failed to get elapsed time
 */
 #[derive(Debug)]
 pub struct DtgError {
@@ -361,11 +362,60 @@ impl Dtg {
             None => Format::Custom(RFC_3339.to_string()).with(&self.dt, &tz),
         }
     }
+
+    pub fn elapsed(&self) -> Result<Duration, DtgError> {
+        match self.dt.until(Timestamp::now()) {
+            Ok(d) => Ok(Duration::new(d)),
+            Err(_) => Err(DtgError::new("Failed to get elapsed time", 104)),
+        }
+    }
 }
 
 impl std::cmp::PartialEq for Dtg {
     fn eq(&self, other: &Dtg) -> bool {
         self.dt == other.dt
+    }
+}
+
+//--------------------------------------------------------------------------------------------------
+// Duration
+
+pub struct Duration {
+    d: Span,
+}
+
+impl Duration {
+    fn new(d: Span) -> Duration {
+        Duration { d }
+    }
+}
+
+impl std::fmt::Display for Duration {
+    fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
+        fn inner(n: i64, abbr: &str) -> Option<String> {
+            if n != 0 {
+                Some(format!("{n}{abbr}"))
+            } else if abbr == "s" {
+                Some(String::from("0s"))
+            } else {
+                None
+            }
+        }
+
+        write!(
+            f,
+            "{}",
+            [
+                (self.d.get_days() as i64, "d"),
+                (self.d.get_hours() as i64, "h"),
+                (self.d.get_minutes(), "m"),
+                (self.d.get_seconds(), "s"),
+            ]
+            .iter()
+            .filter_map(|x| inner(x.0, x.1))
+            .collect::<Vec<String>>()
+            .join(""),
+        )
     }
 }
 

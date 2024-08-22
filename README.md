@@ -94,26 +94,26 @@ Get current date/time in UTC and RFC 3339 format:
 
 ```text
 $ dtg
-2024-08-22T12:06:37Z
+2024-08-22T12:57:37Z
 ```
 
 Get current date/time in the local timezone and default format:
 
 ```text
 $ dtg -l
-Thu 22 Aug 2024 08:06:37 EDT
+Thu 22 Aug 2024 08:57:37 EDT
 ```
 
 Get current date/time in explicit timezone and default format:
 
 ```text
 $ dtg -z MST
-Thu 22 Aug 2024 05:06:37 MST
+Thu 22 Aug 2024 05:57:38 MST
 ```
 
 ```text
 $ dtg -z America/Los_Angeles
-Thu 22 Aug 2024 05:06:37 PDT
+Thu 22 Aug 2024 05:57:38 PDT
 ```
 
 Get current date/time in UTC and specific format:
@@ -125,7 +125,7 @@ Thursday
 
 ```text
 $ dtg -f %s.%f
-1724328397.116771868
+1724331458.62403318
 ```
 
 Get current date/time in local timezone and specific format:
@@ -146,27 +146,27 @@ Get current date/time in "a" format:
 
 ```text
 $ dtg -a
-1724328397.177313112
-2024-08-22T12:06:37Z
-Thu 22 Aug 2024 12:06:37 UTC
-Thu 22 Aug 2024 08:06:37 EDT
+1724331458.113709420
+2024-08-22T12:57:38Z
+Thu 22 Aug 2024 12:57:38 UTC
+Thu 22 Aug 2024 08:57:38 EDT
 ```
 
 Get current date/time in explicit timezone and "a" format:
 
 ```text
 $ dtg -a -z MST
-1724328397.198101797
-2024-08-22T12:06:37Z
-Thu 22 Aug 2024 12:06:37 UTC
-Thu 22 Aug 2024 05:06:37 MST
+1724331458.134636813
+2024-08-22T12:57:38Z
+Thu 22 Aug 2024 12:57:38 UTC
+Thu 22 Aug 2024 05:57:38 MST
 ```
 
 Get current date/time in "x" format:
 
 ```text
 $ dtg -x
-Xi7LC6b
+Xi7LCvc
 ```
 
 Get a specific date / time in UTC and RFC 3339 format:
@@ -904,19 +904,19 @@ Multiple timezones:
 ```text
 $ dtg -z UTC,EST5EDT,CST6CDT,MST7MDT,PST8PDT -f '%Z%n%H:%M:%S%n' -f '%Z%n%Y-%m-%d%n'
 UTC
-12:06:37
+12:57:38
 
 EDT
-08:06:37
+08:57:38
 
 CDT
-07:06:37
+07:57:38
 
 MDT
-06:06:37
+06:57:38
 
 PDT
-05:06:37
+05:57:38
 
 UTC
 2024-08-22
@@ -941,31 +941,31 @@ use a single format and `%n`:*
 ```text
 $ dtg -z UTC,EST5EDT,CST6CDT,MST7MDT,PST8PDT -f '%Z%n%H:%M:%S%n%n%Z%n%Y-%m-%d%n'
 UTC
-12:06:37
+12:57:38
 
 UTC
 2024-08-22
 
 EDT
-08:06:37
+08:57:38
 
 EDT
 2024-08-22
 
 CDT
-07:06:37
+07:57:38
 
 CDT
 2024-08-22
 
 MDT
-06:06:37
+06:57:38
 
 MDT
 2024-08-22
 
 PDT
-05:06:37
+05:57:38
 
 PDT
 2024-08-22
@@ -976,7 +976,7 @@ Use a custom separator between formats/timezones:
 
 ```text
 $ dtg -z PST8PDT,MST7MDT,CST6CDT,EST5EDT,UTC -f '[%Z %H:%M:%S]' -s ' '
-[PDT 05:06:37] [MDT 06:06:37] [CDT 07:06:37] [EDT 08:06:37] [UTC 12:06:37]
+[PDT 05:57:38] [MDT 06:57:38] [CDT 07:57:38] [EDT 08:57:38] [UTC 12:57:38]
 ```
 
 Named formats:
@@ -992,25 +992,25 @@ Named formats:
 
 ```text
 $ dtg -l -n all
-1724328397.672733041
-2024-08-22T12:06:37Z
-Thu 22 Aug 2024 12:06:37 UTC
-Thu 22 Aug 2024 08:06:37 EDT
+1724331458.611965573
+2024-08-22T12:57:38Z
+Thu 22 Aug 2024 12:57:38 UTC
+Thu 22 Aug 2024 08:57:38 EDT
 ```
 
 ```text
 $ dtg -n bcd
-⠄⠔|⠈|⠤|⡠|⠰|⣴
+⠄⠔|⠈|⠤|⡠|⣲|⡌
 ```
 
 ```text
 $ dtg -l -n bcd
-⠄⠔|⠈|⠤|⠈|⠰|⣴
+⠄⠔|⠈|⠤|⠈|⣲|⡌
 ```
 
 ```text
 $ dtg -z MST7MDT -n bcd
-⠄⠔|⠈|⠤|⠰|⠰|⣴
+⠄⠔|⠈|⠤|⠰|⣲|⡌
 ```
 
 ```text
@@ -1020,56 +1020,56 @@ $ dtg -n compact-date
 
 ```text
 $ dtg -n compact-date-time
-20240822-120637
+20240822-125738
 ```
 
 ```text
 $ dtg -n compact-time
-120637
+125738
 ```
 
 ```text
 $ dtg -n default
-Thu 22 Aug 2024 12:06:37 UTC
+Thu 22 Aug 2024 12:57:38 UTC
 ```
 
 ```text
 $ dtg -n rfc-3339
-2024-08-22T12:06:37Z
+2024-08-22T12:57:38Z
 ```
 
 ```text
 $ dtg -n x
-Xi7LC6b
+Xi7LCvc
 ```
 
 Ordered named formats:
 
 ```text
 $ dtg -x -a
-1724328397.889436517
-2024-08-22T12:06:37Z
-Thu 22 Aug 2024 12:06:37 UTC
-Thu 22 Aug 2024 08:06:37 EDT
-Xi7LC6b
+1724331458.815137001
+2024-08-22T12:57:38Z
+Thu 22 Aug 2024 12:57:38 UTC
+Thu 22 Aug 2024 08:57:38 EDT
+Xi7LCvc
 $ dtg -a -x
-1724328397.908370763
-2024-08-22T12:06:37Z
-Thu 22 Aug 2024 12:06:37 UTC
-Thu 22 Aug 2024 08:06:37 EDT
-Xi7LC6b
+1724331458.836190236
+2024-08-22T12:57:38Z
+Thu 22 Aug 2024 12:57:38 UTC
+Thu 22 Aug 2024 08:57:38 EDT
+Xi7LCvc
 $ dtg -n x -n all
-Xi7LC6b
-1724328397.929079225
-2024-08-22T12:06:37Z
-Thu 22 Aug 2024 12:06:37 UTC
-Thu 22 Aug 2024 12:06:37 UTC
+Xi7LCvc
+1724331458.858003246
+2024-08-22T12:57:38Z
+Thu 22 Aug 2024 12:57:38 UTC
+Thu 22 Aug 2024 12:57:38 UTC
 $ dtg -n all -n x
-1724328397.950225444
-2024-08-22T12:06:37Z
-Thu 22 Aug 2024 12:06:37 UTC
-Thu 22 Aug 2024 12:06:37 UTC
-Xi7LC6b
+1724331458.879836017
+2024-08-22T12:57:38Z
+Thu 22 Aug 2024 12:57:38 UTC
+Thu 22 Aug 2024 12:57:38 UTC
+Xi7LCvc
 ```
 
 # Library
