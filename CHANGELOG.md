@@ -51,4 +51,5 @@
   (9999-12-30T22:00:00Z); update dependencies
     * 6.0.1 (2024-07-25): Fix documentation
     * 6.1.0 (2024-08-01): Add `Dtg::from_ymd_hms()` function to apply [BurntSushi's suggestion](https://github.com/BurntSushi/jiff/discussions/43#discussioncomment-10160135) to create a Timestamp from components instead of allocating a string and parsing it; improve `Dtg::from_x()`; fix changelog; update dependencies
+      * 6.1.1 (2024-08-22): Update dependencies; add `commit` target to makefile
 
