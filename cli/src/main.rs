@@ -1,11 +1,20 @@
 #![doc = include_str!("../README.md")]
 
-use clap::Parser;
+use clap::{builder::Styles, Parser};
 use dtg_lib::{tz, Dtg, Format};
 use jiff::tz::TimeZone;
 
 #[cfg(unix)]
 use pager::Pager;
+
+const STYLES: Styles = Styles::styled()
+    .header(clap_cargo::style::HEADER)
+    .usage(clap_cargo::style::USAGE)
+    .literal(clap_cargo::style::LITERAL)
+    .placeholder(clap_cargo::style::PLACEHOLDER)
+    .error(clap_cargo::style::ERROR)
+    .valid(clap_cargo::style::VALID)
+    .invalid(clap_cargo::style::INVALID);
 
 fn error(code: i32, msg: &str) {
     eprintln!("ERROR: {msg}!");
@@ -23,6 +32,7 @@ Date/time CLI utility
     ",
     version,
     max_term_width = 80,
+    styles = STYLES,
     after_help = "\
 ---
 
@@ -68,7 +78,8 @@ Notes:
    binary clock with the Braille Patterns Unicode Block and `|` separators.
 
 6. `-l` / `-z` are ignored when processing UTC-only formats like `-n rfc-3339`.
-"
+\
+    ",
 )]
 struct Cli {
     /// Local timezone (6)
