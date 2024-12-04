@@ -54,4 +54,5 @@
         * 6.1.1 (2024-08-22): Update dependencies; add `commit` target to makefile
     * 6.2.0 (2024-08-22): Add `Dtg.elapsed()` method returning a new `Duration` struct (wrapper around a `jiff::Span`); fix makefile
     * 6.3.0 (2024-10-24): Add clap color; update dependencies
+        * 6.3.1 (2024-12-04): Update dependencies
 

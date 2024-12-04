@@ -91,79 +91,79 @@ Get current date/time in UTC and RFC 3339 format:
 
 ```text
 $ dtg
-2024-10-24T20:37:44Z
+2024-12-04T14:38:28Z
 ```
 
 Get current date/time in the local timezone and default format:
 
 ```text
 $ dtg -l
-Thu 24 Oct 2024 16:37:44 EDT
+Wed 04 Dec 2024 09:38:28 EST
 ```
 
 Get current date/time in explicit timezone and default format:
 
 ```text
 $ dtg -z MST
-Thu 24 Oct 2024 13:37:44 MST
+Wed 04 Dec 2024 07:38:28 MST
 ```
 
 ```text
 $ dtg -z America/Los_Angeles
-Thu 24 Oct 2024 13:37:44 PDT
+Wed 04 Dec 2024 06:38:28 PST
 ```
 
 Get current date/time in UTC and specific format:
 
 ```text
 $ dtg -f %A
-Thursday
+Wednesday
 ```
 
 ```text
 $ dtg -f %s.%f
-1729802264.820781234
+1733323108.400998000
 ```
 
 Get current date/time in local timezone and specific format:
 
 ```text
 $ dtg -l -f %A
-Thursday
+Wednesday
 ```
 
 Get current date/time in explicit timezone and specific format:
 
 ```text
 $ dtg -z MST -f %A
-Thursday
+Wednesday
 ```
 
 Get current date/time in "a" format:
 
 ```text
 $ dtg -a
-1729802264.888230133
-2024-10-24T20:37:44Z
-Thu 24 Oct 2024 20:37:44 UTC
-Thu 24 Oct 2024 16:37:44 EDT
+1733323108.463886475
+2024-12-04T14:38:28Z
+Wed 04 Dec 2024 14:38:28 UTC
+Wed 04 Dec 2024 09:38:28 EST
 ```
 
 Get current date/time in explicit timezone and "a" format:
 
 ```text
 $ dtg -a -z MST
-1729802264.909333272
-2024-10-24T20:37:44Z
-Thu 24 Oct 2024 20:37:44 UTC
-Thu 24 Oct 2024 13:37:44 MST
+1733323108.484611559
+2024-12-04T14:38:28Z
+Wed 04 Dec 2024 14:38:28 UTC
+Wed 04 Dec 2024 07:38:28 MST
 ```
 
 Get current date/time in "x" format:
 
 ```text
 $ dtg -x
-Xi9NKbi
+XiB3EcS
 ```
 
 Get a specific date / time in UTC and RFC 3339 format:
@@ -901,34 +901,34 @@ Multiple timezones:
 ```text
 $ dtg -z UTC,EST5EDT,CST6CDT,MST7MDT,PST8PDT -f '%Z%n%H:%M:%S%n' -f '%Z%n%Y-%m-%d%n'
 UTC
-20:37:45
+14:38:28
 
-EDT
-16:37:45
+EST
+09:38:28
 
-CDT
-15:37:45
+CST
+08:38:28
 
-MDT
-14:37:45
+MST
+07:38:28
 
-PDT
-13:37:45
+PST
+06:38:28
 
 UTC
-2024-10-24
+2024-12-04
 
-EDT
-2024-10-24
+EST
+2024-12-04
 
-CDT
-2024-10-24
+CST
+2024-12-04
 
-MDT
-2024-10-24
+MST
+2024-12-04
 
-PDT
-2024-10-24
+PST
+2024-12-04
 
 ```
 
@@ -938,34 +938,34 @@ use a single format and `%n`:*
 ```text
 $ dtg -z UTC,EST5EDT,CST6CDT,MST7MDT,PST8PDT -f '%Z%n%H:%M:%S%n%n%Z%n%Y-%m-%d%n'
 UTC
-20:37:45
+14:38:28
 
 UTC
-2024-10-24
+2024-12-04
 
-EDT
-16:37:45
+EST
+09:38:28
 
-EDT
-2024-10-24
+EST
+2024-12-04
 
-CDT
-15:37:45
+CST
+08:38:28
 
-CDT
-2024-10-24
+CST
+2024-12-04
 
-MDT
-14:37:45
+MST
+07:38:28
 
-MDT
-2024-10-24
+MST
+2024-12-04
 
-PDT
-13:37:45
+PST
+06:38:28
 
-PDT
-2024-10-24
+PST
+2024-12-04
 
 ```
 
@@ -973,7 +973,7 @@ Use a custom separator between formats/timezones:
 
 ```text
 $ dtg -z PST8PDT,MST7MDT,CST6CDT,EST5EDT,UTC -f '[%Z %H:%M:%S]' -s ' '
-[PDT 13:37:45] [MDT 14:37:45] [CDT 15:37:45] [EDT 16:37:45] [UTC 20:37:45]
+[PST 06:38:28] [MST 07:38:28] [CST 08:38:28] [EST 09:38:28] [UTC 14:38:28]
 ```
 
 Named formats:
@@ -989,84 +989,84 @@ Named formats:
 
 ```text
 $ dtg -l -n all
-1729802265.392895293
-2024-10-24T20:37:45Z
-Thu 24 Oct 2024 20:37:45 UTC
-Thu 24 Oct 2024 16:37:45 EDT
+1733323108.963128540
+2024-12-04T14:38:28Z
+Wed 04 Dec 2024 14:38:28 UTC
+Wed 04 Dec 2024 09:38:28 EST
 ```
 
 ```text
 $ dtg -n bcd
-⠄⠔|⡀|⠔|⠄|⣴|⢒
+⠄⠔|⡠|⠐|⡐|⡌|⠌
 ```
 
 ```text
 $ dtg -l -n bcd
-⠄⠔|⡀|⠔|⡰|⣴|⢒
+⠄⠔|⡠|⠐|⢈|⡌|⢌
 ```
 
 ```text
 $ dtg -z MST7MDT -n bcd
-⠄⠔|⡀|⠔|⡐|⣴|⢒
+⠄⠔|⡠|⠐|⢰|⡌|⢌
 ```
 
 ```text
 $ dtg -n compact-date
-20241024
+20241204
 ```
 
 ```text
 $ dtg -n compact-date-time
-20241024-203745
+20241204-143829
 ```
 
 ```text
 $ dtg -n compact-time
-203745
+143829
 ```
 
 ```text
 $ dtg -n default
-Thu 24 Oct 2024 20:37:45 UTC
+Wed 04 Dec 2024 14:38:29 UTC
 ```
 
 ```text
 $ dtg -n rfc-3339
-2024-10-24T20:37:45Z
+2024-12-04T14:38:29Z
 ```
 
 ```text
 $ dtg -n x
-Xi9NKbj
+XiB3EcT
 ```
 
 Ordered named formats:
 
 ```text
 $ dtg -x -a
-1729802265.614241539
-2024-10-24T20:37:45Z
-Thu 24 Oct 2024 20:37:45 UTC
-Thu 24 Oct 2024 16:37:45 EDT
-Xi9NKbj
+1733323109.176741661
+2024-12-04T14:38:29Z
+Wed 04 Dec 2024 14:38:29 UTC
+Wed 04 Dec 2024 09:38:29 EST
+XiB3EcT
 $ dtg -a -x
-1729802265.634261462
-2024-10-24T20:37:45Z
-Thu 24 Oct 2024 20:37:45 UTC
-Thu 24 Oct 2024 16:37:45 EDT
-Xi9NKbj
+1733323109.197156625
+2024-12-04T14:38:29Z
+Wed 04 Dec 2024 14:38:29 UTC
+Wed 04 Dec 2024 09:38:29 EST
+XiB3EcT
 $ dtg -n x -n all
-Xi9NKbj
-1729802265.655104871
-2024-10-24T20:37:45Z
-Thu 24 Oct 2024 20:37:45 UTC
-Thu 24 Oct 2024 20:37:45 UTC
+XiB3EcT
+1733323109.214159024
+2024-12-04T14:38:29Z
+Wed 04 Dec 2024 14:38:29 UTC
+Wed 04 Dec 2024 14:38:29 UTC
 $ dtg -n all -n x
-1729802265.674685442
-2024-10-24T20:37:45Z
-Thu 24 Oct 2024 20:37:45 UTC
-Thu 24 Oct 2024 20:37:45 UTC
-Xi9NKbj
+1733323109.234258876
+2024-12-04T14:38:29Z
+Wed 04 Dec 2024 14:38:29 UTC
+Wed 04 Dec 2024 14:38:29 UTC
+XiB3EcT
 ```
 
 # Formats
