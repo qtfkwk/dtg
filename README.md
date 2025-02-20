@@ -94,79 +94,79 @@ Get current date/time in UTC and RFC 3339 format:
 
 ```text
 $ dtg
-2024-12-04T14:38:28Z
+2025-02-20T22:28:17Z
 ```
 
 Get current date/time in the local timezone and default format:
 
 ```text
 $ dtg -l
-Wed 04 Dec 2024 09:38:28 EST
+Thu 20 Feb 2025 17:28:17 EST
 ```
 
 Get current date/time in explicit timezone and default format:
 
 ```text
 $ dtg -z MST
-Wed 04 Dec 2024 07:38:28 MST
+Thu 20 Feb 2025 15:28:17 MST
 ```
 
 ```text
 $ dtg -z America/Los_Angeles
-Wed 04 Dec 2024 06:38:28 PST
+Thu 20 Feb 2025 14:28:17 PST
 ```
 
 Get current date/time in UTC and specific format:
 
 ```text
 $ dtg -f %A
-Wednesday
+Thursday
 ```
 
 ```text
 $ dtg -f %s.%f
-1733323108.400998000
+1740090497.187910905
 ```
 
 Get current date/time in local timezone and specific format:
 
 ```text
 $ dtg -l -f %A
-Wednesday
+Thursday
 ```
 
 Get current date/time in explicit timezone and specific format:
 
 ```text
 $ dtg -z MST -f %A
-Wednesday
+Thursday
 ```
 
 Get current date/time in "a" format:
 
 ```text
 $ dtg -a
-1733323108.463886475
-2024-12-04T14:38:28Z
-Wed 04 Dec 2024 14:38:28 UTC
-Wed 04 Dec 2024 09:38:28 EST
+1740090497.253378352
+2025-02-20T22:28:17Z
+Thu 20 Feb 2025 22:28:17 UTC
+Thu 20 Feb 2025 17:28:17 EST
 ```
 
 Get current date/time in explicit timezone and "a" format:
 
 ```text
 $ dtg -a -z MST
-1733323108.484611559
-2024-12-04T14:38:28Z
-Wed 04 Dec 2024 14:38:28 UTC
-Wed 04 Dec 2024 07:38:28 MST
+1740090497.275263880
+2025-02-20T22:28:17Z
+Thu 20 Feb 2025 22:28:17 UTC
+Thu 20 Feb 2025 15:28:17 MST
 ```
 
 Get current date/time in "x" format:
 
 ```text
 $ dtg -x
-XiB3EcS
+Xj1JMSH
 ```
 
 Get a specific date / time in UTC and RFC 3339 format:
@@ -650,8 +650,8 @@ Australia/LHI
 Australia/Lindeman
 Australia/Lord_Howe
 Australia/Melbourne
-Australia/NSW
 Australia/North
+Australia/NSW
 Australia/Perth
 Australia/Queensland
 Australia/South
@@ -664,8 +664,6 @@ Brazil/Acre
 Brazil/DeNoronha
 Brazil/East
 Brazil/West
-CET
-CST6CDT
 Canada/Atlantic
 Canada/Central
 Canada/Eastern
@@ -674,14 +672,16 @@ Canada/Newfoundland
 Canada/Pacific
 Canada/Saskatchewan
 Canada/Yukon
+CET
 Chile/Continental
 Chile/EasterIsland
+CST6CDT
 Cuba
 EET
-EST
-EST5EDT
 Egypt
 Eire
+EST
+EST5EDT
 Etc/GMT
 Etc/GMT+0
 Etc/GMT+1
@@ -714,8 +714,8 @@ Etc/GMT-9
 Etc/GMT0
 Etc/Greenwich
 Etc/UCT
-Etc/UTC
 Etc/Universal
+Etc/UTC
 Etc/Zulu
 Europe/Amsterdam
 Europe/Andorra
@@ -788,8 +788,8 @@ GMT+0
 GMT-0
 GMT0
 Greenwich
-HST
 Hongkong
+HST
 Iceland
 Indian/Antananarivo
 Indian/Chagos
@@ -808,17 +808,16 @@ Jamaica
 Japan
 Kwajalein
 Libya
+localtime
 MET
-MST
-MST7MDT
 Mexico/BajaNorte
 Mexico/BajaSur
 Mexico/General
+MST
+MST7MDT
+Navajo
 NZ
 NZ-CHAT
-Navajo
-PRC
-PST8PDT
 Pacific/Apia
 Pacific/Auckland
 Pacific/Bougainville
@@ -865,11 +864,14 @@ Pacific/Wallis
 Pacific/Yap
 Poland
 Portugal
+PRC
+PST8PDT
 ROC
 ROK
 Singapore
 Turkey
 UCT
+Universal
 US/Alaska
 US/Aleutian
 US/Arizona
@@ -883,11 +885,9 @@ US/Mountain
 US/Pacific
 US/Samoa
 UTC
-Universal
 W-SU
 WET
 Zulu
-localtime
 ```
 
 Search for a timezone:
@@ -904,34 +904,34 @@ Multiple timezones:
 ```text
 $ dtg -z UTC,EST5EDT,CST6CDT,MST7MDT,PST8PDT -f '%Z%n%H:%M:%S%n' -f '%Z%n%Y-%m-%d%n'
 UTC
-14:38:28
+22:28:17
 
 EST
-09:38:28
+17:28:17
 
 CST
-08:38:28
+16:28:17
 
 MST
-07:38:28
+15:28:17
 
 PST
-06:38:28
+14:28:17
 
 UTC
-2024-12-04
+2025-02-20
 
 EST
-2024-12-04
+2025-02-20
 
 CST
-2024-12-04
+2025-02-20
 
 MST
-2024-12-04
+2025-02-20
 
 PST
-2024-12-04
+2025-02-20
 
 ```
 
@@ -941,34 +941,34 @@ use a single format and `%n`:*
 ```text
 $ dtg -z UTC,EST5EDT,CST6CDT,MST7MDT,PST8PDT -f '%Z%n%H:%M:%S%n%n%Z%n%Y-%m-%d%n'
 UTC
-14:38:28
+22:28:17
 
 UTC
-2024-12-04
+2025-02-20
 
 EST
-09:38:28
+17:28:17
 
 EST
-2024-12-04
+2025-02-20
 
 CST
-08:38:28
+16:28:17
 
 CST
-2024-12-04
+2025-02-20
 
 MST
-07:38:28
+15:28:17
 
 MST
-2024-12-04
+2025-02-20
 
 PST
-06:38:28
+14:28:17
 
 PST
-2024-12-04
+2025-02-20
 
 ```
 
@@ -976,7 +976,7 @@ Use a custom separator between formats/timezones:
 
 ```text
 $ dtg -z PST8PDT,MST7MDT,CST6CDT,EST5EDT,UTC -f '[%Z %H:%M:%S]' -s ' '
-[PST 06:38:28] [MST 07:38:28] [CST 08:38:28] [EST 09:38:28] [UTC 14:38:28]
+[PST 14:28:17] [MST 15:28:17] [CST 16:28:17] [EST 17:28:17] [UTC 22:28:17]
 ```
 
 Named formats:
@@ -992,84 +992,84 @@ Named formats:
 
 ```text
 $ dtg -l -n all
-1733323108.963128540
-2024-12-04T14:38:28Z
-Wed 04 Dec 2024 14:38:28 UTC
-Wed 04 Dec 2024 09:38:28 EST
+1740090497.766094754
+2025-02-20T22:28:17Z
+Thu 20 Feb 2025 22:28:17 UTC
+Thu 20 Feb 2025 17:28:17 EST
 ```
 
 ```text
 $ dtg -n bcd
-⠄⠔|⡠|⠐|⡐|⡌|⠌
+⠄⢔|⠠|⠄|⠤|⠌|⣰
 ```
 
 ```text
 $ dtg -l -n bcd
-⠄⠔|⡠|⠐|⢈|⡌|⢌
+⠄⢔|⠠|⠄|⣰|⠌|⣰
 ```
 
 ```text
 $ dtg -z MST7MDT -n bcd
-⠄⠔|⡠|⠐|⢰|⡌|⢌
+⠄⢔|⠠|⠄|⣐|⠌|⣰
 ```
 
 ```text
 $ dtg -n compact-date
-20241204
+20250220
 ```
 
 ```text
 $ dtg -n compact-date-time
-20241204-143829
+20250220-222817
 ```
 
 ```text
 $ dtg -n compact-time
-143829
+222817
 ```
 
 ```text
 $ dtg -n default
-Wed 04 Dec 2024 14:38:29 UTC
+Thu 20 Feb 2025 22:28:17 UTC
 ```
 
 ```text
 $ dtg -n rfc-3339
-2024-12-04T14:38:29Z
+2025-02-20T22:28:17Z
 ```
 
 ```text
 $ dtg -n x
-XiB3EcT
+Xj1JMSH
 ```
 
 Ordered named formats:
 
 ```text
 $ dtg -x -a
-1733323109.176741661
-2024-12-04T14:38:29Z
-Wed 04 Dec 2024 14:38:29 UTC
-Wed 04 Dec 2024 09:38:29 EST
-XiB3EcT
+1740090497.969261748
+2025-02-20T22:28:17Z
+Thu 20 Feb 2025 22:28:17 UTC
+Thu 20 Feb 2025 17:28:17 EST
+Xj1JMSH
 $ dtg -a -x
-1733323109.197156625
-2024-12-04T14:38:29Z
-Wed 04 Dec 2024 14:38:29 UTC
-Wed 04 Dec 2024 09:38:29 EST
-XiB3EcT
+1740090497.987141306
+2025-02-20T22:28:17Z
+Thu 20 Feb 2025 22:28:17 UTC
+Thu 20 Feb 2025 17:28:17 EST
+Xj1JMSH
 $ dtg -n x -n all
-XiB3EcT
-1733323109.214159024
-2024-12-04T14:38:29Z
-Wed 04 Dec 2024 14:38:29 UTC
-Wed 04 Dec 2024 14:38:29 UTC
+Xj1JMSI
+1740090498.007715819
+2025-02-20T22:28:18Z
+Thu 20 Feb 2025 22:28:18 UTC
+Thu 20 Feb 2025 22:28:18 UTC
 $ dtg -n all -n x
-1733323109.234258876
-2024-12-04T14:38:29Z
-Wed 04 Dec 2024 14:38:29 UTC
-Wed 04 Dec 2024 14:38:29 UTC
-XiB3EcT
+1740090498.026467490
+2025-02-20T22:28:18Z
+Thu 20 Feb 2025 22:28:18 UTC
+Thu 20 Feb 2025 22:28:18 UTC
+Xj1JMSI
 ```
 
 # Library

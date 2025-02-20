@@ -150,7 +150,7 @@ fn main() {
     if cli.list_zones {
         let mut found = 0;
         let zones = jiff::tz::db().available().filter(|x| {
-            !x.starts_with("right/") && !["Factory", "posixrules"].contains(&x.as_str())
+            !x.to_string().starts_with("right/") && !["Factory", "posixrules"].contains(&x.as_str())
         });
         if cli.args.is_empty() {
             for zone in zones {

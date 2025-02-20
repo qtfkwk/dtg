@@ -1,13 +1,13 @@
 [package]
 name = "dtg-lib"
-version = "6.3.1"
+version = "6.3.2"
 edition = "2021"
 repository = "https://github.com/qtfkwk/dtg"
 description = "Date/time library"
 license = "MIT"
 
 [dependencies]
-bbd-lib = "0.3.1"
+bbd-lib = "0.3.2"
 iana-time-zone = "0.1.61"
-jiff = "0.1.15"
+jiff = "0.2.1"
 lazy_static = "1.5.0"
