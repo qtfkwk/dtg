@@ -79,9 +79,9 @@ dependencies = [
 
 [[package]]
 name = "bbd-lib"
-version = "0.3.3"
+version = "0.3.4"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "185c8f7b51165dc7af11ef789a2f69f0630716296bef65f8db3f2c9653bac41b"
+checksum = "3cf372c392970ca68e2f1a343c2560c53904e506d7831c28c956437a8918f953"
 dependencies = [
  "lazy_static",
 ]
@@ -220,7 +220,7 @@ checksum = "fea41bba32d969b513997752735605054bc0dfa92b4c56bf1189f2e174be7a10"
 
 [[package]]
 name = "dtg"
-version = "6.3.3"
+version = "6.3.4"
 dependencies = [
  "assert_cmd",
  "clap",
@@ -234,7 +234,7 @@ dependencies = [
 
 [[package]]
 name = "dtg-lib"
-version = "6.3.3"
+version = "6.3.4"
 dependencies = [
  "bbd-lib",
  "iana-time-zone",
