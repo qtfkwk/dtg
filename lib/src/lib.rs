@@ -7,9 +7,9 @@ use lazy_static::lazy_static;
 use std::collections::HashMap;
 
 pub use jiff::{
+    Span, Timestamp,
     civil::{Date, Time},
     tz::TimeZone,
-    Span, Timestamp,
 };
 
 //--------------------------------------------------------------------------------------------------
@@ -122,23 +122,22 @@ impl Dtg {
     */
     pub fn from(s: &str) -> Result<Dtg, DtgError> {
         let mut x = s.split('.');
-        if let Some(seconds) = x.next() {
-            if let Ok(seconds) = seconds.parse::<i64>() {
-                if seconds <= 8210298412799 {
-                    if let Some(nanoseconds) = x.next() {
-                        let mut nanoseconds = nanoseconds.to_string();
-                        while nanoseconds.len() < 9 {
-                            nanoseconds.push('0');
-                        }
-                        if let Ok(nanoseconds) = nanoseconds[..9].parse::<i32>() {
-                            if let Ok(dt) = Timestamp::new(seconds, nanoseconds) {
-                                return Ok(Dtg { dt });
-                            }
-                        }
-                    } else if let Ok(dt) = Timestamp::new(seconds, 0) {
-                        return Ok(Dtg { dt });
-                    }
+        if let Some(seconds) = x.next()
+            && let Ok(seconds) = seconds.parse::<i64>()
+            && seconds <= 8210298412799
+        {
+            if let Some(nanoseconds) = x.next() {
+                let mut nanoseconds = nanoseconds.to_string();
+                while nanoseconds.len() < 9 {
+                    nanoseconds.push('0');
                 }
+                if let Ok(nanoseconds) = nanoseconds[..9].parse::<i32>()
+                    && let Ok(dt) = Timestamp::new(seconds, nanoseconds)
+                {
+                    return Ok(Dtg { dt });
+                }
+            } else if let Ok(dt) = Timestamp::new(seconds, 0) {
+                return Ok(Dtg { dt });
             }
         }
         Err(DtgError::new(&format!("Invalid timestamp: `{s}`"), 101))

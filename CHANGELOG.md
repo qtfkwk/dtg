@@ -58,4 +58,5 @@
         * 6.3.2 (2025-02-20): Update dependencies
         * 6.3.3 (2025-04-16): Update dependencies
         * 6.3.4 (2025-04-16): Update dependencies
+    * 6.4.0 (2025-08-28): Update dependencies; 2024 edition
 

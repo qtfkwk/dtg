@@ -94,79 +94,79 @@ Get current date/time in UTC and RFC 3339 format:
 
 ```text
 $ dtg
-2025-04-16T17:08:56Z
+2025-08-28T11:56:20Z
 ```
 
 Get current date/time in the local timezone and default format:
 
 ```text
 $ dtg -l
-Wed 16 Apr 2025 13:08:56 EDT
+Thu 28 Aug 2025 07:56:20 EDT
 ```
 
 Get current date/time in explicit timezone and default format:
 
 ```text
 $ dtg -z MST
-Wed 16 Apr 2025 10:08:56 MST
+Thu 28 Aug 2025 04:56:20 MST
 ```
 
 ```text
 $ dtg -z America/Los_Angeles
-Wed 16 Apr 2025 10:08:56 PDT
+Thu 28 Aug 2025 04:56:20 PDT
 ```
 
 Get current date/time in UTC and specific format:
 
 ```text
 $ dtg -f %A
-Wednesday
+Thursday
 ```
 
 ```text
 $ dtg -f %s.%f
-1744823336.412535965
+1756382180.95791612
 ```
 
 Get current date/time in local timezone and specific format:
 
 ```text
 $ dtg -l -f %A
-Wednesday
+Thursday
 ```
 
 Get current date/time in explicit timezone and specific format:
 
 ```text
 $ dtg -z MST -f %A
-Wednesday
+Thursday
 ```
 
 Get current date/time in "a" format:
 
 ```text
 $ dtg -a
-1744823336.448331028
-2025-04-16T17:08:56Z
-Wed 16 Apr 2025 17:08:56 UTC
-Wed 16 Apr 2025 13:08:56 EDT
+1756382180.115094611
+2025-08-28T11:56:20Z
+Thu 28 Aug 2025 11:56:20 UTC
+Thu 28 Aug 2025 07:56:20 EDT
 ```
 
 Get current date/time in explicit timezone and "a" format:
 
 ```text
 $ dtg -a -z MST
-1744823336.459301935
-2025-04-16T17:08:56Z
-Wed 16 Apr 2025 17:08:56 UTC
-Wed 16 Apr 2025 10:08:56 MST
+1756382180.121655544
+2025-08-28T11:56:20Z
+Thu 28 Aug 2025 11:56:20 UTC
+Thu 28 Aug 2025 04:56:20 MST
 ```
 
 Get current date/time in "x" format:
 
 ```text
 $ dtg -x
-Xj3FH8u
+Xj7RBuK
 ```
 
 Get a specific date / time in UTC and RFC 3339 format:
@@ -905,34 +905,34 @@ Multiple timezones:
 ```text
 $ dtg -z UTC,EST5EDT,CST6CDT,MST7MDT,PST8PDT -f '%Z%n%H:%M:%S%n' -f '%Z%n%Y-%m-%d%n'
 UTC
-17:08:56
+11:56:20
 
 EDT
-13:08:56
+07:56:20
 
 CDT
-12:08:56
+06:56:20
 
 MDT
-11:08:56
+05:56:20
 
 PDT
-10:08:56
+04:56:20
 
 UTC
-2025-04-16
+2025-08-28
 
 EDT
-2025-04-16
+2025-08-28
 
 CDT
-2025-04-16
+2025-08-28
 
 MDT
-2025-04-16
+2025-08-28
 
 PDT
-2025-04-16
+2025-08-28
 
 ```
 
@@ -942,34 +942,34 @@ use a single format and `%n`:*
 ```text
 $ dtg -z UTC,EST5EDT,CST6CDT,MST7MDT,PST8PDT -f '%Z%n%H:%M:%S%n%n%Z%n%Y-%m-%d%n'
 UTC
-17:08:56
+11:56:20
 
 UTC
-2025-04-16
+2025-08-28
 
 EDT
-13:08:56
+07:56:20
 
 EDT
-2025-04-16
+2025-08-28
 
 CDT
-12:08:56
+06:56:20
 
 CDT
-2025-04-16
+2025-08-28
 
 MDT
-11:08:56
+05:56:20
 
 MDT
-2025-04-16
+2025-08-28
 
 PDT
-10:08:56
+04:56:20
 
 PDT
-2025-04-16
+2025-08-28
 
 ```
 
@@ -977,7 +977,7 @@ Use a custom separator between formats/timezones:
 
 ```text
 $ dtg -z PST8PDT,MST7MDT,CST6CDT,EST5EDT,UTC -f '[%Z %H:%M:%S]' -s ' '
-[PDT 10:08:56] [MDT 11:08:56] [CDT 12:08:56] [EDT 13:08:56] [UTC 17:08:56]
+[PDT 04:56:20] [MDT 05:56:20] [CDT 06:56:20] [EDT 07:56:20] [UTC 11:56:20]
 ```
 
 Named formats:
@@ -993,84 +993,84 @@ Named formats:
 
 ```text
 $ dtg -l -n all
-1744823336.721190022
-2025-04-16T17:08:56Z
-Wed 16 Apr 2025 17:08:56 UTC
-Wed 16 Apr 2025 13:08:56 EDT
+1756382180.292252461
+2025-08-28T11:56:20Z
+Thu 28 Aug 2025 11:56:20 UTC
+Thu 28 Aug 2025 07:56:20 EDT
 ```
 
 ```text
 $ dtg -n bcd
-⠄⢔|⠐|⡰|⣰|⠈|⡲
+⠄⢔|⠈|⠌|⣀|⡲|⠄
 ```
 
 ```text
 $ dtg -l -n bcd
-⠄⢔|⠐|⡰|⣠|⠈|⡲
+⠄⢔|⠈|⠌|⢰|⡲|⠄
 ```
 
 ```text
 $ dtg -z MST7MDT -n bcd
-⠄⢔|⠐|⡰|⣀|⠈|⡲
+⠄⢔|⠈|⠌|⢐|⡲|⠄
 ```
 
 ```text
 $ dtg -n compact-date
-20250416
+20250828
 ```
 
 ```text
 $ dtg -n compact-date-time
-20250416-170856
+20250828-115620
 ```
 
 ```text
 $ dtg -n compact-time
-170856
+115620
 ```
 
 ```text
 $ dtg -n default
-Wed 16 Apr 2025 17:08:56 UTC
+Thu 28 Aug 2025 11:56:20 UTC
 ```
 
 ```text
 $ dtg -n rfc-3339
-2025-04-16T17:08:56Z
+2025-08-28T11:56:20Z
 ```
 
 ```text
 $ dtg -n x
-Xj3FH8u
+Xj7RBuK
 ```
 
 Ordered named formats:
 
 ```text
 $ dtg -x -a
-1744823336.822510550
-2025-04-16T17:08:56Z
-Wed 16 Apr 2025 17:08:56 UTC
-Wed 16 Apr 2025 13:08:56 EDT
-Xj3FH8u
+1756382180.357787925
+2025-08-28T11:56:20Z
+Thu 28 Aug 2025 11:56:20 UTC
+Thu 28 Aug 2025 07:56:20 EDT
+Xj7RBuK
 $ dtg -a -x
-1744823336.836031593
-2025-04-16T17:08:56Z
-Wed 16 Apr 2025 17:08:56 UTC
-Wed 16 Apr 2025 13:08:56 EDT
-Xj3FH8u
+1756382180.364601334
+2025-08-28T11:56:20Z
+Thu 28 Aug 2025 11:56:20 UTC
+Thu 28 Aug 2025 07:56:20 EDT
+Xj7RBuK
 $ dtg -n x -n all
-Xj3FH8u
-1744823336.848708202
-2025-04-16T17:08:56Z
-Wed 16 Apr 2025 17:08:56 UTC
-Wed 16 Apr 2025 17:08:56 UTC
+Xj7RBuK
+1756382180.370636986
+2025-08-28T11:56:20Z
+Thu 28 Aug 2025 11:56:20 UTC
+Thu 28 Aug 2025 11:56:20 UTC
 $ dtg -n all -n x
-1744823336.859272241
-2025-04-16T17:08:56Z
-Wed 16 Apr 2025 17:08:56 UTC
-Wed 16 Apr 2025 17:08:56 UTC
-Xj3FH8u
+1756382180.377433216
+2025-08-28T11:56:20Z
+Thu 28 Aug 2025 11:56:20 UTC
+Thu 28 Aug 2025 11:56:20 UTC
+Xj7RBuK
 ```
 
 # Library

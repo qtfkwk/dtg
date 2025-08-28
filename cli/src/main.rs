@@ -1,7 +1,7 @@
 #![doc = include_str!("../README.md")]
 
-use clap::{builder::Styles, Parser};
-use dtg_lib::{tz, Dtg, Format};
+use clap::{Parser, builder::Styles};
+use dtg_lib::{Dtg, Format, tz};
 use jiff::tz::TimeZone;
 
 #[cfg(unix)]
