@@ -5,7 +5,7 @@ use dtg_lib::{Dtg, Format, tz};
 use jiff::tz::TimeZone;
 
 #[cfg(unix)]
-use pager::Pager;
+use pager2::Pager;
 
 const STYLES: Styles = Styles::styled()
     .header(clap_cargo::style::HEADER)
