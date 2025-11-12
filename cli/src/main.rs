@@ -1,20 +1,14 @@
 #![doc = include_str!("../README.md")]
 
-use clap::{Parser, builder::Styles};
-use dtg_lib::{Dtg, Format, tz};
-use jiff::tz::TimeZone;
+use {
+    clap::Parser,
+    clap_cargo::style::CLAP_STYLING,
+    dtg_lib::{Dtg, Format, tz},
+    jiff::tz::TimeZone,
+};
 
 #[cfg(unix)]
 use pager2::Pager;
-
-const STYLES: Styles = Styles::styled()
-    .header(clap_cargo::style::HEADER)
-    .usage(clap_cargo::style::USAGE)
-    .literal(clap_cargo::style::LITERAL)
-    .placeholder(clap_cargo::style::PLACEHOLDER)
-    .error(clap_cargo::style::ERROR)
-    .valid(clap_cargo::style::VALID)
-    .invalid(clap_cargo::style::INVALID);
 
 fn error(code: i32, msg: &str) {
     eprintln!("ERROR: {msg}!");
@@ -32,7 +26,7 @@ Date/time CLI utility
     ",
     version,
     max_term_width = 80,
-    styles = STYLES,
+    styles = CLAP_STYLING,
     after_help = "\
 ---
 
@@ -81,6 +75,7 @@ Notes:
 \
     ",
 )]
+#[allow(clippy::struct_excessive_bools)]
 struct Cli {
     /// Local timezone (6)
     #[arg(short)]
@@ -136,6 +131,7 @@ struct Cli {
     args: Vec<String>,
 }
 
+#[allow(clippy::too_many_lines)]
 fn main() {
     let cli = Cli::parse();
 
@@ -188,14 +184,14 @@ fn main() {
         Some(s) => match s.as_str() {
             "\\n" => String::from("\n"),
             "\\t" => String::from("\t"),
-            _ => s.to_string(),
+            _ => s.clone(),
         },
         None => String::from("\n"),
     };
 
     let mut formats = vec![];
-    for i in cli.formats.iter() {
-        formats.push(Format::Custom(i.to_string()));
+    for i in &cli.formats {
+        formats.push(Format::Custom(i.clone()));
     }
     if cli.a_format {
         formats.push(Format::A);
@@ -263,7 +259,7 @@ fn core(
     from_x: bool,
 ) {
     let mut dtgs = vec![];
-    for arg in args.iter() {
+    for arg in args {
         let dtg = if from_x {
             Dtg::from_x(arg)
         } else {
@@ -277,7 +273,7 @@ fn core(
     if dtgs.is_empty() {
         dtgs.push(Dtg::now());
     }
-    for i in dtgs.iter() {
+    for i in dtgs {
         let mut t = vec![];
         for fmt in formats {
             for tz in timezones {

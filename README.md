@@ -24,23 +24,23 @@ Arguments:
             default: now]
 
 Options:
-  -l                  Local timezone (6)
-  -a                  "a" format (1)
-  -x                  "x" format (2)
-  -X                  Give timestamp argument(s) in "x" format (2)
-  -Z                  Search/list timezones
-  -f <FORMAT>         Format(s) [-z/-l: "%a %d %b %Y %H:%M:%S %Z",
-                      "%Y-%m-%dT%H:%M:%SZ"]
-  -z <ZONE>           Timezone(s) [default: UTC] (3) (6)
-  -s <SEPARATOR>      Separator [default: "\n"]
-  -n <NAME>           Named format(s) [all, bcd, compact-date (%Y%m%d),
-                      compact-date-time (%Y%m%d-%H%M%S), compact-time (%H%M%S),
-                      default, rfc-3339, x, or any custom format] (4) (5)
-  -i <N>              Run every N seconds
-  -c <N>              Clear and run every N seconds
-  -r, --readme        Print the readme
-  -h, --help          Print help
-  -V, --version       Print version
+  -l              Local timezone (6)
+  -a              "a" format (1)
+  -x              "x" format (2)
+  -X              Give timestamp argument(s) in "x" format (2)
+  -Z              Search/list timezones
+  -f <FORMAT>     Format(s) [-z/-l: "%a %d %b %Y %H:%M:%S %Z",
+                  "%Y-%m-%dT%H:%M:%SZ"]
+  -z <ZONE>       Timezone(s) [default: UTC] (3) (6)
+  -s <SEPARATOR>  Separator [default: "\n"]
+  -n <NAME>       Named format(s) [all, bcd, compact-date (%Y%m%d),
+                  compact-date-time (%Y%m%d-%H%M%S), compact-time (%H%M%S),
+                  default, rfc-3339, x, or any custom format] (4) (5)
+  -i <N>          Run every N seconds
+  -c <N>          Clear and run every N seconds
+  -r, --readme    Print the readme
+  -h, --help      Print help
+  -V, --version   Print version
 
 ---
 
@@ -94,79 +94,79 @@ Get current date/time in UTC and RFC 3339 format:
 
 ```text
 $ dtg
-2025-10-27T15:00:02Z
+2025-11-12T15:36:21Z
 ```
 
 Get current date/time in the local timezone and default format:
 
 ```text
 $ dtg -l
-Mon 27 Oct 2025 11:00:02 EDT
+Wed 12 Nov 2025 10:36:21 EST
 ```
 
 Get current date/time in explicit timezone and default format:
 
 ```text
 $ dtg -z MST
-Mon 27 Oct 2025 08:00:02 MST
+Wed 12 Nov 2025 08:36:21 MST
 ```
 
 ```text
 $ dtg -z America/Los_Angeles
-Mon 27 Oct 2025 08:00:02 PDT
+Wed 12 Nov 2025 07:36:21 PST
 ```
 
 Get current date/time in UTC and specific format:
 
 ```text
 $ dtg -f %A
-Monday
+Wednesday
 ```
 
 ```text
 $ dtg -f %s.%f
-1761577202.757139587
+1762961781.496444899
 ```
 
 Get current date/time in local timezone and specific format:
 
 ```text
 $ dtg -l -f %A
-Monday
+Wednesday
 ```
 
 Get current date/time in explicit timezone and specific format:
 
 ```text
 $ dtg -z MST -f %A
-Monday
+Wednesday
 ```
 
 Get current date/time in "a" format:
 
 ```text
 $ dtg -a
-1761577202.768689244
-2025-10-27T15:00:02Z
-Mon 27 Oct 2025 15:00:02 UTC
-Mon 27 Oct 2025 11:00:02 EDT
+1762961781.506112528
+2025-11-12T15:36:21Z
+Wed 12 Nov 2025 15:36:21 UTC
+Wed 12 Nov 2025 10:36:21 EST
 ```
 
 Get current date/time in explicit timezone and "a" format:
 
 ```text
 $ dtg -a -z MST
-1761577202.772473352
-2025-10-27T15:00:02Z
-Mon 27 Oct 2025 15:00:02 UTC
-Mon 27 Oct 2025 08:00:02 MST
+1762961781.508639288
+2025-11-12T15:36:21Z
+Wed 12 Nov 2025 15:36:21 UTC
+Wed 12 Nov 2025 08:36:21 MST
 ```
 
 Get current date/time in "x" format:
 
 ```text
 $ dtg -x
-Xj9QF02
+XjABFaL
 ```
 
 Get a specific date / time in UTC and RFC 3339 format:
@@ -905,34 +905,34 @@ Multiple timezones:
 ```text
 $ dtg -z UTC,EST5EDT,CST6CDT,MST7MDT,PST8PDT -f '%Z%n%H:%M:%S%n' -f '%Z%n%Y-%m-%d%n'
 UTC
-15:00:02
+15:36:21
 
-EDT
-11:00:02
+EST
+10:36:21
 
-CDT
-10:00:02
+CST
+09:36:21
 
-MDT
-09:00:02
+MST
+08:36:21
 
-PDT
-08:00:02
+PST
+07:36:21
 
 UTC
-2025-10-27
+2025-11-12
 
-EDT
-2025-10-27
+EST
+2025-11-12
 
-CDT
-2025-10-27
+CST
+2025-11-12
 
-MDT
-2025-10-27
+MST
+2025-11-12
 
-PDT
-2025-10-27
+PST
+2025-11-12
 
 ```
 
@@ -942,34 +942,34 @@ use a single format and `%n`:*
 ```text
 $ dtg -z UTC,EST5EDT,CST6CDT,MST7MDT,PST8PDT -f '%Z%n%H:%M:%S%n%n%Z%n%Y-%m-%d%n'
 UTC
-15:00:02
+15:36:21
 
 UTC
-2025-10-27
+2025-11-12
 
-EDT
-11:00:02
+EST
+10:36:21
 
-EDT
-2025-10-27
+EST
+2025-11-12
 
-CDT
-10:00:02
+CST
+09:36:21
 
-CDT
-2025-10-27
+CST
+2025-11-12
 
-MDT
-09:00:02
+MST
+08:36:21
 
-MDT
-2025-10-27
+MST
+2025-11-12
 
-PDT
-08:00:02
+PST
+07:36:21
 
-PDT
-2025-10-27
+PST
+2025-11-12
 
 ```
 
@@ -977,7 +977,7 @@ Use a custom separator between formats/timezones:
 
 ```text
 $ dtg -z PST8PDT,MST7MDT,CST6CDT,EST5EDT,UTC -f '[%Z %H:%M:%S]' -s ' '
-[PDT 08:00:02] [MDT 09:00:02] [CDT 10:00:02] [EDT 11:00:02] [UTC 15:00:02]
+[PST 07:36:21] [MST 08:36:21] [CST 09:36:21] [EST 10:36:21] [UTC 15:36:21]
 ```
 
 Named formats:
@@ -993,84 +993,84 @@ Named formats:
 
 ```text
 $ dtg -l -n all
-1761577202.862697199
-2025-10-27T15:00:02Z
-Mon 27 Oct 2025 15:00:02 UTC
-Mon 27 Oct 2025 11:00:02 EDT
+1762961781.596334118
+2025-11-12T15:36:21Z
+Wed 12 Nov 2025 15:36:21 UTC
+Wed 12 Nov 2025 10:36:21 EST
 ```
 
 ```text
 $ dtg -n bcd
-⠄⢔|⡀|⢴|⣐|⠀|⠠
+⠄⢔|⣀|⡠|⣐|⡴|⢄
 ```
 
 ```text
 $ dtg -l -n bcd
-⠄⢔|⡀|⢴|⣀|⠀|⠠
+⠄⢔|⣀|⡠|⡀|⡴|⢄
 ```
 
 ```text
 $ dtg -z MST7MDT -n bcd
-⠄⢔|⡀|⢴|⢈|⠀|⠠
+⠄⢔|⣀|⡠|⠈|⡴|⢄
 ```
 
 ```text
 $ dtg -n compact-date
-20251027
+20251112
 ```
 
 ```text
 $ dtg -n compact-date-time
-20251027-150002
+20251112-153621
 ```
 
 ```text
 $ dtg -n compact-time
-150002
+153621
 ```
 
 ```text
 $ dtg -n default
-Mon 27 Oct 2025 15:00:02 UTC
+Wed 12 Nov 2025 15:36:21 UTC
 ```
 
 ```text
 $ dtg -n rfc-3339
-2025-10-27T15:00:02Z
+2025-11-12T15:36:21Z
 ```
 
 ```text
 $ dtg -n x
-Xj9QF02
+XjABFaL
 ```
 
 Ordered named formats:
 
 ```text
 $ dtg -x -a
-1761577202.905465466
-2025-10-27T15:00:02Z
-Mon 27 Oct 2025 15:00:02 UTC
-Mon 27 Oct 2025 11:00:02 EDT
-Xj9QF02
+1762961781.636595923
+2025-11-12T15:36:21Z
+Wed 12 Nov 2025 15:36:21 UTC
+Wed 12 Nov 2025 10:36:21 EST
+XjABFaL
 $ dtg -a -x
-1761577202.908021885
-2025-10-27T15:00:02Z
-Mon 27 Oct 2025 15:00:02 UTC
-Mon 27 Oct 2025 11:00:02 EDT
-Xj9QF02
+1762961781.641944584
+2025-11-12T15:36:21Z
+Wed 12 Nov 2025 15:36:21 UTC
+Wed 12 Nov 2025 10:36:21 EST
+XjABFaL
 $ dtg -n x -n all
-Xj9QF02
-1761577202.912407465
-2025-10-27T15:00:02Z
-Mon 27 Oct 2025 15:00:02 UTC
-Mon 27 Oct 2025 15:00:02 UTC
+XjABFaL
+1762961781.647986898
+2025-11-12T15:36:21Z
+Wed 12 Nov 2025 15:36:21 UTC
+Wed 12 Nov 2025 15:36:21 UTC
 $ dtg -n all -n x
-1761577202.915759253
-2025-10-27T15:00:02Z
-Mon 27 Oct 2025 15:00:02 UTC
-Mon 27 Oct 2025 15:00:02 UTC
-Xj9QF02
+1762961781.652425351
+2025-11-12T15:36:21Z
+Wed 12 Nov 2025 15:36:21 UTC
+Wed 12 Nov 2025 15:36:21 UTC
+XjABFaL
 ```
 
 # Library

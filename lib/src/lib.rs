@@ -3,8 +3,7 @@
 //--------------------------------------------------------------------------------------------------
 // Crates
 
-use lazy_static::lazy_static;
-use std::collections::HashMap;
+use std::{collections::HashMap, sync::LazyLock};
 
 pub use jiff::{
     Span, Timestamp,
@@ -19,30 +18,27 @@ const DEFAULT: &str = "%a %d %b %Y %H:%M:%S %Z";
 const EPOCH: &str = "%s.%f";
 const RFC_3339: &str = "%Y-%m-%dT%H:%M:%SZ";
 
-lazy_static! {
-    #[rustfmt::skip]
-    static ref ITOC: HashMap<i8, char> = {
-        [
-            (0, '0'), (10, 'A'), (20, 'K'), (30, 'U'), (40, 'e'), (50, 'o'),
-            (1, '1'), (11, 'B'), (21, 'L'), (31, 'V'), (41, 'f'), (51, 'p'),
-            (2, '2'), (12, 'C'), (22, 'M'), (32, 'W'), (42, 'g'), (52, 'q'),
-            (3, '3'), (13, 'D'), (23, 'N'), (33, 'X'), (43, 'h'), (53, 'r'),
-            (4, '4'), (14, 'E'), (24, 'O'), (34, 'Y'), (44, 'i'), (54, 's'),
-            (5, '5'), (15, 'F'), (25, 'P'), (35, 'Z'), (45, 'j'), (55, 't'),
-            (6, '6'), (16, 'G'), (26, 'Q'), (36, 'a'), (46, 'k'), (56, 'u'),
-            (7, '7'), (17, 'H'), (27, 'R'), (37, 'b'), (47, 'l'), (57, 'v'),
-            (8, '8'), (18, 'I'), (28, 'S'), (38, 'c'), (48, 'm'), (58, 'w'),
-            (9, '9'), (19, 'J'), (29, 'T'), (39, 'd'), (49, 'n'), (59, 'x'),
-        ]
-        .iter()
-        .cloned()
-        .collect()
-    };
+#[rustfmt::skip]
+static ITOC: LazyLock<HashMap<i8, char>> = LazyLock::new(||{
+    [
+        (0, '0'), (10, 'A'), (20, 'K'), (30, 'U'), (40, 'e'), (50, 'o'),
+        (1, '1'), (11, 'B'), (21, 'L'), (31, 'V'), (41, 'f'), (51, 'p'),
+        (2, '2'), (12, 'C'), (22, 'M'), (32, 'W'), (42, 'g'), (52, 'q'),
+        (3, '3'), (13, 'D'), (23, 'N'), (33, 'X'), (43, 'h'), (53, 'r'),
+        (4, '4'), (14, 'E'), (24, 'O'), (34, 'Y'), (44, 'i'), (54, 's'),
+        (5, '5'), (15, 'F'), (25, 'P'), (35, 'Z'), (45, 'j'), (55, 't'),
+        (6, '6'), (16, 'G'), (26, 'Q'), (36, 'a'), (46, 'k'), (56, 'u'),
+        (7, '7'), (17, 'H'), (27, 'R'), (37, 'b'), (47, 'l'), (57, 'v'),
+        (8, '8'), (18, 'I'), (28, 'S'), (38, 'c'), (48, 'm'), (58, 'w'),
+        (9, '9'), (19, 'J'), (29, 'T'), (39, 'd'), (49, 'n'), (59, 'x'),
+    ]
+    .iter()
+    .copied()
+    .collect()
+});
 
-    static ref CTOI: HashMap<char, i8> = {
-        ITOC.iter().map(|(i, c)| (*c, *i)).collect()
-    };
-}
+static CTOI: LazyLock<HashMap<char, i8>> =
+    LazyLock::new(|| ITOC.iter().map(|(i, c)| (*c, *i)).collect());
 
 //--------------------------------------------------------------------------------------------------
 // DtgError struct
@@ -54,6 +50,8 @@ Custom error
 * 102: Invalid timezone
 * 103: Failed to get local timezone
 * 104: Failed to get elapsed time
+* 105: Failed to parse an "x" format component char
+* 106: Failed to convert usize to u32
 */
 #[derive(Debug)]
 pub struct DtgError {
@@ -63,6 +61,7 @@ pub struct DtgError {
 
 impl DtgError {
     /// Create error
+    #[must_use]
     pub fn new(message: &str, code: usize) -> DtgError {
         DtgError {
             code,
@@ -98,6 +97,7 @@ impl Dtg {
     /**
     Create a current [Dtg]
     */
+    #[must_use]
     pub fn now() -> Dtg {
         Dtg {
             dt: Timestamp::now(),
@@ -119,12 +119,16 @@ impl Dtg {
         Dtg::from_dt(&Timestamp::new(1658448142, 936196858).unwrap()),
     );
     ```
+
+    # Errors
+
+    Returns an error if not able to parse the given `&str` as an integer or float timestamp
     */
     pub fn from(s: &str) -> Result<Dtg, DtgError> {
         let mut x = s.split('.');
         if let Some(seconds) = x.next()
             && let Ok(seconds) = seconds.parse::<i64>()
-            && seconds <= 8210298412799
+            && seconds <= 8_210_298_412_799
         {
             if let Some(nanoseconds) = x.next() {
                 let mut nanoseconds = nanoseconds.to_string();
@@ -154,6 +158,10 @@ impl Dtg {
     assert_eq!(dtg.format(&Some(Format::custom("%s")), &None), "1658448142");
     assert_eq!(dtg.rfc_3339(), "2022-07-22T00:02:22Z");
     ```
+
+    # Errors
+
+    Returns an error if not able to parse the given arguments as components of a timestamp
     */
     pub fn from_ymd_hms(
         year: i16,
@@ -190,10 +198,12 @@ impl Dtg {
     assert_eq!(dtg.format(&Some(Format::custom("%s")), &None), "1658448142");
     assert_eq!(dtg.rfc_3339(), "2022-07-22T00:02:22Z");
     ```
+
+    # Errors
+
+    Returns an error if not able to parse the given `&str` as an "x" format timestamp
     */
     pub fn from_x(s: &str) -> Result<Dtg, DtgError> {
-        let mut chars = s.chars().rev();
-
         fn next(chars: &mut std::iter::Rev<std::str::Chars>) -> Option<i8> {
             if let Some(x) = chars.next() {
                 CTOI.get(&x).copied()
@@ -202,15 +212,41 @@ impl Dtg {
             }
         }
 
-        let second = next(&mut chars).expect("second");
-        let minute = next(&mut chars).expect("minute");
-        let hour = next(&mut chars).expect("hour");
-        let day = next(&mut chars).expect("day") + 1;
-        let month = next(&mut chars).expect("month") + 1;
+        let mut chars = s.chars().rev();
+
+        let mut second = 0;
+        let mut minute = 0;
+        let mut hour = 0;
+        let mut day = 0;
+        let mut month = 0;
+        for (x, component, offset) in &mut [
+            (&mut second, "second", 0),
+            (&mut minute, "minute", 0),
+            (&mut hour, "hour", 0),
+            (&mut day, "day", 1),
+            (&mut month, "month", 1),
+        ] {
+            if let Some(c) = next(&mut chars) {
+                **x = c + *offset;
+            } else {
+                return Err(DtgError::new(
+                    &format!("Failed to parse an \"x\" format {component} char"),
+                    105,
+                ));
+            }
+        }
 
         let mut year = 0;
         for (exp, c) in chars.enumerate() {
-            year += (*CTOI.get(&c).unwrap() as i16) * 60_i16.pow(exp as u32);
+            if let Some(i) = CTOI.get(&c) {
+                if let Ok(j) = u32::try_from(exp) {
+                    year += i16::from(*i) * 60_i16.pow(j);
+                } else {
+                    return Err(DtgError::new("Failed to convert usize to u32", 106));
+                }
+            } else {
+                return Err(DtgError::new(&format!("Invalid timestamp: `{s}`"), 101));
+            }
         }
 
         Dtg::from_ymd_hms(year, month, day, hour, minute, second)
@@ -230,6 +266,7 @@ impl Dtg {
     );
     ```
     */
+    #[must_use]
     pub fn from_dt(dt: &Timestamp) -> Dtg {
         Dtg { dt: *dt }
     }
@@ -249,6 +286,7 @@ impl Dtg {
     assert_eq!(dtg.default(&tz("MST7MDT").ok()), default_mt);
     ```
     */
+    #[must_use]
     pub fn default(&self, tz: &Option<TimeZone>) -> String {
         self.format(&Some(Format::default()), tz)
     }
@@ -264,6 +302,7 @@ impl Dtg {
     assert_eq!(dtg.rfc_3339(), "2022-07-22T00:02:22Z");
     ```
     */
+    #[must_use]
     pub fn rfc_3339(&self) -> String {
         self.format(&None, &None)
     }
@@ -279,6 +318,7 @@ impl Dtg {
     assert_eq!(dtg.x_format(), "Xg6L02M");
     ```
     */
+    #[must_use]
     pub fn x_format(&self) -> String {
         self.format(&Some(Format::X), &None)
     }
@@ -306,6 +346,7 @@ impl Dtg {
     // assert_eq!(dtg.a_format(&tz("MST7MDT").ok()), a_mt);
     ```
     */
+    #[must_use]
     pub fn a_format(&self, tz: &Option<TimeZone>) -> String {
         self.format(&Some(Format::A), tz)
     }
@@ -321,6 +362,7 @@ impl Dtg {
     assert_eq!(dtg.bcd_format(), "⠄⠤|⢰|⠤|⠀|⠠|⠤"); // 2022|07|22|00|02|22
     ```
     */
+    #[must_use]
     pub fn bcd_format(&self) -> String {
         self.format(&Some(Format::BCD), &None)
     }
@@ -354,6 +396,7 @@ impl Dtg {
     );
     ```
     */
+    #[must_use]
     pub fn format(&self, fmt: &Option<Format>, tz: &Option<TimeZone>) -> String {
         let tz = tz.clone().unwrap_or(TimeZone::UTC);
         match fmt {
@@ -362,6 +405,11 @@ impl Dtg {
         }
     }
 
+    /**
+    # Errors
+
+    Returns an error if it failed to get the elapsed time
+    */
     pub fn elapsed(&self) -> Result<Duration, DtgError> {
         match self.dt.until(Timestamp::now()) {
             Ok(d) => Ok(Duration::new(d)),
@@ -405,15 +453,14 @@ impl std::fmt::Display for Duration {
             f,
             "{}",
             [
-                (self.d.get_days() as i64, "d"),
-                (self.d.get_hours() as i64, "h"),
+                (i64::from(self.d.get_days()), "d"),
+                (i64::from(self.d.get_hours()), "h"),
                 (self.d.get_minutes(), "m"),
                 (self.d.get_seconds(), "s"),
             ]
             .iter()
             .filter_map(|x| inner(x.0, x.1))
-            .collect::<Vec<String>>()
-            .join(""),
+            .collect::<String>()
         )
     }
 }
@@ -458,11 +505,11 @@ Hour   | 0-23             | 0-N
 Minute | 0-59             | 0-x
 Second | 0-59             | 0-x
 
-See also [Dtg::from_x]
+See also [`Dtg::from_x`]
 
 # Custom format
 
-See also [Dtg::format]
+See also [`Dtg::format`]
 
 ## Date specifiers
 
@@ -554,6 +601,7 @@ impl Format {
     /**
     Create a default [Format]
     */
+    #[must_use]
     pub fn new() -> Format {
         Format::Custom(DEFAULT.to_string())
     }
@@ -561,6 +609,7 @@ impl Format {
     /**
     Create an RFC 3339 [Format]
     */
+    #[must_use]
     pub fn rfc_3339() -> Format {
         Format::Custom(RFC_3339.to_string())
     }
@@ -568,6 +617,7 @@ impl Format {
     /**
     Create a custom [Format]
     */
+    #[must_use]
     pub fn custom(s: &str) -> Format {
         Format::Custom(s.to_string())
     }
@@ -596,23 +646,23 @@ impl Format {
                 }
             }
             Format::A => {
-                let epoch_s = dt.as_second() as i128;
-                let epoch_ns = dt.as_nanosecond() - epoch_s * 1_000_000_000;
-                let epoch = format!("{epoch_s}.{epoch_ns:09}");
+                let epoch_seconds = i128::from(dt.as_second());
+                let epoch_nanoseconds = dt.as_nanosecond() - epoch_seconds * 1_000_000_000;
+                let epoch = format!("{epoch_seconds}.{epoch_nanoseconds:09}");
                 let rfc = dt.strftime(RFC_3339).to_string();
                 let default = dt.to_zoned(TimeZone::UTC).strftime(DEFAULT).to_string();
                 let zoned_default = dt.to_zoned(tz.clone()).strftime(DEFAULT).to_string();
                 [epoch, rfc, default, zoned_default].join("\n")
             }
-            Format::X => self.x(dt),
-            Format::BCD => self.bcd(dt, tz),
+            Format::X => Format::x(dt),
+            Format::BCD => Format::bcd(dt, tz),
         }
     }
 
     /**
     Format a [Timestamp] with "x" format
     */
-    fn x(&self, dt: &Timestamp) -> String {
+    fn x(dt: &Timestamp) -> String {
         let dt = dt.to_zoned(TimeZone::UTC);
         let mut year = dt.year();
         let mut y = vec![];
@@ -640,16 +690,18 @@ impl Format {
     Format a [Timestamp] like a binary clock using the Braille Patterns Unicode Block and `|`
     separators
     */
-    fn bcd(&self, dt: &Timestamp, tz: &TimeZone) -> String {
+    fn bcd(dt: &Timestamp, tz: &TimeZone) -> String {
         let dt = dt.to_zoned(tz.clone());
         let yyyy = dt.year();
+        #[allow(clippy::cast_sign_loss)]
         let (mut r, yyyy) = if yyyy < 0 {
             (String::from("-"), (-yyyy) as u32)
         } else {
             (String::new(), yyyy as u32)
         };
-        let cc = (yyyy / 100) as u8;
-        let yy = (yyyy - yyyy / 100 * 100) as u8;
+        let cc = u8::try_from(yyyy / 100).unwrap();
+        let yy = u8::try_from(yyyy - yyyy / 100 * 100).unwrap();
+        #[allow(clippy::cast_sign_loss)]
         for (i, n) in [
             cc,
             yy,
@@ -1292,6 +1344,10 @@ WET
 Zulu
 localtime
 ```
+
+# Errors
+
+Returns an error if not able to parse the given `&str` as a timezone
 */
 pub fn tz(s: &str) -> Result<TimeZone, DtgError> {
     match s {

@@ -60,4 +60,7 @@
         * 6.3.4 (2025-04-16): Update dependencies
     * 6.4.0 (2025-08-28): Update dependencies; 2024 edition
         * 6.4.1 (2025-10-27): Update dependencies; use `pager2`
+        * 6.4.2 (2025-11-11): Update dependencies; use [`clap-cargo`] `CLAP_STYLING`; clippy fixes
+
+[`clap-cargo`]: https://crates.io/crates/clap-cargo
 

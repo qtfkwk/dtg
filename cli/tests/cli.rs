@@ -4,7 +4,7 @@ CLI Integration Tests
 
 // # Crates
 
-use assert_cmd::Command;
+use assert_cmd::{Command, cargo};
 
 // # Constants
 
@@ -35,8 +35,8 @@ const OVERFLOW_X: &str = "2kdBTM01";
 // # Helper functions
 
 /// Retrieve the binary to test
-pub fn cmd(bin: &str) -> Command {
-    Command::cargo_bin(bin).unwrap()
+pub fn cmd() -> Command {
+    Command::new(cargo::cargo_bin!("dtg"))
 }
 
 /// Print the command
@@ -60,7 +60,7 @@ fn p(bin: &str, args: &[&str]) {
 /// Run command that fails
 fn fail(bin: &str, args: &[&str], code: i32, msg: &str) {
     p(bin, args);
-    cmd(bin)
+    cmd()
         .args(args)
         .assert()
         .failure()
@@ -71,7 +71,7 @@ fn fail(bin: &str, args: &[&str], code: i32, msg: &str) {
 /// Run command that succeeds
 fn pass(bin: &str, args: &[&str], want: &str) {
     p(bin, args);
-    cmd(bin)
+    cmd()
         .args(args)
         .assert()
         .success()
@@ -207,7 +207,7 @@ fn mulitple_f_options() {
 
 #[test]
 fn timezone_list() {
-    cmd("dtg").args(["-Z"]).assert().success();
+    cmd().args(["-Z"]).assert().success();
 }
 
 #[test]
