@@ -43,22 +43,22 @@ dependencies = [
 
 [[package]]
 name = "anstyle-query"
-version = "1.1.4"
+version = "1.1.5"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "9e231f6134f61b71076a3eab506c379d4f36122f2af15a9ff04415ea4c3339e2"
+checksum = "40c48f72fd53cd289104fc64099abca73db4166ad86ea0b4341abe65af83dadc"
 dependencies = [
- "windows-sys 0.60.2",
+ "windows-sys 0.61.2",
 ]
 
 [[package]]
 name = "anstyle-wincon"
-version = "3.0.10"
+version = "3.0.11"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "3e0633414522a32ffaac8ac6cc8f748e090c5717661fddeea04219e2344f5f2a"
+checksum = "291e6a250ff86cd4a820112fb8898808a366d8f9f58ce16d1f538353ad55747d"
 dependencies = [
  "anstyle",
  "once_cell_polyfill",
- "windows-sys 0.60.2",
+ "windows-sys 0.61.2",
 ]
 
 [[package]]
@@ -78,9 +78,9 @@ dependencies = [
 
 [[package]]
 name = "bbd-lib"
-version = "0.4.2"
+version = "0.4.3"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "1a927be9f72b4a5f56713a6a7fd11744cb7531e3200a114eb074f57f64b91638"
+checksum = "a91b2bf6a32d1b04c7e753cb1afdc0a7fedcc3e43afe444d7a592f38ac00b60a"
 
 [[package]]
 name = "bitflags"
@@ -211,7 +211,7 @@ checksum = "6184e33543162437515c2e2b48714794e37845ec9851711914eec9d308f6ebe8"
 
 [[package]]
 name = "dtg"
-version = "6.4.2"
+version = "6.4.3"
 dependencies = [
  "assert_cmd",
  "clap",
@@ -225,7 +225,7 @@ dependencies = [
 
 [[package]]
 name = "dtg-lib"
-version = "6.4.2"
+version = "6.4.3"
 dependencies = [
  "bbd-lib",
  "iana-time-zone",
@@ -420,9 +420,9 @@ checksum = "384b8ab6d37215f3c5301a95a4accb5d64aa607f1fcb26a11b5303878451b4fe"
 
 [[package]]
 name = "pager2"
-version = "0.6.2"
+version = "0.6.3"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "eaeafae65a76f573d4d7450ae718cee60bc9180ce213062b0dedc3837e80d24b"
+checksum = "e30d5a40a266c984e42cd1182be3fbcd13b43ee60c190f5e406bfed986e7149f"
 dependencies = [
  "errno",
  "libc",
