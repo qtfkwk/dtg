@@ -151,7 +151,6 @@ fn main() {
         if cli.args.is_empty() {
             for zone in zones {
                 println!("{zone}");
-                found += 1;
             }
         } else {
             let search = &cli.args[0];
