@@ -91,79 +91,79 @@ Get current date/time in UTC and RFC 3339 format:
 
 ```text
 $ dtg
-2026-03-03T15:01:36Z
+2026-04-17T17:49:19Z
 ```
 
 Get current date/time in the local timezone and default format:
 
 ```text
 $ dtg -l
-Tue 03 Mar 2026 10:01:36 EST
+Fri 17 Apr 2026 13:49:19 EDT
 ```
 
 Get current date/time in explicit timezone and default format:
 
 ```text
 $ dtg -z MST
-Tue 03 Mar 2026 08:01:36 MST
+Fri 17 Apr 2026 10:49:19 MST
 ```
 
 ```text
 $ dtg -z America/Los_Angeles
-Tue 03 Mar 2026 07:01:36 PST
+Fri 17 Apr 2026 10:49:19 PDT
 ```
 
 Get current date/time in UTC and specific format:
 
 ```text
 $ dtg -f %A
-Tuesday
+Friday
 ```
 
 ```text
 $ dtg -f %s.%f
-1772550096.38336829
+1776448159.74792784
 ```
 
 Get current date/time in local timezone and specific format:
 
 ```text
 $ dtg -l -f %A
-Tuesday
+Friday
 ```
 
 Get current date/time in explicit timezone and specific format:
 
 ```text
 $ dtg -z MST -f %A
-Tuesday
+Friday
 ```
 
 Get current date/time in "a" format:
 
 ```text
 $ dtg -a
-1772550096.047798060
-2026-03-03T15:01:36Z
-Tue 03 Mar 2026 15:01:36 UTC
-Tue 03 Mar 2026 10:01:36 EST
+1776448159.086535769
+2026-04-17T17:49:19Z
+Fri 17 Apr 2026 17:49:19 UTC
+Fri 17 Apr 2026 13:49:19 EDT
 ```
 
 Get current date/time in explicit timezone and "a" format:
 
 ```text
 $ dtg -a -z MST
-1772550096.052163438
-2026-03-03T15:01:36Z
-Tue 03 Mar 2026 15:01:36 UTC
-Tue 03 Mar 2026 08:01:36 MST
+1776448159.089135964
+2026-04-17T17:49:19Z
+Fri 17 Apr 2026 17:49:19 UTC
+Fri 17 Apr 2026 10:49:19 MST
 ```
 
 Get current date/time in "x" format:
 
 ```text
 $ dtg -x
-Xk22F1a
+Xk3GHnJ
 ```
 
 Get a specific date / time in UTC and RFC 3339 format:
@@ -902,34 +902,34 @@ Multiple timezones:
 ```text
 $ dtg -z UTC,EST5EDT,CST6CDT,MST7MDT,PST8PDT -f '%Z%n%H:%M:%S%n' -f '%Z%n%Y-%m-%d%n'
 UTC
-15:01:36
+17:49:19
 
-EST
-10:01:36
+EDT
+13:49:19
 
-CST
-09:01:36
+CDT
+12:49:19
 
-MST
-08:01:36
+MDT
+11:49:19
 
-PST
-07:01:36
+PDT
+10:49:19
 
 UTC
-2026-03-03
+2026-04-17
 
-EST
-2026-03-03
+EDT
+2026-04-17
 
-CST
-2026-03-03
+CDT
+2026-04-17
 
-MST
-2026-03-03
+MDT
+2026-04-17
 
-PST
-2026-03-03
+PDT
+2026-04-17
 
 ```
 
@@ -939,34 +939,34 @@ use a single format and `%n`:*
 ```text
 $ dtg -z UTC,EST5EDT,CST6CDT,MST7MDT,PST8PDT -f '%Z%n%H:%M:%S%n%n%Z%n%Y-%m-%d%n'
 UTC
-15:01:36
+17:49:19
 
 UTC
-2026-03-03
+2026-04-17
 
-EST
-10:01:36
+EDT
+13:49:19
 
-EST
-2026-03-03
+EDT
+2026-04-17
 
-CST
-09:01:36
+CDT
+12:49:19
 
-CST
-2026-03-03
+CDT
+2026-04-17
 
-MST
-08:01:36
+MDT
+11:49:19
 
-MST
-2026-03-03
+MDT
+2026-04-17
 
-PST
-07:01:36
+PDT
+10:49:19
 
-PST
-2026-03-03
+PDT
+2026-04-17
 
 ```
 
@@ -974,7 +974,7 @@ Use a custom separator between formats/timezones:
 
 ```text
 $ dtg -z PST8PDT,MST7MDT,CST6CDT,EST5EDT,UTC -f '[%Z %H:%M:%S]' -s ' '
-[PST 07:01:36] [MST 08:01:36] [CST 09:01:36] [EST 10:01:36] [UTC 15:01:36]
+[PDT 10:49:19] [MDT 11:49:19] [CDT 12:49:19] [EDT 13:49:19] [UTC 17:49:19]
 ```
 
 Named formats:
@@ -990,84 +990,84 @@ Named formats:
 
 ```text
 $ dtg -l -n all
-1772550096.127438933
-2026-03-03T15:01:36Z
-Tue 03 Mar 2026 15:01:36 UTC
-Tue 03 Mar 2026 10:01:36 EST
+1776448159.177143101
+2026-04-17T17:49:19Z
+Fri 17 Apr 2026 17:49:19 UTC
+Fri 17 Apr 2026 13:49:19 EDT
 ```
 
 ```text
 $ dtg -n bcd
-⠄⠴|⢠|⢠|⣐|⢀|⡴
+⠄⠴|⠐|⣰|⣰|⢊|⣈
 ```
 
 ```text
 $ dtg -l -n bcd
-⠄⠴|⢠|⢠|⡀|⢀|⡴
+⠄⠴|⠐|⣰|⣠|⢊|⣈
 ```
 
 ```text
 $ dtg -z MST7MDT -n bcd
-⠄⠴|⢠|⢠|⠈|⢀|⡴
+⠄⠴|⠐|⣰|⣀|⢊|⣈
 ```
 
 ```text
 $ dtg -n compact-date
-20260303
+20260417
 ```
 
 ```text
 $ dtg -n compact-date-time
-20260303-150136
+20260417-174919
 ```
 
 ```text
 $ dtg -n compact-time
-150136
+174919
 ```
 
 ```text
 $ dtg -n default
-Tue 03 Mar 2026 15:01:36 UTC
+Fri 17 Apr 2026 17:49:19 UTC
 ```
 
 ```text
 $ dtg -n rfc-3339
-2026-03-03T15:01:36Z
+2026-04-17T17:49:19Z
 ```
 
 ```text
 $ dtg -n x
-Xk22F1a
+Xk3GHnJ
 ```
 
 Ordered named formats:
 
 ```text
 $ dtg -x -a
-1772550096.160016918
-2026-03-03T15:01:36Z
-Tue 03 Mar 2026 15:01:36 UTC
-Tue 03 Mar 2026 10:01:36 EST
-Xk22F1a
+1776448159.216352946
+2026-04-17T17:49:19Z
+Fri 17 Apr 2026 17:49:19 UTC
+Fri 17 Apr 2026 13:49:19 EDT
+Xk3GHnJ
 $ dtg -a -x
-1772550096.164146101
-2026-03-03T15:01:36Z
-Tue 03 Mar 2026 15:01:36 UTC
-Tue 03 Mar 2026 10:01:36 EST
-Xk22F1a
+1776448159.219762507
+2026-04-17T17:49:19Z
+Fri 17 Apr 2026 17:49:19 UTC
+Fri 17 Apr 2026 13:49:19 EDT
+Xk3GHnJ
 $ dtg -n x -n all
-Xk22F1a
-1772550096.166862795
-2026-03-03T15:01:36Z
-Tue 03 Mar 2026 15:01:36 UTC
-Tue 03 Mar 2026 15:01:36 UTC
+Xk3GHnJ
+1776448159.222227574
+2026-04-17T17:49:19Z
+Fri 17 Apr 2026 17:49:19 UTC
+Fri 17 Apr 2026 17:49:19 UTC
 $ dtg -n all -n x
-1772550096.169197237
-2026-03-03T15:01:36Z
-Tue 03 Mar 2026 15:01:36 UTC
-Tue 03 Mar 2026 15:01:36 UTC
-Xk22F1a
+1776448159.225918683
+2026-04-17T17:49:19Z
+Fri 17 Apr 2026 17:49:19 UTC
+Fri 17 Apr 2026 17:49:19 UTC
+Xk3GHnJ
 ```
 
 # Formats
